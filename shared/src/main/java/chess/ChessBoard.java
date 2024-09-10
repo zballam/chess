@@ -21,7 +21,7 @@ public class ChessBoard {
     public void addPiece(ChessPosition position, ChessPiece piece) {
         throw new RuntimeException("Not implemented");
     }
-
+        //Make a two-dimensional array to keep track of the piece positions
     /**
      * Gets a chess piece on the chessboard
      *
