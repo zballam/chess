@@ -3,7 +3,8 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class KingMovesCalc {
+public class KingMovesCalc extends PieceMovesCalc{
+
     /**
      * Calculates possible King moves
      *
@@ -11,10 +12,10 @@ public class KingMovesCalc {
      * @param myPosition
      * @return
      */
-    public ArrayList<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        ArrayList<ChessMove> kingMoves = new ArrayList<>();
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> calcMoves = new ArrayList<>();
         System.out.println(myPosition);
-
-        return kingMoves;
+        System.out.println(board);
+        return calcMoves;
     }
 }

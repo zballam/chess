@@ -1,4 +1,21 @@
 package chess;
 
-public class QueenMovesCalc {
+import java.util.ArrayList;
+import java.util.Collection;
+
+public class QueenMovesCalc extends PieceMovesCalc {
+
+    /**
+     * Calculates possible Queen moves
+     *
+     * @param board
+     * @param myPosition
+     * @return
+     */
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> calcMoves = new ArrayList<>();
+        System.out.println(myPosition);
+        System.out.println(board);
+        return calcMoves;
+    }
 }

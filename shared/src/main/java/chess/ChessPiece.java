@@ -10,8 +10,12 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
+    public PieceType type;
+    public String pieceColor;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.type = type;
+        this.pieceColor = pieceColor.toString();
     }
 
     /**
@@ -37,7 +41,7 @@ public class ChessPiece {
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return type;
     }
 
     /**
@@ -47,11 +51,16 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition, PieceType pieceType) {
-        Collection<ChessMove> moves = new ArrayList<>();
-        PieceMovesCalc pieceCalc = new PieceMovesCalc();
-        moves = pieceCalc.pieceMoves(board, myPosition, pieceType);
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        PieceMovesCalc movesCalc = null;
+        // Figure out which pieceCalc to use
+        if (this.type == ChessPiece.PieceType.KING) {movesCalc = new KingMovesCalc();}
+        else if (this.type == ChessPiece.PieceType.QUEEN) {movesCalc = new QueenMovesCalc();}
+        else if (this.type == ChessPiece.PieceType.BISHOP) {movesCalc = new BishopMovesCalc();}
+        else if (this.type == ChessPiece.PieceType.KNIGHT) {movesCalc = new KnightMovesCalc();}
+        else if (this.type == ChessPiece.PieceType.ROOK) {movesCalc = new RookMovesCalc();}
+        else if (this.type == ChessPiece.PieceType.PAWN) {movesCalc = new PawnMovesCalc();}
 
-        return moves;
+        return movesCalc.pieceMoves(board, myPosition);
     }
 }
