@@ -8,9 +8,19 @@ import java.util.Collection;
  */
 public class PieceMovesCalc {
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
     public boolean inBoard(ChessPosition position) {
         boolean result = true;
-        if (position.getColumn() > 8 || position.getRow() > 8 || position.getColumn() < 8 || position.getRow() < 8) {
+        if (position.getColumn() > 8 || position.getRow() > 8 || position.getColumn() < 1 || position.getRow() < 1) {
             result = false;
         }
         return result;
@@ -24,7 +34,7 @@ public class PieceMovesCalc {
      * @return
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> calculatedMoves = new ArrayList<ChessMove>();
+        Collection<ChessMove> calculatedMoves = new ArrayList<>();
         return calculatedMoves;
     }
 }

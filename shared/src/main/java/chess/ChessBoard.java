@@ -11,6 +11,16 @@ public class ChessBoard {
 
     public ChessBoard() {}
 
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *

@@ -18,6 +18,16 @@ public class ChessPiece {
         this.pieceColor = pieceColor.toString();
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
     /**
      * The various different chess piece options
      */
@@ -61,6 +71,7 @@ public class ChessPiece {
         else if (this.type == ChessPiece.PieceType.ROOK) {movesCalc = new RookMovesCalc();}
         else if (this.type == ChessPiece.PieceType.PAWN) {movesCalc = new PawnMovesCalc();}
 
+        assert movesCalc != null;
         return movesCalc.pieceMoves(board, myPosition);
     }
 }

@@ -17,6 +17,24 @@ public class ChessMove {
         this.endPosition = endPosition;
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    /**
+     * @return string value of ChessMove
+     */
+    @Override
+    public String toString() {
+        return "(" + startPosition.getColumn() + ", " + startPosition.getRow() + ")" + "->(" + endPosition.getColumn() + ", " + endPosition.getRow() + ") P: " + promotionPiece;
+    }
+
     /**
      * @return ChessPosition of starting location
      */
