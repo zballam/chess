@@ -14,7 +14,7 @@ public class PieceMovesCalc {
         while (true) {
             int x = myPosition.getRow() + xChange;
             int y = myPosition.getColumn() + yChange;
-            //System.out.println("x: " + x + ", y: " + y);
+            System.out.println("x: " + x + ", y: " + y);
             ChessPosition newPosition = new ChessPosition(x, y);
             // If the newPosition is out of range then stop
             if (!inBoard(newPosition)){
@@ -22,12 +22,15 @@ public class PieceMovesCalc {
             }
             // If there is a piece in the newPosition
             if (board.getPiece(newPosition) != null) {
+                System.out.println("piece found: " + board.getPiece(newPosition));
                 // If the newPosition hits a piece check if enemy
                 if (onEnemy(board, newPosition, ogPosition)) { //Enemy team piece
-                    return moves;
-                } else if (onEnemy(board, newPosition, ogPosition)) { //Same team piece
+                    System.out.println("enemy piece");
                     ChessMove newMove = new ChessMove(ogPosition, newPosition, null);
                     moves.add(newMove);
+                    return moves;
+                } else { //Same team piece
+                    System.out.println("same team piece");
                     return moves;
                 }
             }
