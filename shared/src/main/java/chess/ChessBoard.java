@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -12,13 +15,36 @@ public class ChessBoard {
     public ChessBoard() {}
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessBoard that = (ChessBoard) o;
+        return Objects.deepEquals(squares, that.squares);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Arrays.deepHashCode(squares);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder full = new StringBuilder();
+        StringBuilder part = new StringBuilder();
+        for (ChessPiece[] row : squares) {
+            part.append("|");
+            for (ChessPiece piece : row) {
+                if (piece != null) {
+                    part.append(piece);
+                }
+                else {part.append(" ");}
+                part.append("|");
+            }
+            part.append("\n");
+            full.insert(0, part);
+            part.setLength(0);
+        }
+        return full.toString();
     }
 
     /**
@@ -28,7 +54,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        squares[position.getRow()][position.getColumn()] = piece; // Adds the position to the piece
+        squares[position.getRow()-1][position.getColumn()-1] = piece; // Adds the position to the piece
     }
 
     /**
@@ -39,7 +65,8 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return squares[position.getRow()][position.getColumn()];
+        if (squares[position.getRow()-1][position.getColumn()-1] != null) {return squares[position.getRow()-1][position.getColumn()-1];}
+        return null;
     }
 
     /**

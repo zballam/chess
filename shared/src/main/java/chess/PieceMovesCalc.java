@@ -8,16 +8,43 @@ import java.util.Collection;
  */
 public class PieceMovesCalc {
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
+    public Collection<ChessMove> findMoves(ChessBoard board, int xChange, int yChange, ChessPosition myPosition) {
+        Collection<ChessMove> moves = new ArrayList<>();
+        ChessPosition ogPosition = myPosition;
+        while (true) {
+            int x = myPosition.getRow() + xChange;
+            int y = myPosition.getColumn() + yChange;
+            //System.out.println("x: " + x + ", y: " + y);
+            ChessPosition newPosition = new ChessPosition(x, y);
+            // If the newPosition is out of range then stop
+            if (!inBoard(newPosition)){
+                return moves;
+            }
+            // If there is a piece in the newPosition
+            if (board.getPiece(newPosition) != null) {
+                // If the newPosition hits a piece check if enemy
+                if (onEnemy(board, newPosition, ogPosition)) { //Enemy team piece
+                    return moves;
+                } else if (onEnemy(board, newPosition, ogPosition)) { //Same team piece
+                    ChessMove newMove = new ChessMove(ogPosition, newPosition, null);
+                    moves.add(newMove);
+                    return moves;
+                }
+            }
+            else {
+                ChessMove newMove = new ChessMove(ogPosition, newPosition, null);
+                moves.add(newMove);
+                myPosition = newPosition;
+            }
+        }
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
+    /**
+     * Checks to see if the position is inside the bounds of the board
+     *
+     * @param position
+     * @return
+     */
     public boolean inBoard(ChessPosition position) {
         boolean result = true;
         if (position.getColumn() > 8 || position.getRow() > 8 || position.getColumn() < 1 || position.getRow() < 1) {
@@ -27,11 +54,26 @@ public class PieceMovesCalc {
     }
 
     /**
+     * Checks to see if there is a piece already at the position and returns boolean
+     * T = enemy
+     * F = same team
+     *
+     */
+    public boolean onEnemy(ChessBoard board, ChessPosition newPosition, ChessPosition ogPosition) {
+        boolean result = false;
+        if (board.getPiece(newPosition).getTeamColor() != board.getPiece(ogPosition).getTeamColor()) {
+            // Enemy
+            result = true;
+        }
+        return result;
+    }
+
+    /**
      * Determines which MovesCalc to call
      *
-     * @param board
-     * @param myPosition
-     * @return
+     * @param board the Chess board
+     * @param myPosition the piece position
+     * @return calculatedMoves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> calculatedMoves = new ArrayList<>();

@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -10,22 +11,25 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    public PieceType type;
-    public String pieceColor;
+    private PieceType type;
+    private ChessGame.TeamColor pieceColor;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-        this.type = type;
-        this.pieceColor = pieceColor.toString();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return type == that.type && pieceColor == that.pieceColor;
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(type, pieceColor);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.type = type;
+        this.pieceColor = pieceColor;
     }
 
     /**
@@ -40,11 +44,27 @@ public class ChessPiece {
         PAWN
     }
 
+
+
     /**
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return pieceColor;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        if (type == PieceType.KING) {result.append("k");}
+        else if (type == PieceType.QUEEN) {result.append("q");}
+        else if (type == PieceType.BISHOP) {result.append("b");}
+        else if (type == PieceType.KNIGHT) {result.append("n");}
+        else if (type == PieceType.ROOK) {result.append("r");}
+        else if (type == PieceType.PAWN) {result.append("p");}
+
+        if (pieceColor == ChessGame.TeamColor.WHITE) {return result.toString().toUpperCase();}
+        return result.toString();
     }
 
     /**
