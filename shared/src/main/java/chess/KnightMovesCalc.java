@@ -14,8 +14,23 @@ public class KnightMovesCalc extends PieceMovesCalc{
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> calcMoves = new ArrayList<>();
-        System.out.println(myPosition);
-        System.out.println(board);
+        System.out.println("Board:\n" + board.toString());
+        // Up-Right move
+        calcMoves.addAll(basicMove(board,1,2,myPosition));
+        // Up-Left move
+        calcMoves.addAll(basicMove(board,-1,2,myPosition));
+        // Down-Right move
+        calcMoves.addAll(basicMove(board,1,-2,myPosition));
+        // Down-Left move
+        calcMoves.addAll(basicMove(board,-1,-2,myPosition));
+        // Right-Up move
+        calcMoves.addAll(basicMove(board,2,1,myPosition));
+        // Right-Down move
+        calcMoves.addAll(basicMove(board,2,-1,myPosition));
+        // Left-Up move
+        calcMoves.addAll(basicMove(board,-2,1,myPosition));
+        // Left-Down move
+        calcMoves.addAll(basicMove(board,-2,-1,myPosition));
         return calcMoves;
     }
 }

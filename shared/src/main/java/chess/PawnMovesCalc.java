@@ -13,9 +13,14 @@ public class PawnMovesCalc extends PieceMovesCalc{
      * @return
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> calcMoves = new ArrayList<>();
-        System.out.println(myPosition);
-        System.out.println(board);
+//        Collection<ChessMove> calcMoves = new ArrayList<>();
+//        System.out.println("Board:\n" + board.toString());
+//        // Up move
+//        calcMoves.addAll(basicMove(board,0,1,myPosition));
+//        // Down move
+//        calcMoves.addAll(basicMove(board,0,-1,myPosition));
+
+        // IF PAWN HASN'T MOVED YET LET IT MOVE TWICE FOR THE FIRST MOVE
         return calcMoves;
     }
 }
