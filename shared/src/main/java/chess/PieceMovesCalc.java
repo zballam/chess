@@ -8,11 +8,11 @@ import java.util.Collection;
  */
 public class PieceMovesCalc {
 
-    public Collection<ChessMove> basicMove(ChessBoard board, int xChange, int yChange, ChessPosition myPosition) {
+    public Collection<ChessMove> basicMove(ChessBoard board, int rowChange, int columnChange, ChessPosition myPosition) {
         Collection<ChessMove> moves = new ArrayList<>();
         ChessPosition ogPosition = myPosition;
-        int x = myPosition.getRow() + xChange;
-        int y = myPosition.getColumn() + yChange;
+        int x = myPosition.getRow() + rowChange;
+        int y = myPosition.getColumn() + columnChange;
         // System.out.println("x: " + x + ", y: " + y);
         ChessPosition newPosition = new ChessPosition(x, y);
         // Check to make sure position is valid before adding it
@@ -37,12 +37,12 @@ public class PieceMovesCalc {
     }
 
 
-    public Collection<ChessMove> findMoves(ChessBoard board, int xChange, int yChange, ChessPosition myPosition) {
+    public Collection<ChessMove> findMoves(ChessBoard board, int rowChange, int columnChange, ChessPosition myPosition) {
         Collection<ChessMove> moves = new ArrayList<>();
         ChessPosition ogPosition = myPosition;
         while (true) {
-            int x = myPosition.getRow() + xChange;
-            int y = myPosition.getColumn() + yChange;
+            int x = myPosition.getRow() + rowChange;
+            int y = myPosition.getColumn() + columnChange;
             // System.out.println("x: " + x + ", y: " + y);
             ChessPosition newPosition = new ChessPosition(x, y);
             // If the newPosition is out of range then stop

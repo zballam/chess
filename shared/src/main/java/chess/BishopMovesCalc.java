@@ -26,6 +26,7 @@ public class BishopMovesCalc extends PieceMovesCalc {
         // Bottom-right moves
         calcMoves.addAll(findMoves(board,-1,1,myPosition));
         //System.out.println(calcMoves);
+
         return calcMoves;
     }
 }
