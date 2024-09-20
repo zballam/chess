@@ -15,7 +15,7 @@ public class RookMovesCalc extends PieceMovesCalc {
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> calcMoves = new ArrayList<>();
-        System.out.println("Board:\n" + board.toString());
+//        System.out.println("Board:\n" + board.toString());
         // Left moves
         calcMoves.addAll(findMoves(board,-1,0,myPosition));
         // Right moves
