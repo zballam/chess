@@ -36,6 +36,34 @@ public class PieceMovesCalc {
         return moves;
     }
 
+    public Collection<ChessMove> basicMove(ChessBoard board, int rowChange, int columnChange, ChessPosition myPosition, ChessPiece.PieceType promotionPiece) {
+        Collection<ChessMove> moves = new ArrayList<>();
+        ChessPosition ogPosition = myPosition;
+        int x = myPosition.getRow() + rowChange;
+        int y = myPosition.getColumn() + columnChange;
+        // System.out.println("x: " + x + ", y: " + y);
+        ChessPosition newPosition = new ChessPosition(x, y);
+        // Check to make sure position is valid before adding it
+        if (!inBoard(newPosition)){return moves;}
+        // Check for another piece at that position
+        if (board.getPiece(newPosition) != null){
+            // System.out.println("piece found: " + board.getPiece(newPosition));
+            // If the newPosition hits a piece check if enemy
+            if (onEnemy(board, newPosition, ogPosition)) {
+                // System.out.println("enemy piece");
+                ChessMove newMove = new ChessMove(ogPosition, newPosition, promotionPiece);
+                moves.add(newMove);
+                return moves;
+            }  else { //Same team piece
+                // System.out.println("same team piece");
+                return moves;
+            }
+        }
+        ChessMove newMove = new ChessMove(ogPosition, newPosition, promotionPiece);
+        moves.add(newMove);
+        return moves;
+    }
+
 
     public Collection<ChessMove> findMoves(ChessBoard board, int rowChange, int columnChange, ChessPosition myPosition) {
         Collection<ChessMove> moves = new ArrayList<>();

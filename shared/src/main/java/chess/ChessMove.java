@@ -11,7 +11,7 @@ import java.util.Objects;
 public class ChessMove {
     ChessPosition startPosition;
     ChessPosition endPosition;
-    ChessPiece.PieceType promotionPiece = null; // Don't know if I need this or not
+    ChessPiece.PieceType promotionPiece = null;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
