@@ -9,15 +9,21 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessMove {
-    ChessPosition startPosition;
-    ChessPosition endPosition;
-    ChessPiece.PieceType promotionPiece = null;
+    private ChessPosition startPosition;
+    private ChessPosition endPosition;
+    private ChessPiece.PieceType promotionPiece;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.promotionPiece = promotionPiece;
+    }
+
+    public ChessMove(ChessPosition startPosition, ChessPosition endPosition) {
+        this.startPosition = startPosition;
+        this.endPosition = endPosition;
+        this.promotionPiece = null;
     }
 
     @Override
@@ -33,23 +39,29 @@ public class ChessMove {
         return Objects.hash(startPosition, endPosition, promotionPiece);
     }
 
-    /**
-     * @return string value of ChessMove
-     */
     @Override
     public String toString() {
-        return "(" + startPosition.getColumn() + ", " + startPosition.getRow() + ")" + "->(" + endPosition.getColumn() + ", " + endPosition.getRow() + ") P: " + promotionPiece;
+        StringBuilder builder = new StringBuilder();
+        builder.append("(" + startPosition.getRow() + "," + startPosition.getColumn() + ")");
+        builder.append(" -> ");
+        builder.append("(" + endPosition.getRow() + "," + endPosition.getColumn() + ")");
+        builder.append(" Promo: " + getPromotionPiece());
+        return builder.toString();
     }
 
     /**
      * @return ChessPosition of starting location
      */
-    public ChessPosition getStartPosition() { return startPosition; }
+    public ChessPosition getStartPosition() {
+        return startPosition;
+    }
 
     /**
      * @return ChessPosition of ending location
      */
-    public ChessPosition getEndPosition() { return endPosition; }
+    public ChessPosition getEndPosition() {
+        return endPosition;
+    }
 
     /**
      * Gets the type of piece to promote a pawn to if pawn promotion is part of this

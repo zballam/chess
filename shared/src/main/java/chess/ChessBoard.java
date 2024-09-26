@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -11,9 +10,11 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    ChessPiece[][] squares = new ChessPiece[8][8]; // Keeps track of the position of a piece
+    private ChessPiece[][] squares = new ChessPiece[8][8];
 
-    public ChessBoard() {}
+    public ChessBoard() {
+        
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -30,22 +31,25 @@ public class ChessBoard {
 
     @Override
     public String toString() {
-        StringBuilder full = new StringBuilder();
-        StringBuilder part = new StringBuilder();
-        for (ChessPiece[] row : squares) {
-            part.append("|");
-            for (ChessPiece piece : row) {
-                if (piece != null) {
-                    part.append(piece);
+        StringBuilder builder = new StringBuilder();
+        StringBuilder helper = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            helper = new StringBuilder();
+            helper.append("|");
+            for (int j = 0; j < 8; j++) {
+                if (squares[i][j] != null) {
+                    helper.append(squares[i][j].toString());
                 }
-                else {part.append(" ");}
-                part.append("|");
+                else {
+                    helper.append(" ");
+                }
+                helper.append("|");
             }
-            part.append("\n");
-            full.insert(0, part);
-            part.setLength(0);
+            helper.append("\n");
+            builder.insert(0,helper);
         }
-        return full.toString();
+
+        return builder.toString();
     }
 
     /**
@@ -55,7 +59,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        squares[position.getRow()-1][position.getColumn()-1] = piece; // Adds the position to the piece
+        squares[position.getRow()-1][position.getColumn()-1] = piece;
     }
 
     /**
@@ -66,8 +70,28 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        if (squares[position.getRow()-1][position.getColumn()-1] != null) {return squares[position.getRow()-1][position.getColumn()-1];}
-        return null;
+        return squares[position.getRow()-1][position.getColumn()-1];
+    }
+
+    public void makeRow(int row) {
+        ChessGame.TeamColor pieceColor = ChessGame.TeamColor.WHITE;
+        if (row == 8) { pieceColor = ChessGame.TeamColor.BLACK; }
+        addPiece(new ChessPosition(row,1), new ChessPiece(pieceColor, ChessPiece.PieceType.ROOK));
+        addPiece(new ChessPosition(row,2), new ChessPiece(pieceColor, ChessPiece.PieceType.KNIGHT));
+        addPiece(new ChessPosition(row,3), new ChessPiece(pieceColor, ChessPiece.PieceType.BISHOP));
+        addPiece(new ChessPosition(row,4), new ChessPiece(pieceColor, ChessPiece.PieceType.QUEEN));
+        addPiece(new ChessPosition(row,5), new ChessPiece(pieceColor, ChessPiece.PieceType.KING));
+        addPiece(new ChessPosition(row,6), new ChessPiece(pieceColor, ChessPiece.PieceType.BISHOP));
+        addPiece(new ChessPosition(row,7), new ChessPiece(pieceColor, ChessPiece.PieceType.KNIGHT));
+        addPiece(new ChessPosition(row,8), new ChessPiece(pieceColor, ChessPiece.PieceType.ROOK));
+    }
+
+    public void makePawns(int row) {
+        ChessGame.TeamColor pieceColor = ChessGame.TeamColor.WHITE;
+        if (row == 7) { pieceColor = ChessGame.TeamColor.BLACK; }
+        for (int i = 0; i < 8; i++) {
+            addPiece(new ChessPosition(row,i+1), new ChessPiece(pieceColor, ChessPiece.PieceType.PAWN));
+        }
     }
 
     /**
@@ -75,60 +99,13 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        ArrayList<String> pattern = new ArrayList<>(Arrays.asList("r","n","b","q","k","b","n","r"));
-        int row = 1;
-        int column = 1;
-        ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
-        ChessPiece piece = null;
-        // WHITE LINE
-        // First line
-        for (int i = 0; i < 8; i++) {
-            // Decide which piece to add
-            if (pattern.get(i) == "r") { piece = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK); }
-            else if (pattern.get(i) == "n") { piece = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT); }
-            else if (pattern.get(i) == "b") { piece = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP); }
-            else if (pattern.get(i) == "q") { piece = new ChessPiece(teamColor, ChessPiece.PieceType.QUEEN); }
-            else if (pattern.get(i) == "k") { piece = new ChessPiece(teamColor, ChessPiece.PieceType.KING); }
-            ChessPosition position = new ChessPosition(row, column);
-            this.addPiece(position, piece);
-            column += 1;
-        }
-        // Pawn Line
-        row = 2;
-        column = 1;
-        piece = new ChessPiece(teamColor, ChessPiece.PieceType.PAWN);
-        for (int i = 0; i < 8; i++) {
-            ChessPosition position = new ChessPosition(row, column);
-            this.addPiece(position, piece);
-            column += 1;
-        }
-
-        // BLACK SIDE
-        row = 8;
-        column = 1;
-        teamColor = ChessGame.TeamColor.BLACK;
-        // First line
-        for (int i = 0; i < 8; i++) {
-            // Decide which piece to add
-            if (pattern.get(i) == "r") { piece = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK); }
-            else if (pattern.get(i) == "n") { piece = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT); }
-            else if (pattern.get(i) == "b") { piece = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP); }
-            else if (pattern.get(i) == "q") { piece = new ChessPiece(teamColor, ChessPiece.PieceType.QUEEN); }
-            else if (pattern.get(i) == "k") { piece = new ChessPiece(teamColor, ChessPiece.PieceType.KING); }
-            ChessPosition position = new ChessPosition(row, column);
-            this.addPiece(position, piece);
-            column += 1;
-        }
-        // Pawn Line
-        row = 7;
-        column = 1;
-        piece = new ChessPiece(teamColor, ChessPiece.PieceType.PAWN);
-        for (int i = 0; i < 8; i++) {
-            ChessPosition position = new ChessPosition(row, column);
-            this.addPiece(position, piece);
-            column += 1;
-        }
-
-        //System.out.println("Board:\n" + this.toString());
+        // Make bottom
+        makeRow(1);
+        // Make white pawns
+        makePawns(2);
+        // Make top
+        makeRow(8);
+        // Make black pawns
+        makePawns(7);
     }
 }

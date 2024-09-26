@@ -11,25 +11,38 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    private PieceType type;
     private ChessGame.TeamColor pieceColor;
+    private ChessPiece.PieceType type;
+
+    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.pieceColor = pieceColor;
+        this.type = type;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessPiece that = (ChessPiece) o;
-        return type == that.type && pieceColor == that.pieceColor;
+        return pieceColor == that.pieceColor && type == that.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, pieceColor);
+        return Objects.hash(pieceColor, type);
     }
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-        this.type = type;
-        this.pieceColor = pieceColor;
+    @Override
+    public String toString() {
+        String s;
+        if (type == PieceType.BISHOP) { s = "b"; }
+        else if (type == PieceType.KING) { s = "k"; }
+        else if (type == PieceType.KNIGHT) { s = "n"; }
+        else if (type == PieceType.PAWN) { s = "p"; }
+        else if (type == PieceType.QUEEN) { s = "q"; }
+        else { s = "r"; } // ROOK
+        if (pieceColor == ChessGame.TeamColor.WHITE) { return s.toUpperCase(); }
+        else { return s; }
     }
 
     /**
@@ -44,27 +57,11 @@ public class ChessPiece {
         PAWN
     }
 
-
-
     /**
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
         return pieceColor;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder result = new StringBuilder();
-        if (type == PieceType.KING) {result.append("k");}
-        else if (type == PieceType.QUEEN) {result.append("q");}
-        else if (type == PieceType.BISHOP) {result.append("b");}
-        else if (type == PieceType.KNIGHT) {result.append("n");}
-        else if (type == PieceType.ROOK) {result.append("r");}
-        else if (type == PieceType.PAWN) {result.append("p");}
-
-        if (pieceColor == ChessGame.TeamColor.WHITE) {return result.toString().toUpperCase();}
-        return result.toString();
     }
 
     /**
@@ -82,16 +79,20 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        PieceMovesCalc movesCalc = null;
-        // Figure out which pieceCalc to use
-        if (this.type == ChessPiece.PieceType.KING) {movesCalc = new KingMovesCalc();}
-        else if (this.type == ChessPiece.PieceType.QUEEN) {movesCalc = new QueenMovesCalc();}
-        else if (this.type == ChessPiece.PieceType.BISHOP) {movesCalc = new BishopMovesCalc();}
-        else if (this.type == ChessPiece.PieceType.KNIGHT) {movesCalc = new KnightMovesCalc();}
-        else if (this.type == ChessPiece.PieceType.ROOK) {movesCalc = new RookMovesCalc();}
-        else if (this.type == ChessPiece.PieceType.PAWN) {movesCalc = new PawnMovesCalc();}
+        Collection<ChessMove> calcMoves = new ArrayList<>();
+        MovesCalc movesCalc = null;
 
-        assert movesCalc != null;
-        return movesCalc.pieceMoves(board, myPosition);
+        if (type == PieceType.BISHOP) { movesCalc = new BishopCalc(); }
+        else if (type == PieceType.KING) { movesCalc = new KingCalc(); }
+        else if (type == PieceType.KNIGHT) { movesCalc = new KnightCalc(); }
+        else if (type == PieceType.PAWN) { movesCalc = new PawnCalc(); }
+        else if (type == PieceType.QUEEN) { movesCalc = new QueenCalc(); }
+        else { movesCalc = new RookCalc(); } // ROOK
+
+        calcMoves.addAll(movesCalc.pieceMoves(board, myPosition));
+
+        System.out.println("Board:");
+        System.out.println(board);
+        return calcMoves;
     }
 }
