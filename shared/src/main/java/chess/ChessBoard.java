@@ -9,11 +9,30 @@ import java.util.Objects;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessBoard {
+public class ChessBoard implements Cloneable {
     private ChessPiece[][] squares = new ChessPiece[8][8];
 
     public ChessBoard() {
         
+    }
+
+    @Override
+    public ChessBoard clone() {
+        try {
+            ChessBoard clone = (ChessBoard) super.clone();
+            // Clone squares
+            ChessPiece[][] clonedSquares = new ChessPiece[8][8];
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    clonedSquares[i][j] = squares[i][j];
+                }
+            }
+            clone.squares = clonedSquares;
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -63,6 +82,15 @@ public class ChessBoard {
     }
 
     /**
+     * Removes a piece from the board
+     *
+     * @param position where to remove piece from
+     */
+    public void removePiece(ChessPosition position) {
+        squares[position.getRow()-1][position.getColumn()-1] = null;
+    }
+
+    /**
      * Gets a chess piece on the chessboard
      *
      * @param position The position to get the piece from
@@ -72,6 +100,20 @@ public class ChessBoard {
     public ChessPiece getPiece(ChessPosition position) {
         return squares[position.getRow()-1][position.getColumn()-1];
     }
+
+    /**
+     * Implements a move on the board
+     *
+     * @param move the move to implement
+     */
+    public void makeMove(ChessMove move) {
+        ChessPiece piece = getPiece(move.getStartPosition());
+        squares[move.getEndPosition().getRow()-1][move.getEndPosition().getColumn()-1] = piece;
+        removePiece(move.getStartPosition()); // Removes the piece from its start position
+    }
+
+
+
 
     public void makeRow(int row) {
         ChessGame.TeamColor pieceColor = ChessGame.TeamColor.WHITE;
