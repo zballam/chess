@@ -87,6 +87,22 @@ public class ChessGame {
     }
 
     /**
+     * Return a team's valid moves
+     *
+     * @param team the team to return all moves from
+     * @return a collection of all possible ChessPositions
+     */
+    public Collection<ChessMove> allValidMoves(TeamColor team) {
+        Collection moves = new ArrayList();
+        Collection<ChessPosition> teamPositions = currentTeamPositions(team, this.board);
+        // Loop through the team's positions to get possible moves
+        for(ChessPosition position : teamPositions) {
+            moves.addAll(validMoves(position));
+        }
+        return moves;
+    }
+
+    /**
      * Returns just the end positions of every move a certain team can make
      *
      * @param team team in question
@@ -132,7 +148,21 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        ChessGame.TeamColor teamColor = this.board.getPiece(startPosition).getTeamColor();
+        // Find all moves of one piece
+        Collection<ChessMove> allMoves = this.board.getPiece(startPosition).pieceMoves(board,startPosition);
+        for (ChessMove move : allMoves) {
+            // Clone board
+            ChessBoard clonedBoard = this.board.clone();
+            // Check to see if any of these moves don't cause Check
+            clonedBoard.doMove(move);
+            if (!isInCheck(teamColor,clonedBoard)) {
+                // Add move to validMoves
+                validMoves.add(move);
+            }
+        }
+        return validMoves;
     }
 
     /**
@@ -143,13 +173,19 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         // Make copy of the board
+        ChessBoard cloneBoard = this.board.clone();
+        // Determine piece color
+        ChessGame.TeamColor teamColor = cloneBoard.getPiece(move.getStartPosition()).getTeamColor();
         // Make the move on the copy
-        // Check for Check/Checkmate/Stalemate on the copy
-
-        // If valid, make move
-        // Else do not
-
-        throw new RuntimeException("Not implemented");
+        cloneBoard.doMove(move);
+        // Check for Check/Stalemate on the copy
+        if (!isInCheck(teamColor) || !isInStalemate(teamColor)) {
+            // If valid, make move
+            this.board.doMove(move);
+        }
+        else { // Else throw InvalidMoveException
+            throw new InvalidMoveException();
+        }
     }
 
     /**
@@ -190,12 +226,13 @@ public class ChessGame {
      * @param teamColor which team to check for checkmate
      * @return True if the specified team is in checkmate
      */
+    // Need to check all possible moves the current team can make and if any bring king out of check
     public boolean isInCheckmate(TeamColor teamColor) {
         Collection<ChessMove> teamMoves = allMoves(teamColor, board);
         for (ChessMove move : teamMoves) {
             ChessBoard boardClone = board.clone();
-            boardClone.makeMove(move);
-            if (!isInCheck(teamColor, board)) { return false; }
+            boardClone.doMove(move);
+            if (!isInCheck(teamColor, boardClone)) { return false; }
         }
         return true;
     }
@@ -208,7 +245,14 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        // Find all moves for teamColor
+        Collection<ChessMove> teamMoves = allValidMoves(teamColor);
+        // Find all ValidMoves for teamColor
+        // If count of all moves == 0 and !isInCheck
+        if (teamMoves.size() == 0 && !isInCheck(teamColor)) {
+            return true;
+        }
+        return false;
     }
 
     /**
