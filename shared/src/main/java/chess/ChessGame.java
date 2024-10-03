@@ -261,6 +261,13 @@ public class ChessGame {
         return false;
     }
 
+    /**
+     * Determines if the given team is in check
+     *
+     * @param teamColor which team to check for check
+     * @param board the board where we want to check for inCheck
+     * @return True if the specified team is in check
+     */
     public boolean isInCheck(TeamColor teamColor, ChessBoard board) {
         ChessPosition kingPosition = findKing(teamColor, board);
         if (kingPosition == null) { return false; }
