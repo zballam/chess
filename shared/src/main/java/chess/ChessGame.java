@@ -167,6 +167,14 @@ public class ChessGame {
         return validMoves;
     }
 
+    /**
+     * Gets a valid moves for a piece at the given location
+     *
+     * @param startPosition the piece to get valid moves for
+     * @param board the board where we want to check the validMoves
+     * @return Set of valid moves for requested piece, or null if no piece at
+     * startPosition
+     */
     public Collection<ChessMove> validMoves(ChessPosition startPosition, ChessBoard board) {
         Collection<ChessMove> validMoves = new ArrayList<>();
         if (board.getPiece(startPosition) != null) {
