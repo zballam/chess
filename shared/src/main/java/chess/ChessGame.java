@@ -317,6 +317,14 @@ public class ChessGame {
         return false;
     }
 
+    /**
+     * Determines if the given team is in stalemate, which here is defined as having
+     * no valid moves
+     *
+     * @param teamColor which team to check for stalemate
+     * @param board the board where we want to check for stalemate
+     * @return True if the specified team is in stalemate, otherwise false
+     */
     public boolean isInStalemate(TeamColor teamColor, ChessBoard board) {
         // Find all moves for teamColor
         Collection<ChessMove> teamMoves = allValidMoves(teamColor, board);
