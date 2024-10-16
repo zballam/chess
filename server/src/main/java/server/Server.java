@@ -1,6 +1,7 @@
 package server;
 
 import spark.*;
+import service.*;
 
 public class Server {
 
@@ -35,6 +36,9 @@ public class Server {
      * @return JSON Object
      */
     private Object clear(Request req, Response res) { //Throws ResponseException?
+        // Is this the handler?
+        // Does this just deserialize and serialize the data?
+        ClearHandler handler = new ClearHandler();
         // Success response: [200] {}
         // Failure response: [500] { "message": "Error: (description of error)" }
         throw new RuntimeException("Not implemented");
