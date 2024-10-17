@@ -2,14 +2,14 @@ package dataaccess;
 
 public interface AuthDAO {
     // clear Method
-    //void clear() throwsDataAccessException
+    void clear() throws DataAccessException;
 
     // createAuth Method
-    //void createAuth() throwsDataAccessException
+    void createAuth() throws DataAccessException;
 
     // getAuth Method
-    //
+    String getAuth() throws DataAccessException;
 
     // deleteAuth Method
-    //void deleteAuth() throwsDataAccessException
+    void deleteAuth() throws DataAccessException;
 }

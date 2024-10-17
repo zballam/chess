@@ -1,10 +1,11 @@
 package server;
 
+import org.eclipse.jetty.client.HttpResponseException;
 import spark.*;
 import service.*;
+import com.google.gson.*;
 
 public class Server {
-
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
@@ -20,7 +21,7 @@ public class Server {
         Spark.put("/game", this::joinGame);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
-        Spark.init();
+        //Spark.init();
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -35,10 +36,7 @@ public class Server {
      * Clears the database. Removes all users, games, and authTokens.
      * @return JSON Object
      */
-    private Object clear(Request req, Response res) { //Throws ResponseException?
-        // Is this the handler?
-        // Does this just deserialize and serialize the data?
-        ClearHandler handler = new ClearHandler();
+    private Object clear(Request req, Response res) throws HttpResponseException { //Throws ResponseException?
         // Success response: [200] {}
         // Failure response: [500] { "message": "Error: (description of error)" }
         throw new RuntimeException("Not implemented");
