@@ -1,11 +1,26 @@
 package server;
 
+import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryGameDAO;
+import dataaccess.MemoryUserDAO;
+import model.*;
 import org.eclipse.jetty.client.HttpResponseException;
 import spark.*;
 import service.*;
 import com.google.gson.*;
 
 public class Server {
+    private AuthService authService;
+    private GameService gameService;
+    private UserService userService;
+
+    public Server() {
+        // Change these MemoryDAOs to change which interface is used
+        this.authService = new AuthService(new MemoryAuthDAO());
+        this.gameService = new GameService(new MemoryGameDAO());
+        this.userService = new UserService(new MemoryUserDAO());
+    }
+
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
@@ -36,10 +51,19 @@ public class Server {
      * Clears the database. Removes all users, games, and authTokens.
      * @return JSON Object
      */
-    private Object clear(Request req, Response res) throws HttpResponseException { //Throws ResponseException?
-        // Success response: [200] {}
-        // Failure response: [500] { "message": "Error: (description of error)" }
-        throw new RuntimeException("Not implemented");
+    private Object clear(Request req, Response res) throws HttpResponseException {
+        try {
+            authService.clear();
+            gameService.clear();
+            userService.clear();
+            // Success response: [200] {}
+            res.status(200);
+            return "{}";
+        } catch (Exception e) {
+            // Failure response: [500] { "message": "Error: (description of error)" }
+            res.status(500);
+            return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
+        }
     }
 
     /**
@@ -47,6 +71,7 @@ public class Server {
      * @return JSON Object
      */
     private Object register(Request req, Response res) { //Throws ResponseException?
+//        userService.register();
         // Body: { "username":"", "password":"", "email":"" }
         // Success response: [200] { "username":"", "authToken":"" }
         // Failure response: [400] { "message": "Error: bad request" }
@@ -60,6 +85,7 @@ public class Server {
      * @return JSON Object
      */
     private Object login(Request req, Response res) { //Throws ResponseException?
+//        userService.login();
         // Body: { "username":"", "password":"" }
         // Success response: [200] { "username":"", "authToken":"" }
         // Failure response: [401] { "message": "Error: unauthorized" }
@@ -72,6 +98,7 @@ public class Server {
      * @return JSON Object
      */
     private Object logout(Request req, Response res) { //Throws ResponseException?
+//        userService.logout();
         // Headers: authorization: <authToken>
         // Success response: [200] {}
         // Failure response: [401] { "message": "Error: unauthorized" }
