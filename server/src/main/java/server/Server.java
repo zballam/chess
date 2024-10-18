@@ -73,6 +73,11 @@ public class Server {
     private Object register(Request req, Response res) { //Throws ResponseException?
         UserData newUser = gson.fromJson(req.body(), UserData.class);
         // Body: { "username":"", "password":"", "email":"" }
+        if (newUser.username() == null || newUser.password() == null || newUser.email() == null) {
+            // Failure response: [400] { "message": "Error: bad request" }
+            res.status(400);
+            return "{ \"message\": \"Error: bad request\" }";
+        }
         try {
             userService.register(newUser);
             // Success response: [200] { "username":"", "authToken":"" }
@@ -90,9 +95,6 @@ public class Server {
                 return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
             }
         }
-//        // Failure response: [400] { "message": "Error: bad request" }
-//        res.status(400);
-//        return "{ \"message\": \"Error: bad request\" }";
     }
 
     /**

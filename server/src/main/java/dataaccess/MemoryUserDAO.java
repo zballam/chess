@@ -23,7 +23,6 @@ public class MemoryUserDAO implements UserDAO{
     }
 
     public UserData getUser(String username) throws DataAccessException {
-        System.out.println("Start of getUser:");
         for (UserData data : userDataList) {
             if (username.equals(data.username())) { //Objects.equals(data.username(), username) also works
                 return data;
