@@ -1,23 +1,34 @@
 package dataaccess;
 
 import model.UserData;
+import org.eclipse.jetty.server.Authentication;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 public class MemoryUserDAO implements UserDAO{
-    Collection<UserData> userDataList = new ArrayList<>();
+    final private Collection<UserData> userDataList = new ArrayList<>();
+
+    public Collection<UserData> getUserDataList() {
+        return userDataList;
+    }
 
     public void clear() throws DataAccessException {
-//        throw new RuntimeException("Not implemented: MemoryUserDAO clear");
         this.userDataList.clear();
     }
 
     public void createUser(UserData user) throws DataAccessException {
-        throw new RuntimeException("Not implemented: MemoryUserDAO createUser");
+        this.userDataList.add(user);
     }
 
     public UserData getUser(String username) throws DataAccessException {
-        throw new RuntimeException("Not implemented: MemoryUserDAO getUser");
+        System.out.println("Start of getUser:");
+        for (UserData data : userDataList) {
+            if (username.equals(data.username())) { //Objects.equals(data.username(), username) also works
+                return data;
+            }
+        }
+        return null;
     }
 }

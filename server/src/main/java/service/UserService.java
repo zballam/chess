@@ -20,10 +20,15 @@ public class UserService {
         }
     }
 
-//    public AuthData register(UserData user) throws DataAccessException {
-//        throw new RuntimeException("Not implemented");
-//    }
-//
+    public AuthData register(UserData newUser) throws DataAccessException {
+        UserData user = this.userDAO.getUser(newUser.username());
+        if (user != null) {
+            throw new DataAccessException("Already taken");
+        }
+        this.userDAO.createUser(newUser);
+        return null;
+    }
+
 //    public AuthData login(UserData user) throws DataAccessException {
 //        throw new RuntimeException("Not implemented");
 //    }
