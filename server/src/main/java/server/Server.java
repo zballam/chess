@@ -80,9 +80,10 @@ public class Server {
         }
         try {
             userService.register(newUser);
+            AuthData registerRes = authService.createAuth(newUser);
             // Success response: [200] { "username":"", "authToken":"" }
             res.status(200);
-            return gson.toJson(new AuthData("authToken", newUser.username()));
+            return gson.toJson(registerRes);
         } catch (DataAccessException e) {
             if (e.getMessage() == "Already taken") {
                 // Failure response: [403] { "message": "Error: already taken" }

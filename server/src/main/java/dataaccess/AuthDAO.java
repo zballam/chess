@@ -1,11 +1,13 @@
 package dataaccess;
 
+import model.AuthData;
+
 public interface AuthDAO {
     // clear Method
     void clear() throws DataAccessException;
 
     // createAuth Method
-    void createAuth() throws DataAccessException;
+    void createAuth(AuthData authData) throws DataAccessException;
 
     // getAuth Method
     String getAuth() throws DataAccessException;

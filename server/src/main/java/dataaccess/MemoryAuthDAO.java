@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
+import model.UserData;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,8 +14,8 @@ public class MemoryAuthDAO implements AuthDAO{
         this.authDataList.clear();
     }
 
-    public void createAuth() throws DataAccessException {
-        throw new RuntimeException("Not implemented: MemoryAuthDAO createAuth");
+    public void createAuth(AuthData authData) throws DataAccessException {
+        this.authDataList.add(authData);
     }
 
     public String getAuth() throws DataAccessException {
