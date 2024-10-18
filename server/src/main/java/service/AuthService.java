@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import model.*;
 
 public class AuthService {
@@ -11,7 +12,11 @@ public class AuthService {
     }
 
     public void clear() {
-        throw new RuntimeException("Not implemented");
+        try {
+            authDAO.clear();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public AuthData getAuth(String authToken) {

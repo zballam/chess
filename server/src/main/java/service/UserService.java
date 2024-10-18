@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryUserDAO;
 import dataaccess.UserDAO;
 import model.*;
@@ -12,18 +13,22 @@ public class UserService {
     }
 
     public void clear() {
-        //userDAO.clear();
+        try {
+            userDAO.clear();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-//    public AuthData register(UserData user) {
+//    public AuthData register(UserData user) throws DataAccessException {
 //        throw new RuntimeException("Not implemented");
 //    }
 //
-//    public AuthData login(UserData user) {
+//    public AuthData login(UserData user) throws DataAccessException {
 //        throw new RuntimeException("Not implemented");
 //    }
 
-    public void logout(AuthData auth) {
+    public void logout(AuthData auth) throws DataAccessException {
         throw new RuntimeException("Not implemented");
     }
 }

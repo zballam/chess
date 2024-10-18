@@ -1,6 +1,7 @@
 package service;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.*;
 
@@ -14,7 +15,11 @@ public class GameService {
     }
 
     public void clear() {
-        throw new RuntimeException("Not implemented");
+        try {
+            gameDAO.clear();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public GameData getGame() {
