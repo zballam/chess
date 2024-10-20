@@ -23,6 +23,7 @@ public class MemoryGameDAO implements GameDAO{
         String gameName = createRequest.gameName();
         GameData newData = new GameData(nextGameID, whiteUsername, blackUsername, gameName, newGame);
         this.gameDataList.add(newData);
+        nextGameID++;
         return newData.gameID();
     }
 

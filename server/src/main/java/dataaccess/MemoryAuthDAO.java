@@ -20,10 +20,22 @@ public class MemoryAuthDAO implements AuthDAO{
     /**
      * @return Returns authToken or null if not found
      */
-    public String getAuth(String authToken) throws DataAccessException {
+    public String getAuthToken(String authToken) throws DataAccessException {
         for (AuthData data : this.authDataList) {
             if (data.authToken().equals(authToken)) { // Make sure this part works when testing
                 return data.authToken();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return Returns authData or null if not found
+     */
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        for (AuthData data : this.authDataList) {
+            if (data.authToken().equals(authToken)) { // Make sure this part works when testing
+                return data;
             }
         }
         return null;

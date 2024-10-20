@@ -8,6 +8,7 @@ import spark.*;
 import service.*;
 import com.google.gson.*;
 
+import java.util.Collection;
 import java.util.Objects;
 
 public class Server {
@@ -158,10 +159,24 @@ public class Server {
     // Note that whiteUsername and blackUsername may be null.
     private Object listGames(Request req, Response res) { //Throws ResponseException?
         // Headers: authorization: <authToken>
-        // Success response: [200] { "games": [{"gameID": 1234, "whiteUsername":"", "blackUsername":"", "gameName:""} ]}
-        // Failure response: [401] { "message": "Error: unauthorized" }
-        // Failure response: [500] { "message": "Error: (description of error)" }
-        throw new RuntimeException("Not implemented");
+        AuthData authData = new AuthData(req.headers("Authorization"),null);
+        try {
+            Collection<GameData> gameList = gameService.listGames(authData);
+            // Success response: [200] { "games": [{"gameID": 1234, "whiteUsername":"", "blackUsername":"", "gameName:""} ]}
+            res.status(200);
+            return gson.toJson(new GamesList(gameList));
+        } catch (DataAccessException e) {
+            if (Objects.equals(e.getMessage(), "AuthToken doesn't exist")) {
+                // Failure response: [401] { "message": "Error: unauthorized" }
+                res.status(401);
+                return "{ \"message\": \"Error: unauthorized\" }";
+            }
+            else {
+                // Failure response: [500] { "message": "Error: (description of error)" }
+                res.status(500);
+                return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
+            }
+        }
     }
 
     /**
@@ -205,7 +220,9 @@ public class Server {
     // Note that whiteUsername and blackUsername may be null.
     private Object joinGame(Request req, Response res) { //Throws ResponseException?
         // Headers: authorization: <authToken>
+        AuthData authData = new AuthData(req.headers("Authorization"),null);
         // Body: { "playerColor":"WHITE/BLACK", "gameID": 1234 }
+        GameData gameData = gson.fromJson(req.body(), GameData.class);
         // Success response: [200] {}
         // Failure response: [400] { "message": "Error: bad request" }
         // Failure response: [401] { "message": "Error: unauthorized" }

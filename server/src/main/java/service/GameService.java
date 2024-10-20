@@ -5,6 +5,7 @@ import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class GameService {
@@ -28,17 +29,17 @@ public class GameService {
         return this.gameDAO.getGame(gameID);
     }
 
-    public Collection<ChessGame> listGames() {
-        throw new RuntimeException("Not implemented");
+    public Collection<GameData> listGames(AuthData auth) throws DataAccessException {
+        authService.authenticate(auth);
+        return gameDAO.listGames();
     }
 
     public int createGame(GameData gameData, AuthData auth) throws DataAccessException {
-        String authString = authService.getAuth(auth.authToken());
-        if (authString == null) { throw new DataAccessException("AuthToken doesn't exist"); }
+        authService.authenticate(auth);
         return this.gameDAO.createGame(gameData);
     }
 
-    public void addPlayer(UserData user) {
+    public void joinGame(UserData user) {
         throw new RuntimeException("Not implemented");
     }
 }
