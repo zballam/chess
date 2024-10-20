@@ -19,8 +19,8 @@ public class Server {
     public Server() {
         // Change these MemoryDAOs to change which interface is used
         this.authService = new AuthService(new MemoryAuthDAO());
-        this.gameService = new GameService(new MemoryGameDAO());
-        this.userService = new UserService(new MemoryUserDAO(), authService);
+        this.gameService = new GameService(new MemoryGameDAO(), this.authService);
+        this.userService = new UserService(new MemoryUserDAO(), this.authService);
     }
 
     public int run(int desiredPort) {
@@ -86,7 +86,7 @@ public class Server {
             res.status(200);
             return gson.toJson(registerRes);
         } catch (DataAccessException e) {
-            if (e.getMessage() == "Already taken") {
+            if (Objects.equals(e.getMessage(), "Already taken")) {
                 // Failure response: [403] { "message": "Error: already taken" }
                 res.status(403);
                 return "{ \"message\": \"Error: already taken\" }";
@@ -171,12 +171,31 @@ public class Server {
     // Note that whiteUsername and blackUsername may be null.
     private Object createGame(Request req, Response res) { //Throws ResponseException?
         // Headers: authorization: <authToken>
+        AuthData authData = new AuthData(req.headers("Authorization"),null);
         // Body: { "gameName":"" }
-        // Success response: [200] { "gameID": 1234 }
-        // Failure response: [400] { "message": "Error: bad request" }
-        // Failure response: [401] { "message": "Error: unauthorized" }
-        // Failure response: [500] { "message": "Error: (description of error)" }
-        throw new RuntimeException("Not implemented");
+        GameData gameData = gson.fromJson(req.body(), GameData.class);
+        if (Objects.equals(authData.authToken(), "") || Objects.equals(gameData.gameName(), "")) {
+            // Failure response: [400] { "message": "Error: bad request" }
+            res.status(400);
+            return "{ \"message\": \"Error: bad request\" }";
+        }
+        try {
+            int gameID = gameService.createGame(gameData, authData);
+            // Success response: [200] { "gameID": 1234 }
+            res.status(200);
+            return "{ \"gameID\": " + gameID + " }";
+        } catch (DataAccessException e) {
+            if (Objects.equals(e.getMessage(), "AuthToken doesn't exist")) {
+                // Failure response: [401] { "message": "Error: unauthorized" }
+                res.status(401);
+                return "{ \"message\": \"Error: unauthorized\" }";
+            }
+            else {
+                // Failure response: [500] { "message": "Error: (description of error)" }
+                res.status(500);
+                return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
+            }
+        }
     }
 
     /**
