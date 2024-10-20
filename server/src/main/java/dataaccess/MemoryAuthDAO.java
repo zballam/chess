@@ -33,6 +33,7 @@ public class MemoryAuthDAO implements AuthDAO{
         for (AuthData data : this.authDataList) {
             if (data.authToken().equals(authToken)) { // Make sure this part works when testing
                 this.authDataList.remove(data);
+                break;
             }
         }
     }
