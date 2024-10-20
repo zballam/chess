@@ -13,11 +13,7 @@ public class AuthDAOTests {
 
     @BeforeAll
     public static void init() {
-        Boolean memoryAccess = true;
-
-        if (memoryAccess) {
-            authDAO = new MemoryAuthDAO();
-        }
+        authDAO = new MemoryAuthDAO();
 
         testAuthData = new AuthData("1234567890", "username");
     }

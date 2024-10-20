@@ -19,11 +19,7 @@ public class GameDAOTests {
 
     @BeforeAll
     public static void init() {
-        Boolean memoryAccess = true;
-
-        if (memoryAccess) {
-            gameDAO = new MemoryGameDAO();
-        }
+        gameDAO = new MemoryGameDAO();
 
         testGameData = new GameData(1,"whiteUsername","blackUsername",
                             "gameName",new ChessGame());
