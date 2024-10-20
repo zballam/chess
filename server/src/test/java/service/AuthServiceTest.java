@@ -3,7 +3,11 @@ package service;
 import org.junit.jupiter.api.*;
 
 /* TESTS TO IMPLEMENT
-    -Logout tests
+    -clear()
+    -getAuth()
+    -createAuth()
+        -Check auth is added to memory
+    -logout()
         -Unauthorized error
         -Make sure it deletes the auth from the memory
  */

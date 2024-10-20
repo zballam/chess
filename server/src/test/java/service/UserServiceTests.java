@@ -3,7 +3,13 @@ package service;
 import org.junit.jupiter.api.*;
 
 /* TESTS TO IMPLEMENT
-    -
+    -clear()
+    -register()
+        -Authenticate
+        -Check user is created in memory
+    -login
+        -User doesn't exist
+        -Wrong password (might already exist)
  */
 
 public class UserServiceTests {
