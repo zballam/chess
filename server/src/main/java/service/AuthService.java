@@ -21,8 +21,8 @@ public class AuthService {
         }
     }
 
-    public AuthData getAuth(String authToken) {
-        throw new RuntimeException("Not implemented");
+    public String getAuth(String authToken) throws DataAccessException {
+        return this.authDAO.getAuth(authToken);
     }
 
     private String randGenString(int len) {
@@ -41,4 +41,9 @@ public class AuthService {
         return authData;
     }
 
+    public void logout(AuthData auth) throws DataAccessException {
+        String authString = getAuth(auth.authToken());
+        if (authString == null) { throw new DataAccessException("AuthToken doesn't exist"); }
+        authDAO.deleteAuth(authString);
+    }
 }

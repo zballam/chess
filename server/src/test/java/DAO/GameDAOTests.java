@@ -1,4 +1,4 @@
-package service.DAOTests;
+package DAO;
 
 import chess.ChessGame;
 import dataaccess.GameDAO;

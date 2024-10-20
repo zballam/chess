@@ -1,4 +1,4 @@
-package service.DAOTests;
+package DAO;
 
 import dataaccess.UserDAO;
 import dataaccess.DataAccessException;

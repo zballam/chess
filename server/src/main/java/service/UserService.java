@@ -40,8 +40,4 @@ public class UserService {
         }
         return this.authService.createAuth(userData);
     }
-
-    public void logout(AuthData auth) throws DataAccessException {
-        throw new RuntimeException("Not implemented");
-    }
 }

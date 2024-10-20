@@ -105,9 +105,9 @@ public class Server {
      */
     private Object login(Request req, Response res) { //Throws ResponseException?
         // Body: { "username":"", "password":"" }
-        UserData newUser = gson.fromJson(req.body(), UserData.class);
+        UserData user = gson.fromJson(req.body(), UserData.class);
         try {
-            AuthData loginRes = userService.login(newUser);
+            AuthData loginRes = userService.login(user);
             // Success response: [200] { "username":"", "authToken":"" }
             res.status(200);
             return gson.toJson(loginRes);
@@ -130,12 +130,25 @@ public class Server {
      * @return JSON String
      */
     private Object logout(Request req, Response res) { //Throws ResponseException?
-//        userService.logout();
         // Headers: authorization: <authToken>
-        // Success response: [200] {}
-        // Failure response: [401] { "message": "Error: unauthorized" }
-        // Failure response: [500] { "message": "Error: (description of error)" }
-        throw new RuntimeException("Not implemented");
+        AuthData authData = new AuthData(req.headers("Authorization"),null);
+        try {
+            authService.logout(authData);
+            // Success response: [200] {}
+            res.status(200);
+            return "{}";
+        } catch (DataAccessException e) {
+            if (Objects.equals(e.getMessage(), "AuthToken doesn't exist")) {
+                // Failure response: [401] { "message": "Error: unauthorized" }
+                res.status(401);
+                return "{ \"message\": \"Error: unauthorized\" }";
+            }
+            else {
+                // Failure response: [500] { "message": "Error: (description of error)" }
+                res.status(500);
+                return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
+            }
+        }
     }
 
     /**
