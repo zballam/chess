@@ -8,6 +8,8 @@ import spark.*;
 import service.*;
 import com.google.gson.*;
 
+import java.util.Objects;
+
 public class Server {
     private static final Gson gson = new Gson();
     private final AuthService authService;
@@ -18,7 +20,7 @@ public class Server {
         // Change these MemoryDAOs to change which interface is used
         this.authService = new AuthService(new MemoryAuthDAO());
         this.gameService = new GameService(new MemoryGameDAO());
-        this.userService = new UserService(new MemoryUserDAO());
+        this.userService = new UserService(new MemoryUserDAO(), authService);
     }
 
     public int run(int desiredPort) {
@@ -79,8 +81,7 @@ public class Server {
             return "{ \"message\": \"Error: bad request\" }";
         }
         try {
-            userService.register(newUser);
-            AuthData registerRes = authService.createAuth(newUser);
+            AuthData registerRes = userService.register(newUser);
             // Success response: [200] { "username":"", "authToken":"" }
             res.status(200);
             return gson.toJson(registerRes);
@@ -103,12 +104,25 @@ public class Server {
      * @return JSON String
      */
     private Object login(Request req, Response res) { //Throws ResponseException?
-//        userService.login();
         // Body: { "username":"", "password":"" }
-        // Success response: [200] { "username":"", "authToken":"" }
-        // Failure response: [401] { "message": "Error: unauthorized" }
-        // Failure response: [500] { "message": "Error: (description of error)" }
-        throw new RuntimeException("Not implemented");
+        UserData newUser = gson.fromJson(req.body(), UserData.class);
+        try {
+            AuthData loginRes = userService.login(newUser);
+            // Success response: [200] { "username":"", "authToken":"" }
+            res.status(200);
+            return gson.toJson(loginRes);
+        } catch (DataAccessException e) {
+            if (Objects.equals(e.getMessage(), "User doesn't exist") || Objects.equals(e.getMessage(), "Wrong password")) {
+                // Failure response: [401] { "message": "Error: unauthorized" }
+                res.status(401);
+                return "{ \"message\": \"Error: unauthorized\" }";
+            }
+            else {
+                // Failure response: [500] { "message": "Error: (description of error)" }
+                res.status(500);
+                return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
+            }
+        }
     }
 
     /**

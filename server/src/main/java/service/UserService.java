@@ -1,15 +1,16 @@
 package service;
 
 import dataaccess.DataAccessException;
-import dataaccess.MemoryUserDAO;
 import dataaccess.UserDAO;
 import model.*;
 
 public class UserService {
     UserDAO userDAO;
+    AuthService authService;
 
-    public UserService(UserDAO userDAO) {
+    public UserService(UserDAO userDAO, AuthService authService) {
         this.userDAO = userDAO;
+        this.authService = authService;
     }
 
     public void clear() {
@@ -20,16 +21,24 @@ public class UserService {
         }
     }
 
-    public void register(UserData newUser) throws DataAccessException {
+    public AuthData register(UserData newUser) throws DataAccessException {
         UserData user = this.userDAO.getUser(newUser.username());
         if (user != null) {
             throw new DataAccessException("Already taken");
         }
         this.userDAO.createUser(newUser);
+        return authService.createAuth(newUser);
     }
 
     public AuthData login(UserData user) throws DataAccessException {
-        throw new RuntimeException("Not implemented");
+        UserData userData = userDAO.getUser(user.username());
+        if (userData == null) {
+            throw new DataAccessException("User doesn't exist");
+        }
+        if (!userData.password().equals(user.password())) {
+            throw new DataAccessException("Wrong password");
+        }
+        return this.authService.createAuth(userData);
     }
 
     public void logout(AuthData auth) throws DataAccessException {
