@@ -3,32 +3,50 @@ package dataaccess;
 import chess.ChessGame;
 import model.UserData;
 import model.GameData;
-import service.GameService;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class MemoryGameDAO implements GameDAO{
     Collection<GameData> gameDataList = new ArrayList<>();
+    int nextGameID = 1;
+    // Might need to initialize these in the constructor instead
 
     public void clear() throws DataAccessException {
-//        throw new RuntimeException("Not implemented: MemoryGameDAO clear");
         this.gameDataList.clear();
     }
 
-//    public void createGame(GameService createRequest, String authToken) throws DataAccessException {
-//        throw new RuntimeException("Not implemented");
-//    }
-
-    public ChessGame getGame(int gameID) throws DataAccessException {
-        throw new RuntimeException("Not implemented: MemoryGameDAO getGame");
+    public int createGame(GameData createRequest) throws DataAccessException {
+        ChessGame newGame = new ChessGame();
+        String whiteUsername = createRequest.whiteUsername();
+        String blackUsername = createRequest.blackUsername();
+        String gameName = createRequest.gameName();
+        GameData newData = new GameData(nextGameID, whiteUsername, blackUsername, gameName, newGame);
+        this.gameDataList.add(newData);
+        return newData.gameID();
     }
 
-    public Collection<ChessGame> listGames() throws DataAccessException {
-        throw new RuntimeException("Not implemented: MemoryGameDAO listGames");
+    /**
+     * @return Returns GameData if game is found, otherwise returns null
+     */
+    public GameData getGame(int gameID) throws DataAccessException {
+        for (GameData gameData : this.gameDataList) {
+            if (gameData.gameID() == gameID) {
+                return gameData;
+            }
+        }
+        return null;
     }
 
-    public void insertUser(UserData user, ChessGame.TeamColor playerColor) throws DataAccessException {
-        throw new RuntimeException("Not implemented: MemoryGameDAO insertUser");
+    public Collection<GameData> listGames() throws DataAccessException {
+        Collection<GameData> gamesList = new ArrayList<>();
+        for (GameData gameData : this.gameDataList) {
+            gamesList.add(gameData);
+        }
+        return gamesList;
+    }
+
+    public void insertUser(int gameID, UserData user, ChessGame.TeamColor playerColor) throws DataAccessException {
+
     }
 }
