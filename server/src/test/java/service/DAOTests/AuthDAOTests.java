@@ -1,13 +1,12 @@
 package service.DAOTests;
 
-import chess.ChessGame;
 import dataaccess.*;
 import model.*;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class authDAOTests {
+public class AuthDAOTests {
     static AuthDAO authDAO;
 
     static AuthData testAuthData;

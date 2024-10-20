@@ -40,9 +40,7 @@ public class MemoryGameDAO implements GameDAO{
 
     public Collection<GameData> listGames() throws DataAccessException {
         Collection<GameData> gamesList = new ArrayList<>();
-        for (GameData gameData : this.gameDataList) {
-            gamesList.add(gameData);
-        }
+        boolean b = gamesList.addAll(this.gameDataList);
         return gamesList;
     }
 
