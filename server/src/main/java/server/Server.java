@@ -20,8 +20,8 @@ public class Server {
     public Server() {
         // Change these MemoryDAOs to change which interface is used
         this.authService = new AuthService(new MemoryAuthDAO());
-        this.gameService = new GameService(new MemoryGameDAO(), this.authService);
         this.userService = new UserService(new MemoryUserDAO(), this.authService);
+        this.gameService = new GameService(new MemoryGameDAO(), this.authService, this.userService);
     }
 
     public int run(int desiredPort) {
@@ -219,15 +219,43 @@ public class Server {
      */
     // Note that whiteUsername and blackUsername may be null.
     private Object joinGame(Request req, Response res) { //Throws ResponseException?
-        // Headers: authorization: <authToken>
-        AuthData authData = new AuthData(req.headers("Authorization"),null);
-        // Body: { "playerColor":"WHITE/BLACK", "gameID": 1234 }
-        GameData gameData = gson.fromJson(req.body(), GameData.class);
-        // Success response: [200] {}
+        try {
+            // Headers: authorization: <authToken>
+            AuthData authData = new AuthData(req.headers("Authorization"),null);
+            // Body: { "playerColor":"WHITE/BLACK", "gameID": 1234 }
+            if (authData.authToken() == null) {
+                throw new DataAccessException("Bad request");
+            }
+            JoinGameRequest joinRequest = gson.fromJson(req.body(), JoinGameRequest.class);
+            if (joinRequest.playerColor() == null) { // Might need joinRequest.gameID() == null later
+                throw new DataAccessException("Bad request");
+            }
+            gameService.joinGame(joinRequest, authData);
+            // Success response: [200] {}
+            res.status(200);
+            return "{}";
+        } catch (DataAccessException e) {
+            if (e.getMessage().equals("AuthToken doesn't exist")) {
+                // Failure response: [401] { "message": "Error: unauthorized" }
+                res.status(401);
+                return "{ \"message\": \"Error: unauthorized\" }";
+            }
+            else if (e.getMessage().equals("Already taken")) {
+                // Failure response: [403] { "message": "Error: already taken" }
+                res.status(403);
+                return "{ \"message\": \"Error: already taken\" }";
+            }
+            else if (e.getMessage().equals("Bad request")) {
+                // Failure response: [400] { "message": "Error: bad request" }
+                res.status(400);
+                return "{ \"message\": \"Error: bad request\" }";
+            }
+            else {
+                // Failure response: [500] { "message": "Error: (description of error)" }
+                res.status(500);
+                return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
+            }
+        }
         // Failure response: [400] { "message": "Error: bad request" }
-        // Failure response: [401] { "message": "Error: unauthorized" }
-        // Failure response: [403] { "message": "Error: already taken" }
-        // Failure response: [500] { "message": "Error: (description of error)" }
-        throw new RuntimeException("Not implemented");
     }
 }

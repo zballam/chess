@@ -51,8 +51,8 @@ public class AuthService {
     }
 
     public void logout(AuthData auth) throws DataAccessException {
+        authenticate(auth);
         AuthData authData = getAuth(auth.authToken());
-        if (authData == null) { throw new DataAccessException("AuthToken doesn't exist"); }
         authDAO.deleteAuth(authData.authToken());
     }
 }

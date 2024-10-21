@@ -6,14 +6,14 @@ import model.GameData;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 public class MemoryGameDAO implements GameDAO{
-    Collection<GameData> gameDataList = new ArrayList<>();
+    final private HashMap<Integer, GameData> gameDataHashMap = new HashMap<>();
     int nextGameID = 1;
-    // Might need to initialize these in the constructor instead
 
     public void clear() throws DataAccessException {
-        this.gameDataList.clear();
+        this.gameDataHashMap.clear();
     }
 
     public int createGame(GameData createRequest) throws DataAccessException {
@@ -22,7 +22,7 @@ public class MemoryGameDAO implements GameDAO{
         String blackUsername = createRequest.blackUsername();
         String gameName = createRequest.gameName();
         GameData newData = new GameData(nextGameID, whiteUsername, blackUsername, gameName, newGame);
-        this.gameDataList.add(newData);
+        this.gameDataHashMap.put(nextGameID,newData);
         nextGameID++;
         return newData.gameID();
     }
@@ -31,7 +31,7 @@ public class MemoryGameDAO implements GameDAO{
      * @return Returns GameData if game is found, otherwise returns null
      */
     public GameData getGame(int gameID) throws DataAccessException {
-        for (GameData gameData : this.gameDataList) {
+        for (GameData gameData : this.gameDataHashMap.values()) {
             if (gameData.gameID() == gameID) {
                 return gameData;
             }
@@ -41,11 +41,14 @@ public class MemoryGameDAO implements GameDAO{
 
     public Collection<GameData> listGames() throws DataAccessException {
         Collection<GameData> gamesList = new ArrayList<>();
-        gamesList.addAll(this.gameDataList);
+        gamesList.addAll(this.gameDataHashMap.values());
         return gamesList;
     }
 
     public void insertUser(int gameID, UserData user, ChessGame.TeamColor playerColor) throws DataAccessException {
-
+        GameData game;
+        if (playerColor == ChessGame.TeamColor.WHITE) {
+            game.whiteUsername() = user.username();
+        }
     }
 }
