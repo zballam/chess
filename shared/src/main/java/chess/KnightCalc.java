@@ -10,8 +10,6 @@ public class KnightCalc extends MovesCalc{
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> calcMoves = new ArrayList<>();
 
-//        System.out.println("Knight");
-
         // Up-R
         calcMoves.addAll(basicMove(2,1, board, myPosition));
         // Up-L

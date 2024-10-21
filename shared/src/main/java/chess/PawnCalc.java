@@ -87,8 +87,6 @@ public class PawnCalc extends MovesCalc{
         int initialRow = 2;
         int promotionRow = 7;
 
-//        System.out.println("Pawn");
-
         // Figure out which direction pawn is going
         if (pieceColor == ChessGame.TeamColor.BLACK) {
             initialRow = 7;

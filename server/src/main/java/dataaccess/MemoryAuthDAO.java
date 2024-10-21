@@ -4,7 +4,6 @@ import model.AuthData;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 public class MemoryAuthDAO implements AuthDAO{
     Collection<AuthData> authDataList = new ArrayList<>();
@@ -15,18 +14,6 @@ public class MemoryAuthDAO implements AuthDAO{
 
     public void createAuth(AuthData authData) throws DataAccessException {
         this.authDataList.add(authData);
-    }
-
-    /**
-     * @return Returns authToken or null if not found
-     */
-    public String getAuthToken(String authToken) throws DataAccessException {
-        for (AuthData data : this.authDataList) {
-            if (data.authToken().equals(authToken)) { // Make sure this part works when testing
-                return data.authToken();
-            }
-        }
-        return null;
     }
 
     /**

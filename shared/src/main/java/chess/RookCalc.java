@@ -10,8 +10,6 @@ public class RookCalc extends MovesCalc{
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> calcMoves = new ArrayList<>();
 
-//        System.out.println("Rook");
-
         // Up
         calcMoves.addAll(extMove(1,0, board, myPosition));
         // Down

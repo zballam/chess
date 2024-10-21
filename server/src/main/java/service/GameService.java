@@ -3,12 +3,9 @@ package service;
 import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
-import dataaccess.UserDAO;
 import model.*;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 
 public class GameService {
     GameDAO gameDAO;
@@ -28,10 +25,6 @@ public class GameService {
             throw new RuntimeException(e);
         }
     }
-
-//    public GameData getGame(int gameID) throws DataAccessException {
-//        return this.gameDAO.getGame(gameID);
-//    }
 
     public Collection<GameData> listGames(AuthData auth) throws DataAccessException {
         authService.authenticate(auth);

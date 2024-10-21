@@ -10,8 +10,6 @@ public class KingCalc extends MovesCalc{
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> calcMoves = new ArrayList<>();
 
-//        System.out.println("King");
-
         // Up
         calcMoves.addAll(basicMove(1,0, board, myPosition));
         // Down

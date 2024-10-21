@@ -91,8 +91,6 @@ public class ChessPiece {
 
         calcMoves.addAll(movesCalc.pieceMoves(board, myPosition));
 
-//        System.out.println("Board:");
-//        System.out.println(board);
         return calcMoves;
     }
 }

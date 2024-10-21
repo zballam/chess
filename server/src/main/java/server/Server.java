@@ -256,6 +256,5 @@ public class Server {
                 return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
             }
         }
-        // Failure response: [400] { "message": "Error: bad request" }
     }
 }
