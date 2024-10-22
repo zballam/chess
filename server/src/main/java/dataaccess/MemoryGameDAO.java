@@ -14,10 +14,16 @@ public class MemoryGameDAO implements GameDAO{
 
     public void clear() throws DataAccessException {
         this.gameDataHashMap.clear();
+        nextGameID = 1;
     }
 
     public int createGame(GameData createRequest) throws DataAccessException {
-        ChessGame newGame = new ChessGame();
+        for (GameData data : this.gameDataHashMap.values()) {
+            if (data.gameName().equals(createRequest.gameName())) {
+                throw new DataAccessException("GameName already taken");
+            }
+        }
+        ChessGame newGame = createRequest.game();
         String whiteUsername = createRequest.whiteUsername();
         String blackUsername = createRequest.blackUsername();
         String gameName = createRequest.gameName();
@@ -27,16 +33,13 @@ public class MemoryGameDAO implements GameDAO{
         return newData.gameID();
     }
 
-    /**
-     * @return Returns GameData if game is found, otherwise returns null
-     */
     public GameData getGame(int gameID) throws DataAccessException {
         for (GameData gameData : this.gameDataHashMap.values()) {
             if (gameData.gameID() == gameID) {
                 return gameData;
             }
         }
-        return null;
+        throw new DataAccessException("GameID doesn't exist");
     }
 
     public Collection<GameData> listGames() throws DataAccessException {

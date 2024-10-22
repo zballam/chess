@@ -245,7 +245,7 @@ public class Server {
                 res.status(403);
                 return "{ \"message\": \"Error: already taken\" }";
             }
-            else if (e.getMessage().equals("Bad request")) {
+            else if (e.getMessage().equals("Bad request") || e.getMessage().equals("GameID doesn't exist")) {
                 // Failure response: [400] { "message": "Error: bad request" }
                 res.status(400);
                 return "{ \"message\": \"Error: bad request\" }";

@@ -21,9 +21,6 @@ public class MemoryAuthDAO implements AuthDAO{
         this.authDataList.add(authData);
     }
 
-    /**
-     * @return Returns authData or null if not found
-     */
     public AuthData getAuth(String authToken) throws DataAccessException {
         for (AuthData data : this.authDataList) {
             if (data.authToken().equals(authToken)) { // Make sure this part works when testing

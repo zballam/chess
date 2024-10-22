@@ -9,21 +9,10 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/* TESTS TO IMPLEMENT
-    -clear()
-    -getAuth()
-    -createAuth()
-        -Check auth is added to memory
-    -logout()
-        -Unauthorized error
-        -Make sure it deletes the auth from the memory
- */
-
 public class AuthServiceTest {
     static AuthService authService;
     static AuthDAO authDAO;
     static UserData testUserData;
-    static UserData testUserData2;
     static String testAuthToken;
     static AuthData testAuthData;
 
@@ -32,7 +21,6 @@ public class AuthServiceTest {
         authDAO = new MemoryAuthDAO();
         authService = new AuthService(authDAO);
         testUserData = new UserData("username", "password", "email");
-        testUserData2 = new UserData("username2", "password2", "email2");
         testAuthToken = authService.randGenString(10);
         testAuthData = new AuthData(testAuthToken,testUserData.username());
     }
@@ -44,7 +32,7 @@ public class AuthServiceTest {
 
     @Test
     @DisplayName("Create")
-    public void create() throws DataAccessException {
+    public void create() {
         assertDoesNotThrow(() -> {authService.createAuth(testUserData,testAuthToken);});
     }
 
@@ -52,7 +40,7 @@ public class AuthServiceTest {
     @DisplayName("Bad create")
     public void badCreate() throws DataAccessException {
         authService.createAuth(testUserData,testAuthToken);
-        assertThrows(DataAccessException.class, () -> {authService.createAuth(testUserData2,testAuthToken);});
+        assertThrows(DataAccessException.class, () -> {authService.createAuth(testUserData,testAuthToken);});
     }
 
     @Test
@@ -91,7 +79,7 @@ public class AuthServiceTest {
 
     @Test
     @DisplayName("Bad Get")
-    public void badGet() throws DataAccessException {
+    public void badGet() {
         assertThrows(DataAccessException.class, () -> {authService.getAuth(testAuthToken);});
     }
 }

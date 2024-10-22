@@ -36,24 +36,24 @@ public class GameDAOTests {
         gameDAO.clear();
     }
 
-//    @Test
-//    @Order(1)
-//    @DisplayName("create game")
-//    public void create() throws DataAccessException {
-//        gameDAO.createGame(testGameData);
-//        assertEquals(testGameData, gameDAO.getGame(testGameData.gameID()),
-//                "Invalid gameData returned");
-//    }
-
     @Test
-    @Order(2)
-    @DisplayName("clear")
-    public void clear() throws DataAccessException {
+    @Order(1)
+    @DisplayName("create game")
+    public void create() throws DataAccessException {
         gameDAO.createGame(testGameData);
-        gameDAO.clear();
-        assertEquals(null, gameDAO.getGame(testGameData.gameID()),
-                "Clear failed");
+        assertEquals(testGameData, gameDAO.getGame(testGameData.gameID()),
+                "Invalid gameData returned");
     }
+
+//    @Test
+//    @Order(2)
+//    @DisplayName("clear")
+//    public void clear() throws DataAccessException {
+//        gameDAO.createGame(testGameData);
+//        gameDAO.clear();
+//        assertEquals(null, gameDAO.getGame(testGameData.gameID()),
+//                "Clear failed");
+//    }
 
 //    @Test
 //    @Order(3)
