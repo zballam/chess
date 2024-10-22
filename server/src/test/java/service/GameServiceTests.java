@@ -51,8 +51,9 @@ public class GameServiceTests {
 
     @Test
     @DisplayName("Create")
-    public void create() {
+    public void create() throws DataAccessException {
         assertDoesNotThrow(() -> {gameService.createGame(testGameData,testAuthData);});
+        assertEquals(testGameData,gameDAO.getGame(testGameData.gameID()));
     }
 
     @Test

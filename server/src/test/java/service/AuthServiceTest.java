@@ -32,8 +32,9 @@ public class AuthServiceTest {
 
     @Test
     @DisplayName("Create")
-    public void create() {
+    public void create() throws DataAccessException {
         assertDoesNotThrow(() -> {authService.createAuth(testUserData,testAuthToken);});
+        assertEquals(testAuthData,authDAO.getAuth(testAuthToken));
     }
 
     @Test

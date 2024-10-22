@@ -44,6 +44,9 @@ public class UserService {
     public void logout(AuthData auth) throws DataAccessException {
         authService.getAuth(auth.authToken());
         AuthData authData = authService.getAuth(auth.authToken());
+        if (authData == null) {
+            throw new DataAccessException("No AuthData");
+        }
         authService.deleteAuth(authData);
     }
 }
