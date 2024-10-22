@@ -1,6 +1,13 @@
 package service;
 
+import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
+import dataaccess.MemoryAuthDAO;
+import model.AuthData;
+import model.UserData;
 import org.junit.jupiter.api.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /* TESTS TO IMPLEMENT
     -clear()
@@ -13,15 +20,78 @@ import org.junit.jupiter.api.*;
  */
 
 public class AuthServiceTest {
+    static AuthService authService;
+    static AuthDAO authDAO;
+    static UserData testUserData;
+    static UserData testUserData2;
+    static String testAuthToken;
+    static AuthData testAuthData;
+
     @BeforeAll
     public static void init() {
+        authDAO = new MemoryAuthDAO();
+        authService = new AuthService(authDAO);
+        testUserData = new UserData("username", "password", "email");
+        testUserData2 = new UserData("username2", "password2", "email2");
+        testAuthToken = authService.randGenString(10);
+        testAuthData = new AuthData(testAuthToken,testUserData.username());
     }
 
     @BeforeEach
-    public void setup() {}
+    public void setup() {
+        authService.clear();
+    }
 
     @Test
-    @Order(1)
-    @DisplayName("")
-    public void test1() {}
+    @DisplayName("Create")
+    public void create() throws DataAccessException {
+        assertDoesNotThrow(() -> {authService.createAuth(testUserData,testAuthToken);});
+    }
+
+    @Test
+    @DisplayName("Bad create")
+    public void badCreate() throws DataAccessException {
+        authService.createAuth(testUserData,testAuthToken);
+        assertThrows(DataAccessException.class, () -> {authService.createAuth(testUserData2,testAuthToken);});
+    }
+
+    @Test
+    @DisplayName("Clear")
+    public void clear() throws DataAccessException {
+        authService.createAuth(testUserData,testAuthToken);
+        authService.clear();
+        assertThrows(DataAccessException.class, () -> {authDAO.getAuth(testAuthToken);});
+    }
+
+    @Test
+    @DisplayName("Random Number")
+    public void randNum() {
+        assertNotNull(authService.randGenString(10));
+    }
+
+    @Test
+    @DisplayName("Delete")
+    public void delete() throws DataAccessException {
+        authService.createAuth(testUserData, testAuthToken);
+        assertDoesNotThrow(() -> {authService.deleteAuth(testAuthData);}, "Delete fail");
+    }
+
+    @Test
+    @DisplayName("Bad Delete")
+    public void badDelete() {
+        assertThrows(DataAccessException.class, () -> {authService.deleteAuth(testAuthData);});
+    }
+
+    @Test
+    @DisplayName("Get")
+    public void get() throws DataAccessException {
+        authService.createAuth(testUserData, testAuthToken);
+        assertDoesNotThrow(() -> {authService.getAuth(testAuthToken);});
+    }
+
+    @Test
+    @DisplayName("Bad Get")
+    public void badGet() throws DataAccessException {
+        assertThrows(DataAccessException.class, () -> {authService.getAuth(testAuthToken);});
+    }
 }

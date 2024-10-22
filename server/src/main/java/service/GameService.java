@@ -27,17 +27,17 @@ public class GameService {
     }
 
     public Collection<GameData> listGames(AuthData auth) throws DataAccessException {
-        authService.authenticate(auth);
+        authService.getAuth(auth.authToken());
         return gameDAO.listGames();
     }
 
     public int createGame(GameData gameData, AuthData auth) throws DataAccessException {
-        authService.authenticate(auth);
+        authService.getAuth(auth.authToken());
         return this.gameDAO.createGame(gameData);
     }
 
     public void joinGame(JoinGameRequest joinRequest, AuthData auth) throws DataAccessException {
-        authService.authenticate(auth);
+        authService.getAuth(auth.authToken());
         // Check to make sure user color isn't already taken
         GameData game = gameDAO.getGame(joinRequest.gameID());
         if (game == null) { throw new DataAccessException("Bad request"); }

@@ -8,13 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AuthDAOTests {
     static AuthDAO authDAO;
-
     static AuthData testAuthData;
 
     @BeforeAll
     public static void init() {
         authDAO = new MemoryAuthDAO();
-
         testAuthData = new AuthData("1234567890", "username");
     }
 
@@ -28,7 +26,7 @@ public class AuthDAOTests {
     @DisplayName("create auth")
     public void create() throws DataAccessException {
         authDAO.createAuth(testAuthData);
-        assertEquals(testAuthData.authToken(), authDAO.getAuth(testAuthData.authToken()),
+        assertEquals(testAuthData.authToken(), authDAO.getAuth(testAuthData.authToken()).authToken(),
                 "Invalid AuthToken returned");
     }
 

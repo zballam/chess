@@ -21,20 +21,11 @@ public class AuthService {
         }
     }
 
-    public String getAuthToken(String authToken) throws DataAccessException {
-        return this.authDAO.getAuth(authToken).authToken();
-    }
-
     public AuthData getAuth(String authToken) throws DataAccessException {
         return this.authDAO.getAuth(authToken);
     }
 
-    public void authenticate(AuthData auth) throws DataAccessException {
-        AuthData authData = getAuth(auth.authToken());
-        if (authData == null) { throw new DataAccessException("AuthToken doesn't exist"); }
-    }
-
-    private String randGenString(int len) {
+    public String randGenString(int len) {
         String chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%&";
         Random rand = new Random();
         StringBuilder builder = new StringBuilder();
@@ -44,15 +35,13 @@ public class AuthService {
         return builder.toString();
     }
 
-    public AuthData createAuth(UserData user) throws DataAccessException {
-        AuthData authData = new AuthData(randGenString(10), user.username());
+    public AuthData createAuth(UserData user, String authToken) throws DataAccessException {
+        AuthData authData = new AuthData(authToken, user.username());
         authDAO.createAuth(authData);
         return authData;
     }
 
-    public void logout(AuthData auth) throws DataAccessException {
-        authenticate(auth);
-        AuthData authData = getAuth(auth.authToken());
+    public void deleteAuth(AuthData authData) throws DataAccessException {
         authDAO.deleteAuth(authData.authToken());
     }
 }

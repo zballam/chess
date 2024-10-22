@@ -134,7 +134,7 @@ public class Server {
         // Headers: authorization: <authToken>
         AuthData authData = new AuthData(req.headers("Authorization"),null);
         try {
-            authService.logout(authData);
+            userService.logout(authData);
             // Success response: [200] {}
             res.status(200);
             return "{}";

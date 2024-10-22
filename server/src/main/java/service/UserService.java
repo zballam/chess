@@ -27,7 +27,7 @@ public class UserService {
             throw new DataAccessException("Already taken");
         }
         this.userDAO.createUser(newUser);
-        return authService.createAuth(newUser);
+        return authService.createAuth(newUser,authService.randGenString(10));
     }
 
     public AuthData login(UserData user) throws DataAccessException {
@@ -38,6 +38,12 @@ public class UserService {
         if (!userData.password().equals(user.password())) {
             throw new DataAccessException("Wrong password");
         }
-        return this.authService.createAuth(userData);
+        return this.authService.createAuth(userData, authService.randGenString(10));
+    }
+
+    public void logout(AuthData auth) throws DataAccessException {
+        authService.getAuth(auth.authToken());
+        AuthData authData = authService.getAuth(auth.authToken());
+        authService.deleteAuth(authData);
     }
 }

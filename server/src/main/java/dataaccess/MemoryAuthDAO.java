@@ -13,6 +13,11 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     public void createAuth(AuthData authData) throws DataAccessException {
+        for (AuthData data : this.authDataList) {
+            if (data.authToken() == authData.authToken()) {
+                throw new DataAccessException("AuthToken already exists");
+            }
+        }
         this.authDataList.add(authData);
     }
 
@@ -25,15 +30,16 @@ public class MemoryAuthDAO implements AuthDAO{
                 return data;
             }
         }
-        return null;
+        throw new DataAccessException("AuthToken doesn't exist");
     }
 
     public void deleteAuth(String authToken) throws DataAccessException {
         for (AuthData data : this.authDataList) {
             if (data.authToken().equals(authToken)) { // Make sure this part works when testing
                 this.authDataList.remove(data);
-                break;
+                return;
             }
         }
+        throw new DataAccessException("No item to delete");
     }
 }
