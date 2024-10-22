@@ -213,11 +213,6 @@ public class ChessGame {
         if (validMoves.contains(move)) {
             validMove = true;
         }
-//        for (ChessMove moveToCheck : validMoves) {
-//            if (moveToCheck.getEndPosition() == move.getEndPosition() && moveToCheck.getStartPosition() == move.getStartPosition()) {
-//                validMove = true;
-//            }
-//        }
         if (validMove) {
             // Make copy of the board
             ChessBoard cloneBoard = this.board.clone();

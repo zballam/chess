@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 public class Server {
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new Gson();
     private final AuthService authService;
     private final GameService gameService;
     private final UserService userService;
@@ -50,6 +50,19 @@ public class Server {
         Spark.awaitStop();
     }
 
+    private String catch401(Response res, Exception e) {
+        if (Objects.equals(e.getMessage(), "AuthToken doesn't exist")) {
+            // Failure response: [401] { "message": "Error: unauthorized" }
+            res.status(401);
+            return "{ \"message\": \"Error: unauthorized\" }";
+        }
+        else {
+            // Failure response: [500] { "message": "Error: (description of error)" }
+            res.status(500);
+            return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
+        }
+    }
+
     /**
      * Clears the database. Removes all users, games, and authTokens.
      * @return JSON String
@@ -74,7 +87,7 @@ public class Server {
      * @return JSON String
      */
     private Object register(Request req, Response res) { //Throws ResponseException?
-        UserData newUser = gson.fromJson(req.body(), UserData.class);
+        UserData newUser = GSON.fromJson(req.body(), UserData.class);
         // Body: { "username":"", "password":"", "email":"" }
         if (newUser.username() == null || newUser.password() == null || newUser.email() == null) {
             // Failure response: [400] { "message": "Error: bad request" }
@@ -85,7 +98,7 @@ public class Server {
             AuthData registerRes = userService.register(newUser);
             // Success response: [200] { "username":"", "authToken":"" }
             res.status(200);
-            return gson.toJson(registerRes);
+            return GSON.toJson(registerRes);
         } catch (DataAccessException e) {
             if (Objects.equals(e.getMessage(), "Already taken")) {
                 // Failure response: [403] { "message": "Error: already taken" }
@@ -106,12 +119,12 @@ public class Server {
      */
     private Object login(Request req, Response res) { //Throws ResponseException?
         // Body: { "username":"", "password":"" }
-        UserData user = gson.fromJson(req.body(), UserData.class);
+        UserData user = GSON.fromJson(req.body(), UserData.class);
         try {
             AuthData loginRes = userService.login(user);
             // Success response: [200] { "username":"", "authToken":"" }
             res.status(200);
-            return gson.toJson(loginRes);
+            return GSON.toJson(loginRes);
         } catch (DataAccessException e) {
             if (Objects.equals(e.getMessage(), "User doesn't exist") || Objects.equals(e.getMessage(), "Wrong password")) {
                 // Failure response: [401] { "message": "Error: unauthorized" }
@@ -139,16 +152,7 @@ public class Server {
             res.status(200);
             return "{}";
         } catch (DataAccessException e) {
-            if (Objects.equals(e.getMessage(), "AuthToken doesn't exist")) {
-                // Failure response: [401] { "message": "Error: unauthorized" }
-                res.status(401);
-                return "{ \"message\": \"Error: unauthorized\" }";
-            }
-            else {
-                // Failure response: [500] { "message": "Error: (description of error)" }
-                res.status(500);
-                return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
-            }
+            return catch401(res, e);
         }
     }
 
@@ -164,18 +168,9 @@ public class Server {
             Collection<GameData> gameList = gameService.listGames(authData);
             // Success response: [200] { "games": [{"gameID": 1234, "whiteUsername":"", "blackUsername":"", "gameName:""} ]}
             res.status(200);
-            return gson.toJson(new GamesList(gameList));
+            return GSON.toJson(new GamesList(gameList));
         } catch (DataAccessException e) {
-            if (Objects.equals(e.getMessage(), "AuthToken doesn't exist")) {
-                // Failure response: [401] { "message": "Error: unauthorized" }
-                res.status(401);
-                return "{ \"message\": \"Error: unauthorized\" }";
-            }
-            else {
-                // Failure response: [500] { "message": "Error: (description of error)" }
-                res.status(500);
-                return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
-            }
+            return catch401(res, e);
         }
     }
 
@@ -188,7 +183,7 @@ public class Server {
         // Headers: authorization: <authToken>
         AuthData authData = new AuthData(req.headers("Authorization"),null);
         // Body: { "gameName":"" }
-        GameData gameData = gson.fromJson(req.body(), GameData.class);
+        GameData gameData = GSON.fromJson(req.body(), GameData.class);
         if (Objects.equals(authData.authToken(), "") || Objects.equals(gameData.gameName(), "")) {
             // Failure response: [400] { "message": "Error: bad request" }
             res.status(400);
@@ -200,16 +195,7 @@ public class Server {
             res.status(200);
             return "{ \"gameID\": " + gameID + " }";
         } catch (DataAccessException e) {
-            if (Objects.equals(e.getMessage(), "AuthToken doesn't exist")) {
-                // Failure response: [401] { "message": "Error: unauthorized" }
-                res.status(401);
-                return "{ \"message\": \"Error: unauthorized\" }";
-            }
-            else {
-                // Failure response: [500] { "message": "Error: (description of error)" }
-                res.status(500);
-                return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
-            }
+            return catch401(res, e);
         }
     }
 
@@ -226,7 +212,7 @@ public class Server {
             if (authData.authToken() == null) {
                 throw new DataAccessException("Bad request");
             }
-            JoinGameRequest joinRequest = gson.fromJson(req.body(), JoinGameRequest.class);
+            JoinGameRequest joinRequest = GSON.fromJson(req.body(), JoinGameRequest.class);
             if (joinRequest.playerColor() == null) { // Might need joinRequest.gameID() == null later
                 throw new DataAccessException("Bad request");
             }

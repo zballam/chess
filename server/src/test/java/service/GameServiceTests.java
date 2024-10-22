@@ -75,8 +75,8 @@ public class GameServiceTests {
     @DisplayName("List Games")
     public void listGames() throws DataAccessException {
         Collection<GameData> gamesList = new ArrayList<>();
-        int ID = gameService.createGame(testGameData,testAuthData);
-        gamesList.add(gameDAO.getGame(ID));
+        int iD = gameService.createGame(testGameData,testAuthData);
+        gamesList.add(gameDAO.getGame(iD));
         assertEquals(gamesList,gameService.listGames(testAuthData), "Wrong gameData returned");
     }
 
@@ -108,7 +108,7 @@ public class GameServiceTests {
 
     @Test
     @DisplayName("Join Game Bad Request")
-    public void JoinGameBadRequest() {
+    public void joinGameBadRequest() {
         JoinGameRequest joinGameRequest = new JoinGameRequest(ChessGame.TeamColor.BLACK, 1);
         assertThrows(DataAccessException.class, () -> {gameService.joinGame(joinGameRequest,testAuthData);});
     }
