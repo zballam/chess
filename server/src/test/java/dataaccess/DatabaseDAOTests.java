@@ -1,26 +1,24 @@
 package dataaccess;
 
+import model.UserData;
 import org.junit.jupiter.api.*;
+import org.mindrot.jbcrypt.BCrypt;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DatabaseDAOTests {
     static UserDAO userDAO;
     static AuthDAO authDAO;
     static GameDAO gameDAO;
+    static UserData testUser;
 
     @BeforeAll
     public static void init() {
         userDAO = new DatabaseUserDAO();
         authDAO = new DatabaseAuthDAO();
         gameDAO = new DatabaseGameDAO();
-    }
-
-    @BeforeEach
-    public void addData() throws DataAccessException {
-        String userStatement = """
-                        INSERT INTO user (username, password, email) VALUES 
-                        (\'usernameTest\', \'passwordTest\', \'emailTest\');
-                        """;
-        DatabaseManager.executeUpdate(userStatement);
+        testUser = new UserData("testUser","testPassword","testEmail");
     }
 
     @AfterEach
@@ -31,9 +29,17 @@ public class DatabaseDAOTests {
     }
 
     @Test
-    @DisplayName("Clear User")
-    public void clearUserTest() throws DataAccessException {
-        userDAO.clear();
+    @DisplayName("Create User")
+    public void createUserTest() throws DataAccessException {
+        userDAO.createUser(testUser);
+        assertEquals(testUser.username(),userDAO.getUser("testUser").username(),"Incorrect Username");
+        assertEquals(testUser.email(),userDAO.getUser("testUser").email(),"Incorrect Email");
+    }
 
+    @Test
+    @DisplayName("Create Duplicate User")
+    public void createDuplicateUserTest() throws DataAccessException {
+        userDAO.createUser(testUser);
+        assertThrows(DataAccessException.class, () -> {userDAO.createUser(testUser);});
     }
 }

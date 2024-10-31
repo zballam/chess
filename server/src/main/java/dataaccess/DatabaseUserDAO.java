@@ -48,12 +48,14 @@ public class DatabaseUserDAO implements UserDAO{
                     String usernameData = rs.getString(1);
                     String password = rs.getString(2);
                     String email = rs.getString(3);
-                    return new UserData(usernameData,password,email);
+                    return new UserData(usernameData, password, email);
+                }
+                else {
+                    throw new DataAccessException("User not found");
                 }
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
-        return null;
     }
 }
