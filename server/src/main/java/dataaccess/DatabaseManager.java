@@ -130,20 +130,20 @@ public class DatabaseManager {
               whiteUsername varchar(256) NULL,
               blackUsername varchar(256) NULL,
               gameName varchar(256) NOT NULL,
-              game varchar(512) NULL,
-              FOREIGN KEY(whiteUsername) REFERENCES user(username),
-              FOREIGN KEY(blackUsername) REFERENCES user(username)
+              game varchar(512) NULL
             )
             """;
+            //FOREIGN KEY(whiteUsername) REFERENCES user(username),
+            //FOREIGN KEY(blackUsername) REFERENCES user(username)
 
     private static final String createAuthTableStatement =
             """
             CREATE TABLE IF NOT EXISTS auth (
               authToken varchar(256) NOT NULL,
-              username varchar(256) NULL,
-              FOREIGN KEY(username) REFERENCES user(username)
+              username varchar(256) NULL
             )
             """;
+            //FOREIGN KEY(username) REFERENCES user(username)
 
     public static void configureDatabase() {
         try {
