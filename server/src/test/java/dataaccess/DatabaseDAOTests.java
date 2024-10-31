@@ -32,7 +32,8 @@ public class DatabaseDAOTests {
 
     @Test
     @DisplayName("Clear User")
-    public void clearUserTest() {
+    public void clearUserTest() throws DataAccessException {
+        userDAO.clear();
 
     }
 }
