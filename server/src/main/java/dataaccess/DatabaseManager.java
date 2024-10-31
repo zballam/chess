@@ -70,10 +70,22 @@ public class DatabaseManager {
         }
     }
 
-    public static void executeUpdate(String statement) throws DataAccessException {
+    /**
+     * Execute a SQL Update query
+     *
+     * @param statement The SQL statement to execute
+     * @param commit Determines whether the connection should commit
+     */
+    public static void executeUpdate(String statement, boolean commit) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
+            conn.setAutoCommit(false);
             try (var ps = conn.prepareStatement(statement)) {
                 ps.executeUpdate();
+                if (commit) { conn.commit(); }
+                else { conn.rollback(); }
+            }
+            finally {
+                conn.close();
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
@@ -115,9 +127,9 @@ public class DatabaseManager {
     public static void configureDatabase() {
         try {
             createDatabase();
-            executeUpdate(createUserTableStatement);
-            executeUpdate(createGameTableStatement);
-            executeUpdate(createAuthTableStatement);
+            executeUpdate(createUserTableStatement, true);
+            executeUpdate(createGameTableStatement, true);
+            executeUpdate(createAuthTableStatement, true);
         } catch (DataAccessException e) {
             throw new RuntimeException(e.getMessage());
         }

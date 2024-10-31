@@ -15,7 +15,7 @@ public class DatabaseGameDAO implements GameDAO{
     @Override
     public void clear() throws DataAccessException {
         String clearStatement = "DELETE FROM game;";
-        DatabaseManager.executeUpdate(clearStatement);
+        DatabaseManager.executeUpdate(clearStatement, true);
     }
 
     @Override

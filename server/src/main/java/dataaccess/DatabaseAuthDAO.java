@@ -10,7 +10,7 @@ public class DatabaseAuthDAO implements AuthDAO{
     @Override
     public void clear() throws DataAccessException {
         String clearStatement = "DELETE FROM auth;";
-        DatabaseManager.executeUpdate(clearStatement);
+        DatabaseManager.executeUpdate(clearStatement, true);
     }
 
     @Override
