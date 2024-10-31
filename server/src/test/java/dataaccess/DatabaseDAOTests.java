@@ -1,8 +1,7 @@
 package dataaccess;
 
-import model.UserData;
+import model.*;
 import org.junit.jupiter.api.*;
-import org.mindrot.jbcrypt.BCrypt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -12,6 +11,7 @@ public class DatabaseDAOTests {
     static AuthDAO authDAO;
     static GameDAO gameDAO;
     static UserData testUser;
+    static AuthData testAuth;
 
     @BeforeAll
     public static void init() {
@@ -19,6 +19,7 @@ public class DatabaseDAOTests {
         authDAO = new DatabaseAuthDAO();
         gameDAO = new DatabaseGameDAO();
         testUser = new UserData("testUser","testPassword","testEmail");
+        testAuth = new AuthData("testToken", testUser.username());
     }
 
     @AfterEach
@@ -65,5 +66,19 @@ public class DatabaseDAOTests {
     @DisplayName("Get Nonexisting User")
     public void getNoUserTest() throws DataAccessException {
         assertEquals(null,userDAO.getUser("testUser"));
+    }
+
+    @Test
+    @DisplayName("Create Auth")
+    public void createAuthTest() throws DataAccessException {
+        authDAO.createAuth(testAuth);
+        assertEquals(testAuth,authDAO.getAuth(testAuth.authToken()));
+    }
+
+    @Test
+    @DisplayName("Create Duplicate Auth")
+    public void createBadAuthTest() throws DataAccessException {
+        authDAO.createAuth(testAuth);
+        assertThrows(DataAccessException.class, () -> {authDAO.createAuth(testAuth);});
     }
 }
