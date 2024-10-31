@@ -49,8 +49,6 @@ public class DatabaseDAOTests {
     public void clearUserTest() throws DataAccessException {
         userDAO.createUser(testUser);
         userDAO.clear();
-//        DataAccessException e = assertThrows(DataAccessException.class, () -> {userDAO.getUser("testUser");});
-//        assertEquals("User not found", e.getMessage());
         assertEquals(null,userDAO.getUser("testUser"));
     }
 
@@ -80,5 +78,20 @@ public class DatabaseDAOTests {
     public void createBadAuthTest() throws DataAccessException {
         authDAO.createAuth(testAuth);
         assertThrows(DataAccessException.class, () -> {authDAO.createAuth(testAuth);});
+    }
+
+    @Test
+    @DisplayName("Get Auth")
+    public void getAuthTest() throws DataAccessException {
+        authDAO.createAuth(testAuth);
+        assertEquals(testAuth,authDAO.getAuth(testAuth.authToken()));
+    }
+
+    @Test
+    @DisplayName("Get Nonexisting Auth")
+    public void getNoAuthTest() throws DataAccessException {
+        assertEquals(null,userDAO.getUser("testUser"));
+        DataAccessException e = assertThrows(DataAccessException.class, () -> {authDAO.getAuth(testAuth.authToken());});
+        assertEquals("AuthToken doesn't exist", e.getMessage());
     }
 }

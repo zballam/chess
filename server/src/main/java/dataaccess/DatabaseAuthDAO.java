@@ -48,7 +48,7 @@ public class DatabaseAuthDAO implements AuthDAO{
                     return new AuthData(authTokenData,username);
                 }
                 else {
-                    return null;
+                    throw new DataAccessException("AuthToken doesn't exist");
                 }
             }
         } catch (SQLException e) {
