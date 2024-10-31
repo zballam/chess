@@ -18,10 +18,18 @@ public class Server {
     private final UserService userService;
 
     public Server() {
-        // Change these MemoryDAOs to change which interface is used
-        this.authService = new AuthService(new MemoryAuthDAO());
-        this.userService = new UserService(new MemoryUserDAO(), this.authService);
-        this.gameService = new GameService(new MemoryGameDAO(), this.authService, this.userService);
+        // Change these DAOs to change which interface is used
+        boolean database = true;
+        if (database) {
+            this.authService = new AuthService(new DatabaseAuthDAO());
+            this.userService = new UserService(new DatabaseUserDAO(), this.authService);
+            this.gameService = new GameService(new DatabaseGameDAO(), this.authService, this.userService);
+        }
+        else {
+            this.authService = new AuthService(new MemoryAuthDAO());
+            this.userService = new UserService(new MemoryUserDAO(), this.authService);
+            this.gameService = new GameService(new MemoryGameDAO(), this.authService, this.userService);
+        }
     }
 
     public int run(int desiredPort) {

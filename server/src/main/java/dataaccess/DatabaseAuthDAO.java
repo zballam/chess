@@ -2,7 +2,12 @@ package dataaccess;
 
 import model.AuthData;
 
+import static dataaccess.DatabaseManager.createDatabase;
+
 public class DatabaseAuthDAO implements AuthDAO{
+    public DatabaseAuthDAO() {
+        configureDatabase();
+    }
 
     @Override
     public void clear() throws DataAccessException {
@@ -21,6 +26,15 @@ public class DatabaseAuthDAO implements AuthDAO{
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
+
+    }
+
+    private void configureDatabase() {
+        try {
+            DatabaseManager.createDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException("ERROR creating database");
+        }
 
     }
 }
