@@ -42,4 +42,13 @@ public class DatabaseDAOTests {
         userDAO.createUser(testUser);
         assertThrows(DataAccessException.class, () -> {userDAO.createUser(testUser);});
     }
+
+    @Test
+    @DisplayName("Clear")
+    public void clearUserTest() throws DataAccessException {
+        userDAO.createUser(testUser);
+        userDAO.clear();
+        DataAccessException e = assertThrows(DataAccessException.class, () -> {userDAO.getUser("testUser");});
+        assertEquals("User not found", e.getMessage());
+    }
 }
