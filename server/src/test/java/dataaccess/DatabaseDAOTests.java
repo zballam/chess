@@ -48,7 +48,22 @@ public class DatabaseDAOTests {
     public void clearUserTest() throws DataAccessException {
         userDAO.createUser(testUser);
         userDAO.clear();
-        DataAccessException e = assertThrows(DataAccessException.class, () -> {userDAO.getUser("testUser");});
-        assertEquals("User not found", e.getMessage());
+//        DataAccessException e = assertThrows(DataAccessException.class, () -> {userDAO.getUser("testUser");});
+//        assertEquals("User not found", e.getMessage());
+        assertEquals(null,userDAO.getUser("testUser"));
+    }
+
+    @Test
+    @DisplayName("Get User")
+    public void getUserTest() throws DataAccessException {
+        userDAO.createUser(testUser);
+        assertEquals(testUser.username(),userDAO.getUser("testUser").username(),"Incorrect Username");
+        assertEquals(testUser.email(),userDAO.getUser("testUser").email(),"Incorrect Email");
+    }
+
+    @Test
+    @DisplayName("Get Nonexisting User")
+    public void getNoUserTest() throws DataAccessException {
+        assertEquals(null,userDAO.getUser("testUser"));
     }
 }

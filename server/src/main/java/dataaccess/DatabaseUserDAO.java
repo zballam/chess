@@ -51,7 +51,8 @@ public class DatabaseUserDAO implements UserDAO{
                     return new UserData(usernameData, password, email);
                 }
                 else {
-                    throw new DataAccessException("User not found");
+//                    throw new DataAccessException("User doesn't exist");
+                    return null;
                 }
             }
         } catch (SQLException e) {
