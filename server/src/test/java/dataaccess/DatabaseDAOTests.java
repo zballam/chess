@@ -16,7 +16,10 @@ public class DatabaseDAOTests {
 
     @BeforeEach
     public void addData() throws DataAccessException {
-        String userStatement = "INSERT INTO user (username, password, email) values (\'usernameTest\', \'passwordTest\', \'emailTest\');";
+        String userStatement = """
+                        INSERT INTO user (username, password, email) VALUES 
+                        (\'usernameTest\', \'passwordTest\', \'emailTest\');
+                        """;
         DatabaseManager.executeUpdate(userStatement);
     }
 

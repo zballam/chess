@@ -1,6 +1,10 @@
 package dataaccess;
 
+import model.*;
+
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Properties;
 
 public class DatabaseManager {
@@ -76,16 +80,37 @@ public class DatabaseManager {
      * @param statement The SQL statement to execute
      */
     public static void executeUpdate(String statement) throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()) {
+        try (var conn = getConnection()) {
             try (var ps = conn.prepareStatement(statement)) {
                 ps.executeUpdate();
-            }
-            finally {
-                conn.close();
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
+    }
+
+    /**
+     * Used to execute a query on the User table
+     *
+     * @param statement SQL query statement to execute
+     * @return Returns a collection of UserData
+     */
+    public static Collection<UserData> executeUserQuery(String statement) throws DataAccessException {
+        Collection<UserData> data = new ArrayList<>();
+        try (var conn = getConnection()) {
+            try (var ps = conn.prepareStatement(statement)) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    String username = rs.getString(1);
+                    String password = rs.getString(2);
+                    String email = rs.getString(3);
+                    data.add(new UserData(username,password,email));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        return data;
     }
 
     private static final String createUserTableStatement =
