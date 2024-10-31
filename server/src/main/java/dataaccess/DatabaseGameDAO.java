@@ -7,6 +7,7 @@ import model.UserData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -46,6 +47,16 @@ public class DatabaseGameDAO implements GameDAO{
         }
     }
 
+    private GameData readRS(ResultSet rs) throws SQLException {
+        int dataGameID = rs.getInt(1);
+        String whiteUsername = rs.getString(2);
+        String blackUsername = rs.getString(3);
+        String gameName = rs.getString(4);
+        String game = rs.getString(5);
+        ChessGame gameData = GSON.fromJson(game, ChessGame.class);
+        return new GameData(dataGameID, whiteUsername, blackUsername, gameName, gameData);
+    }
+
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
         String userQuery = """
@@ -56,13 +67,7 @@ public class DatabaseGameDAO implements GameDAO{
                 ps.setString(1, String.valueOf(gameID));
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
-                    int dataGameID = rs.getInt(1);
-                    String whiteUsername = rs.getString(2);
-                    String blackUsername = rs.getString(3);
-                    String gameName = rs.getString(4);
-                    String game = rs.getString(5);
-                    ChessGame gameData = GSON.fromJson(game, ChessGame.class);
-                    return new GameData(dataGameID, whiteUsername, blackUsername, gameName, gameData);
+                    return readRS(rs);
                 }
                 else {
 //                    throw new DataAccessException("User doesn't exist");
@@ -76,7 +81,21 @@ public class DatabaseGameDAO implements GameDAO{
 
     @Override
     public Collection<GameData> listGames() throws DataAccessException {
-        return List.of();
+        String gameQuery = """
+                SELECT * FROM game;
+                """;
+        Collection<GameData> data = new ArrayList<>();
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(gameQuery)) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    data.add(readRS(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        return data;
     }
 
     @Override
