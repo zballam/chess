@@ -2,8 +2,6 @@ package dataaccess;
 
 import model.AuthData;
 
-import static dataaccess.DatabaseManager.createDatabase;
-
 public class DatabaseAuthDAO implements AuthDAO{
     public DatabaseAuthDAO() {
         configureDatabase();
@@ -28,6 +26,19 @@ public class DatabaseAuthDAO implements AuthDAO{
     public void deleteAuth(String authToken) throws DataAccessException {
 
     }
+
+    private final String createStatement =
+            """
+            CREATE TABLE IF NOT EXISTS  pet (
+              `id` int NOT NULL AUTO_INCREMENT,
+              `name` varchar(256) NOT NULL,
+              `type` ENUM('CAT', 'DOG', 'FISH', 'FROG', 'ROCK') DEFAULT 'CAT',
+              `json` TEXT DEFAULT NULL,
+              PRIMARY KEY (`id`),
+              INDEX(type),
+              INDEX(name)
+            )
+            """;
 
     private void configureDatabase() {
         try {
