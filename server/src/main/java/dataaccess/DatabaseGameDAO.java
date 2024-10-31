@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 
 public class DatabaseGameDAO implements GameDAO{
@@ -100,6 +99,25 @@ public class DatabaseGameDAO implements GameDAO{
 
     @Override
     public void insertUser(int gameID, UserData user, ChessGame.TeamColor playerColor) throws DataAccessException {
-
+        String insertStatement;
+        if (playerColor == ChessGame.TeamColor.WHITE) {
+            insertStatement = """
+                    UPDATE game SET whiteUsername = ? WHERE gameID=?;
+                    """;
+        }
+        else {
+            insertStatement = """
+                    UPDATE game SET blackUsername = ? WHERE gameID=?;
+                    """;
+        }
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(insertStatement)) {
+                ps.setString(1, user.username());
+                ps.setString(2, String.valueOf(gameID));
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 }
