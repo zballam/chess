@@ -58,6 +58,16 @@ public class DatabaseAuthDAO implements AuthDAO{
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
-
+        String insertStatement = """
+                    DELETE FROM auth WHERE authToken=?;
+                    """;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(insertStatement)) {
+                ps.setString(1, authToken);
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 }
