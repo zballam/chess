@@ -46,6 +46,5 @@ public class DatabaseAuthDAO implements AuthDAO{
         } catch (DataAccessException e) {
             throw new RuntimeException("ERROR creating database");
         }
-
     }
 }

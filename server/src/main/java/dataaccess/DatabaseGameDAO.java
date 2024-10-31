@@ -8,8 +8,21 @@ import java.util.Collection;
 import java.util.List;
 
 public class DatabaseGameDAO implements GameDAO{
+    private final String createStatement =
+            """
+            CREATE TABLE IF NOT EXISTS  game (
+              gameID int NOT NULL,
+              whiteUsername varchar(256) NULL,
+              blackUsername varchar(256) NULL,
+              gameName varchar(256) NOT NULL,
+              game varchar(512) NULL,
+              FOREIGN KEY(whiteUsername) REFERENCES user(username),
+              FOREIGN KEY(blackUsername) REFERENCES user(username)
+            )
+            """;
+
     public DatabaseGameDAO() {
-        configureDatabase();
+        DatabaseManager.configureDatabase(createStatement);
     }
 
     @Override
@@ -34,15 +47,6 @@ public class DatabaseGameDAO implements GameDAO{
 
     @Override
     public void insertUser(int gameID, UserData user, ChessGame.TeamColor playerColor) throws DataAccessException {
-
-    }
-
-    private void configureDatabase() {
-        try {
-            DatabaseManager.createDatabase();
-        } catch (DataAccessException e) {
-            throw new RuntimeException("ERROR creating database");
-        }
 
     }
 }
