@@ -4,6 +4,8 @@ import model.UserData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class DatabaseUserDAO implements UserDAO{
 
@@ -36,6 +38,22 @@ public class DatabaseUserDAO implements UserDAO{
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
+        String userQuery = """
+                SELECT * FROM user WHERE username = ?;
+                """;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(userQuery)) {
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    String usernameData = rs.getString(1);
+                    String password = rs.getString(2);
+                    String email = rs.getString(3);
+                    return new UserData(usernameData,password,email);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
         return null;
     }
 }
