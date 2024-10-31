@@ -10,7 +10,7 @@ public class DatabaseUserDAO implements UserDAO{
     @Override
     public void clear() throws DataAccessException {
         String clearStatement = "DELETE FROM user;";
-        DatabaseManager.executeUpdate(clearStatement, true);
+        DatabaseManager.executeUpdate(clearStatement);
     }
 
     @Override
