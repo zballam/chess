@@ -90,7 +90,23 @@ public class DatabaseDAOTests {
     @Test
     @DisplayName("Get Nonexisting Auth")
     public void getNoAuthTest() throws DataAccessException {
-        assertEquals(null,userDAO.getUser("testUser"));
+        DataAccessException e = assertThrows(DataAccessException.class, () -> {authDAO.getAuth(testAuth.authToken());});
+        assertEquals("AuthToken doesn't exist", e.getMessage());
+    }
+
+    @Test
+    @DisplayName("Delete Auth")
+    public void deleteAuthTest() throws DataAccessException {
+        authDAO.createAuth(testAuth);
+        authDAO.deleteAuth(testAuth.authToken());
+        DataAccessException e = assertThrows(DataAccessException.class, () -> {authDAO.getAuth(testAuth.authToken());});
+        assertEquals("AuthToken doesn't exist", e.getMessage());
+    }
+
+    @Test
+    @DisplayName("Delete Nonexisting Auth")
+    public void deleteNoAuthTest() throws DataAccessException {
+        authDAO.deleteAuth(testAuth.authToken());
         DataAccessException e = assertThrows(DataAccessException.class, () -> {authDAO.getAuth(testAuth.authToken());});
         assertEquals("AuthToken doesn't exist", e.getMessage());
     }
