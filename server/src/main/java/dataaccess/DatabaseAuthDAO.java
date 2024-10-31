@@ -3,19 +3,8 @@ package dataaccess;
 import model.AuthData;
 
 public class DatabaseAuthDAO implements AuthDAO{
-    private final String createStatement =
-            """
-            CREATE TABLE IF NOT EXISTS auth (
-              authToken varchar(256) NOT NULL,
-              username varchar(256) NULL
-            )
-            """;
-    // This doesn't work because user needs to be created first
-//    FOREIGN KEY(username) REFERENCES user(username)
-//    DatabaseManager.executeUpdate("INSERT INTO auth (authToken, username) VALUES (\"token\", \"username\")");
-
     public DatabaseAuthDAO() {
-        DatabaseManager.configureDatabase(createStatement);
+        DatabaseManager.configureDatabase();
     }
 
     @Override

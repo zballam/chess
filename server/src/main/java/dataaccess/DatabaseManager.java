@@ -80,10 +80,44 @@ public class DatabaseManager {
         }
     }
 
-    public static void configureDatabase(String statement) {
+    private static final String createUserTableStatement =
+            """
+            CREATE TABLE IF NOT EXISTS user (
+              username varchar(256) NOT NULL,
+              password varchar(256) NOT NULL,
+              email varchar(256) NOT NULL,
+              PRIMARY KEY (username)
+            )
+            """;
+
+    private static final String createGameTableStatement =
+            """
+            CREATE TABLE IF NOT EXISTS game (
+              gameID int NOT NULL,
+              whiteUsername varchar(256) NULL,
+              blackUsername varchar(256) NULL,
+              gameName varchar(256) NOT NULL,
+              game varchar(512) NULL,
+              FOREIGN KEY(whiteUsername) REFERENCES user(username),
+              FOREIGN KEY(blackUsername) REFERENCES user(username)
+            )
+            """;
+
+    private static final String createAuthTableStatement =
+            """
+            CREATE TABLE IF NOT EXISTS auth (
+              authToken varchar(256) NOT NULL,
+              username varchar(256) NULL,
+              FOREIGN KEY(username) REFERENCES user(username)
+            )
+            """;
+
+    public static void configureDatabase() {
         try {
             createDatabase();
-            executeUpdate(statement);
+            executeUpdate(createUserTableStatement);
+            executeUpdate(createGameTableStatement);
+            executeUpdate(createAuthTableStatement);
         } catch (DataAccessException e) {
             throw new RuntimeException(e.getMessage());
         }

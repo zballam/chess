@@ -8,21 +8,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class DatabaseGameDAO implements GameDAO{
-    private final String createStatement =
-            """
-            CREATE TABLE IF NOT EXISTS game (
-              gameID int NOT NULL,
-              whiteUsername varchar(256) NULL,
-              blackUsername varchar(256) NULL,
-              gameName varchar(256) NOT NULL,
-              game varchar(512) NULL,
-              FOREIGN KEY(whiteUsername) REFERENCES user(username),
-              FOREIGN KEY(blackUsername) REFERENCES user(username)
-            )
-            """;
-
     public DatabaseGameDAO() {
-        DatabaseManager.configureDatabase(createStatement);
+        DatabaseManager.configureDatabase();
     }
 
     @Override
