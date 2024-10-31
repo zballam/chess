@@ -70,7 +70,7 @@ public class DatabaseManager {
         }
     }
 
-    private static void executeQuery(String statement) throws DataAccessException {
+    public static void executeUpdate(String statement) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement)) {
                 ps.executeUpdate();
@@ -83,9 +83,9 @@ public class DatabaseManager {
     public static void configureDatabase(String statement) {
         try {
             createDatabase();
-            executeQuery(statement);
+            executeUpdate(statement);
         } catch (DataAccessException e) {
-            throw new RuntimeException("ERROR configuring database");
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

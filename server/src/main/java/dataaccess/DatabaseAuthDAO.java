@@ -7,10 +7,12 @@ public class DatabaseAuthDAO implements AuthDAO{
             """
             CREATE TABLE IF NOT EXISTS auth (
               authToken varchar(256) NOT NULL,
-              username varchar(256) NULL,
-              FOREIGN KEY(username) REFERENCES user(username)
+              username varchar(256) NULL
             )
             """;
+    // This doesn't work because user needs to be created first
+//    FOREIGN KEY(username) REFERENCES user(username)
+//    DatabaseManager.executeUpdate("INSERT INTO auth (authToken, username) VALUES (\"token\", \"username\")");
 
     public DatabaseAuthDAO() {
         DatabaseManager.configureDatabase(createStatement);
@@ -18,7 +20,8 @@ public class DatabaseAuthDAO implements AuthDAO{
 
     @Override
     public void clear() throws DataAccessException {
-
+        String clearStatement = "DELETE FROM auth;";
+        DatabaseManager.executeUpdate(clearStatement);
     }
 
     @Override
