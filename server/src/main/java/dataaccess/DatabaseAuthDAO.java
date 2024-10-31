@@ -3,8 +3,17 @@ package dataaccess;
 import model.AuthData;
 
 public class DatabaseAuthDAO implements AuthDAO{
+    private final String createStatement =
+            """
+            CREATE TABLE IF NOT EXISTS auth (
+              authToken varchar(256) NOT NULL,
+              username varchar(256) NULL,
+              FOREIGN KEY(username) REFERENCES user(username)
+            )
+            """;
+
     public DatabaseAuthDAO() {
-        configureDatabase();
+        DatabaseManager.configureDatabase(createStatement);
     }
 
     @Override
@@ -25,26 +34,5 @@ public class DatabaseAuthDAO implements AuthDAO{
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
 
-    }
-
-    private final String createStatement =
-            """
-            CREATE TABLE IF NOT EXISTS  pet (
-              `id` int NOT NULL AUTO_INCREMENT,
-              `name` varchar(256) NOT NULL,
-              `type` ENUM('CAT', 'DOG', 'FISH', 'FROG', 'ROCK') DEFAULT 'CAT',
-              `json` TEXT DEFAULT NULL,
-              PRIMARY KEY (`id`),
-              INDEX(type),
-              INDEX(name)
-            )
-            """;
-
-    private void configureDatabase() {
-        try {
-            DatabaseManager.createDatabase();
-        } catch (DataAccessException e) {
-            throw new RuntimeException("ERROR creating database");
-        }
     }
 }

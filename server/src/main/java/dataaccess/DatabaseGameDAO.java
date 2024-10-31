@@ -10,7 +10,7 @@ import java.util.List;
 public class DatabaseGameDAO implements GameDAO{
     private final String createStatement =
             """
-            CREATE TABLE IF NOT EXISTS  game (
+            CREATE TABLE IF NOT EXISTS game (
               gameID int NOT NULL,
               whiteUsername varchar(256) NULL,
               blackUsername varchar(256) NULL,

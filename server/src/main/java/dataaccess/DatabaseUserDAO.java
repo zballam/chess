@@ -5,7 +5,7 @@ import model.UserData;
 public class DatabaseUserDAO implements UserDAO{
     private final String createStatement =
             """
-            CREATE TABLE IF NOT EXISTS  user (
+            CREATE TABLE IF NOT EXISTS user (
               username varchar(256) NOT NULL,
               password varchar(256) NOT NULL,
               email varchar(256) NOT NULL,
