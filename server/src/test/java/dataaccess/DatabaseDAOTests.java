@@ -95,7 +95,7 @@ public class DatabaseDAOTests {
     public void clearAuthTest() throws DataAccessException {
         authDAO.createAuth(testAuth);
         authDAO.clear();
-        assertEquals(null,authDAO.getAuth(testAuth.authToken()));
+        assertThrows(DataAccessException.class, () -> {authDAO.getAuth(testAuth.authToken());});
     }
 
     @Test
@@ -105,7 +105,7 @@ public class DatabaseDAOTests {
         authDAO.createAuth(testAuth2);
         authDAO.createAuth(testAuth);
         authDAO.clear();
-        assertEquals(null,authDAO.getAuth(testAuth.authToken()));
+        assertThrows(DataAccessException.class, () -> {authDAO.getAuth(testAuth.authToken());});
     }
 
     @Test
