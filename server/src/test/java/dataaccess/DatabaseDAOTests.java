@@ -47,7 +47,14 @@ public class DatabaseDAOTests {
     }
 
     @Test
-    @DisplayName("Clear")
+    @DisplayName("Create Null User")
+    public void createUserNoThrowTest() throws DataAccessException {
+        UserData badData = new UserData(null,null, null);
+        assertThrows(DataAccessException.class, () -> {userDAO.createUser(badData);});
+    }
+
+    @Test
+    @DisplayName("Clear User")
     public void clearUserTest() throws DataAccessException {
         userDAO.createUser(testUser);
         userDAO.clear();
@@ -68,6 +75,7 @@ public class DatabaseDAOTests {
         assertEquals(null,userDAO.getUser("testUser"));
     }
 
+
     @Test
     @DisplayName("Create Auth")
     public void createAuthTest() throws DataAccessException {
@@ -80,6 +88,24 @@ public class DatabaseDAOTests {
     public void createBadAuthTest() throws DataAccessException {
         AuthData badData = new AuthData(null,null);
         assertThrows(DataAccessException.class, () -> {authDAO.createAuth(badData);});
+    }
+
+    @Test
+    @DisplayName("Clear Auth")
+    public void clearAuthTest() throws DataAccessException {
+        authDAO.createAuth(testAuth);
+        authDAO.clear();
+        assertEquals(null,authDAO.getAuth(testAuth.authToken()));
+    }
+
+    @Test
+    @DisplayName("Clear Auth Multiple")
+    public void clearAuthTestMultiple() throws DataAccessException {
+        AuthData testAuth2 = new AuthData("test2","test2");
+        authDAO.createAuth(testAuth2);
+        authDAO.createAuth(testAuth);
+        authDAO.clear();
+        assertEquals(null,authDAO.getAuth(testAuth.authToken()));
     }
 
     @Test
@@ -135,6 +161,24 @@ public class DatabaseDAOTests {
     }
 
     @Test
+    @DisplayName("Clear Game")
+    public void clearGameTest() throws DataAccessException {
+        gameDAO.createGame(testGame);
+        gameDAO.clear();
+        assertEquals(null,gameDAO.getGame(testGame.gameID()));
+    }
+
+    @Test
+    @DisplayName("Clear Game Multiple")
+    public void clearGameTestMultiple() throws DataAccessException {
+        GameData testGame2 = new GameData(1,"test2","test2","test2",new ChessGame());
+        gameDAO.createGame(testGame2);
+        gameDAO.createGame(testGame);
+        gameDAO.clear();
+        assertEquals(null,gameDAO.getGame(testGame.gameID()));
+    }
+
+    @Test
     @DisplayName("Get Game")
     public void getGameTest() throws DataAccessException {
         int i = gameDAO.createGame(testGame);
@@ -145,5 +189,30 @@ public class DatabaseDAOTests {
     @DisplayName("Get Nonexisting Game")
     public void getNoGameTest() throws DataAccessException {
         assertEquals(null,gameDAO.getGame(testGame.gameID()));
+    }
+
+    public void assertCorrectGame(int i, GameData correctGame) throws DataAccessException {
+        assertEquals(i,gameDAO.getGame(i).gameID(),"Invalid gameID");
+        assertEquals(correctGame.whiteUsername(),gameDAO.getGame(i).whiteUsername(),"Invalid whiteUsername");
+        assertEquals(correctGame.blackUsername(),gameDAO.getGame(i).blackUsername(),"Invalid blackUsername");
+        assertEquals(correctGame.gameName(),gameDAO.getGame(i).gameName(),"Invalid gameName");
+    }
+
+    @Test
+    @DisplayName("Insert White User")
+    public void insertWhiteTest() throws DataAccessException {
+        int i = gameDAO.createGame(testGame);
+        gameDAO.insertUser(i,testUser, ChessGame.TeamColor.WHITE);
+        GameData correctGame = new GameData(i, testUser.username(), testGame.blackUsername(), testGame.gameName(), testGame.game());
+        assertCorrectGame(i,correctGame);
+    }
+
+    @Test
+    @DisplayName("Insert Black User")
+    public void insertBlackTest() throws DataAccessException {
+        int i = gameDAO.createGame(testGame);
+        gameDAO.insertUser(i,testUser, ChessGame.TeamColor.BLACK);
+        GameData correctGame = new GameData(i, testGame.whiteUsername(), testUser.username(), testGame.gameName(), testGame.game());
+        assertCorrectGame(i,correctGame);
     }
 }
