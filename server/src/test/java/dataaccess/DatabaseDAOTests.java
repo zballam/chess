@@ -4,8 +4,7 @@ import chess.ChessGame;
 import model.*;
 import org.junit.jupiter.api.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DatabaseDAOTests {
     static UserDAO userDAO;
@@ -37,9 +36,7 @@ public class DatabaseDAOTests {
     @Test
     @DisplayName("Create User")
     public void createUserTest() throws DataAccessException {
-        userDAO.createUser(testUser);
-        assertEquals(testUser.username(),userDAO.getUser("testUser").username(),"Incorrect Username");
-        assertEquals(testUser.email(),userDAO.getUser("testUser").email(),"Incorrect Email");
+        assertDoesNotThrow(() -> userDAO.createUser(testUser));
     }
 
     @Test

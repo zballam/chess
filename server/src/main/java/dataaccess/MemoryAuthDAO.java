@@ -30,15 +30,6 @@ public class MemoryAuthDAO implements AuthDAO{
         throw new DataAccessException("AuthToken doesn't exist");
     }
 
-    public AuthData getAuthUsername(String username) throws DataAccessException {
-        for (AuthData data : this.authDataList) {
-            if (data.username().equals(username)) { // Make sure this part works when testing
-                return data;
-            }
-        }
-        throw new DataAccessException("AuthToken doesn't exist");
-    }
-
     public void deleteAuth(String authToken) throws DataAccessException {
         for (AuthData data : this.authDataList) {
             if (data.authToken().equals(authToken)) { // Make sure this part works when testing

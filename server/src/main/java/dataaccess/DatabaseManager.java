@@ -1,10 +1,6 @@
 package dataaccess;
 
-import model.*;
-
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Properties;
 
 public class DatabaseManager {
@@ -89,7 +85,7 @@ public class DatabaseManager {
         }
     }
 
-    private static final String createUserTableStatement =
+    private static final String CREATEUSERTABLESTATEMENT =
             """
             CREATE TABLE IF NOT EXISTS user (
               username varchar(256) NOT NULL,
@@ -99,7 +95,7 @@ public class DatabaseManager {
             )
             """;
 
-    private static final String createGameTableStatement =
+    private static final String CREATEGAMETABLESTATEMENT =
             """
             CREATE TABLE IF NOT EXISTS game (
               gameID INT NOT NULL AUTO_INCREMENT,
@@ -113,7 +109,7 @@ public class DatabaseManager {
             //FOREIGN KEY(whiteUsername) REFERENCES user(username),
             //FOREIGN KEY(blackUsername) REFERENCES user(username)
 
-    private static final String createAuthTableStatement =
+    private static final String CREATEAUTHTABLESTATEMENT =
             """
             CREATE TABLE IF NOT EXISTS auth (
               authToken varchar(256) NOT NULL,
@@ -125,9 +121,9 @@ public class DatabaseManager {
     public static void configureDatabase() {
         try {
             createDatabase();
-            executeUpdate(createUserTableStatement);
-            executeUpdate(createGameTableStatement);
-            executeUpdate(createAuthTableStatement);
+            executeUpdate(CREATEUSERTABLESTATEMENT);
+            executeUpdate(CREATEGAMETABLESTATEMENT);
+            executeUpdate(CREATEAUTHTABLESTATEMENT);
         } catch (DataAccessException e) {
             throw new RuntimeException(e.getMessage());
         }

@@ -57,29 +57,6 @@ public class DatabaseAuthDAO implements AuthDAO{
     }
 
     @Override
-    public AuthData getAuthUsername(String username) throws DataAccessException {
-        String authQuery = """
-                SELECT * FROM auth WHERE username = ?;
-                """;
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(authQuery)) {
-                ps.setString(1,username);
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    String authToken = rs.getString(1);
-                    String usernameData = rs.getString(2);
-                    return new AuthData(authToken,usernameData);
-                }
-                else {
-                    throw new DataAccessException("AuthToken doesn't exist");
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
-    }
-
-    @Override
     public void deleteAuth(String authToken) throws DataAccessException {
         String insertStatement = """
                     DELETE FROM auth WHERE authToken=?;
