@@ -39,18 +39,7 @@ public class UserService {
         if (!BCrypt.checkpw(user.password(), userData.password())) {
             throw new DataAccessException("Wrong password");
         }
-        AuthData authData;
-        try {
-            authData = authService.authDAO.getAuthUsername(user.username());
-        } catch (DataAccessException e) {
-            authData = null;
-        }
-        if (authData == null) {
-            return this.authService.createAuth(userData, authService.randGenString(10));
-        }
-        else {
-            return authData;
-        }
+        return this.authService.createAuth(userData, authService.randGenString(10));
     }
 
     public void logout(AuthData auth) throws DataAccessException {

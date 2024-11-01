@@ -79,10 +79,10 @@ public class DatabaseDAOTests {
     }
 
     @Test
-    @DisplayName("Create Duplicate Auth")
+    @DisplayName("Null Auth Input")
     public void createBadAuthTest() throws DataAccessException {
-        authDAO.createAuth(testAuth);
-        assertThrows(DataAccessException.class, () -> {authDAO.createAuth(testAuth);});
+        AuthData badData = new AuthData(null,null);
+        assertThrows(DataAccessException.class, () -> {authDAO.createAuth(badData);});
     }
 
     @Test

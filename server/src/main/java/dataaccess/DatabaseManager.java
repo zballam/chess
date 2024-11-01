@@ -117,8 +117,7 @@ public class DatabaseManager {
             """
             CREATE TABLE IF NOT EXISTS auth (
               authToken varchar(256) NOT NULL,
-              username varchar(256) NOT NULL,
-              PRIMARY KEY(username)
+              username varchar(256) NOT NULL
             )
             """;
             //FOREIGN KEY(username) REFERENCES user(username)
