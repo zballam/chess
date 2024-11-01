@@ -110,4 +110,18 @@ public class DatabaseDAOTests {
         DataAccessException e = assertThrows(DataAccessException.class, () -> {authDAO.getAuth(testAuth.authToken());});
         assertEquals("AuthToken doesn't exist", e.getMessage());
     }
+
+    @Test
+    @DisplayName("Create Game")
+    public void createGameTest() throws DataAccessException {
+        authDAO.createAuth(testAuth);
+        assertEquals(testAuth,authDAO.getAuth(testAuth.authToken()));
+    }
+
+    @Test
+    @DisplayName("Create Duplicate Game")
+    public void createBadGameTest() throws DataAccessException {
+        authDAO.createAuth(testAuth);
+        assertThrows(DataAccessException.class, () -> {authDAO.createAuth(testAuth);});
+    }
 }
