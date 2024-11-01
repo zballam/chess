@@ -89,30 +89,6 @@ public class DatabaseManager {
         }
     }
 
-    /**
-     * Used to execute a query on the User table
-     *
-     * @param statement SQL query statement to execute
-     * @return Returns a collection of UserData
-     */
-    public static Collection<UserData> executeUserQuery(String statement) throws DataAccessException {
-        Collection<UserData> data = new ArrayList<>();
-        try (var conn = getConnection()) {
-            try (var ps = conn.prepareStatement(statement)) {
-                ResultSet rs = ps.executeQuery();
-                while (rs.next()) {
-                    String username = rs.getString(1);
-                    String password = rs.getString(2);
-                    String email = rs.getString(3);
-                    data.add(new UserData(username,password,email));
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
-        return data;
-    }
-
     private static final String createUserTableStatement =
             """
             CREATE TABLE IF NOT EXISTS user (
@@ -126,7 +102,7 @@ public class DatabaseManager {
     private static final String createGameTableStatement =
             """
             CREATE TABLE IF NOT EXISTS game (
-              gameID int NOT NULL,
+              gameID INT NOT NULL AUTO_INCREMENT,
               whiteUsername varchar(256) NULL,
               blackUsername varchar(256) NULL,
               gameName varchar(256) NOT NULL,

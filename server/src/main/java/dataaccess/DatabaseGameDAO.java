@@ -7,6 +7,7 @@ import model.UserData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -24,22 +25,46 @@ public class DatabaseGameDAO implements GameDAO{
         DatabaseManager.executeUpdate(clearStatement);
     }
 
+    public GameData getGameName(String gameName) throws DataAccessException {
+        String userQuery = """
+                SELECT * FROM game WHERE gameName = ?;
+                """;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(userQuery)) {
+                ps.setString(1, String.valueOf(gameName));
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    return readRS(rs);
+                }
+                else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
     @Override
     public int createGame(GameData createRequest) throws DataAccessException {
+        if (getGameName(createRequest.gameName()) != null) {
+            throw new DataAccessException("GameName already taken");
+        }
         // Serialize game
         String gameInfo = GSON.toJson(createRequest.game());
         String insertStatement = """
-                    INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?);
+                    INSERT INTO game (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?);
                     """;
         try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(insertStatement)) {
-                ps.setInt(1, createRequest.gameID());
-                ps.setString(2, createRequest.whiteUsername());
-                ps.setString(3, createRequest.blackUsername());
-                ps.setString(4, createRequest.gameName());
-                ps.setString(5, gameInfo);
+            try (var ps = conn.prepareStatement(insertStatement,Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, createRequest.whiteUsername());
+                ps.setString(2, createRequest.blackUsername());
+                ps.setString(3, createRequest.gameName());
+                ps.setString(4, gameInfo);
                 ps.executeUpdate();
-                return createRequest.gameID();
+                ResultSet keys = ps.getGeneratedKeys();
+                keys.next();
+                return keys.getInt(1);
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
@@ -69,7 +94,6 @@ public class DatabaseGameDAO implements GameDAO{
                     return readRS(rs);
                 }
                 else {
-//                    throw new DataAccessException("User doesn't exist");
                     return null;
                 }
             }

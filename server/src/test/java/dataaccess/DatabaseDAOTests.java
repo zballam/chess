@@ -116,18 +116,18 @@ public class DatabaseDAOTests {
         assertEquals("AuthToken doesn't exist", e.getMessage());
     }
 
-    public void assertGame() throws DataAccessException {
-        assertEquals(testGame.gameID(),gameDAO.getGame(testGame.gameID()).gameID(),"Invalid gameID");
-        assertEquals(testGame.whiteUsername(),gameDAO.getGame(testGame.gameID()).whiteUsername(),"Invalid whiteUsername");
-        assertEquals(testGame.blackUsername(),gameDAO.getGame(testGame.gameID()).blackUsername(),"Invalid blackUsername");
-        assertEquals(testGame.gameName(),gameDAO.getGame(testGame.gameID()).gameName(),"Invalid gameName");
+    public void assertGame(int i) throws DataAccessException {
+        assertEquals(i,gameDAO.getGame(i).gameID(),"Invalid gameID");
+        assertEquals(testGame.whiteUsername(),gameDAO.getGame(i).whiteUsername(),"Invalid whiteUsername");
+        assertEquals(testGame.blackUsername(),gameDAO.getGame(i).blackUsername(),"Invalid blackUsername");
+        assertEquals(testGame.gameName(),gameDAO.getGame(i).gameName(),"Invalid gameName");
     }
 
     @Test
     @DisplayName("Create Game")
     public void createGameTest() throws DataAccessException {
-        gameDAO.createGame(testGame);
-        assertGame();
+        int i = gameDAO.createGame(testGame);
+        assertGame(i);
     }
 
     @Test
@@ -140,8 +140,8 @@ public class DatabaseDAOTests {
     @Test
     @DisplayName("Get Game")
     public void getGameTest() throws DataAccessException {
-        gameDAO.createGame(testGame);
-        assertGame();
+        int i = gameDAO.createGame(testGame);
+        assertGame(i);
     }
 
     @Test
