@@ -3,6 +3,7 @@ package service;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
     UserDAO userDAO;
@@ -35,10 +36,21 @@ public class UserService {
         if (userData == null) {
             throw new DataAccessException("User doesn't exist");
         }
-        if (!userData.password().equals(user.password())) {
+        if (!BCrypt.checkpw(user.password(), userData.password())) {
             throw new DataAccessException("Wrong password");
         }
-        return this.authService.createAuth(userData, authService.randGenString(10));
+        AuthData authData;
+        try {
+            authData = authService.authDAO.getAuthUsername(user.username());
+        } catch (DataAccessException e) {
+            authData = null;
+        }
+        if (authData == null) {
+            return this.authService.createAuth(userData, authService.randGenString(10));
+        }
+        else {
+            return authData;
+        }
     }
 
     public void logout(AuthData auth) throws DataAccessException {
