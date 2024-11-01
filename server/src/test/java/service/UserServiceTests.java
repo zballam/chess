@@ -4,6 +4,7 @@ import dataaccess.*;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -36,7 +37,9 @@ public class UserServiceTests {
     @DisplayName("Register")
     public void reg() throws DataAccessException {
         userService.register(testUserData);
-        assertEquals(testUserData,userDAO.getUser(testUserData.username()));
+        assertEquals(testUserData.username(),userDAO.getUser(testUserData.username()).username());
+        assertEquals(testUserData.email(),userDAO.getUser(testUserData.username()).email());
+        assertEquals(true, BCrypt.checkpw(testUserData.password(), userDAO.getUser(testUserData.username()).password()));
     }
 
     @Test
