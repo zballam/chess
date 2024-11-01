@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.*;
 import org.junit.jupiter.api.*;
 
@@ -12,6 +13,8 @@ public class DatabaseDAOTests {
     static GameDAO gameDAO;
     static UserData testUser;
     static AuthData testAuth;
+    static ChessGame game;
+    static GameData testGame;
 
     @BeforeAll
     public static void init() {
@@ -20,6 +23,8 @@ public class DatabaseDAOTests {
         gameDAO = new DatabaseGameDAO();
         testUser = new UserData("testUser","testPassword","testEmail");
         testAuth = new AuthData("testToken", testUser.username());
+        game = new ChessGame();
+        testGame = new GameData(0,null,null,"testName",game);
     }
 
     @AfterEach
@@ -111,17 +116,37 @@ public class DatabaseDAOTests {
         assertEquals("AuthToken doesn't exist", e.getMessage());
     }
 
+    public void assertGame() throws DataAccessException {
+        assertEquals(testGame.gameID(),gameDAO.getGame(testGame.gameID()).gameID(),"Invalid gameID");
+        assertEquals(testGame.whiteUsername(),gameDAO.getGame(testGame.gameID()).whiteUsername(),"Invalid whiteUsername");
+        assertEquals(testGame.blackUsername(),gameDAO.getGame(testGame.gameID()).blackUsername(),"Invalid blackUsername");
+        assertEquals(testGame.gameName(),gameDAO.getGame(testGame.gameID()).gameName(),"Invalid gameName");
+    }
+
     @Test
     @DisplayName("Create Game")
     public void createGameTest() throws DataAccessException {
-        authDAO.createAuth(testAuth);
-        assertEquals(testAuth,authDAO.getAuth(testAuth.authToken()));
+        gameDAO.createGame(testGame);
+        assertGame();
     }
 
     @Test
     @DisplayName("Create Duplicate Game")
     public void createBadGameTest() throws DataAccessException {
-        authDAO.createAuth(testAuth);
-        assertThrows(DataAccessException.class, () -> {authDAO.createAuth(testAuth);});
+        gameDAO.createGame(testGame);
+        assertThrows(DataAccessException.class, () -> {gameDAO.createGame(testGame);});
+    }
+
+    @Test
+    @DisplayName("Get Game")
+    public void getGameTest() throws DataAccessException {
+        gameDAO.createGame(testGame);
+        assertGame();
+    }
+
+    @Test
+    @DisplayName("Get Nonexisting Game")
+    public void getNoGameTest() throws DataAccessException {
+        assertEquals(null,gameDAO.getGame(testGame.gameID()));
     }
 }

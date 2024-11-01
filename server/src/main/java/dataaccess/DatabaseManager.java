@@ -130,7 +130,7 @@ public class DatabaseManager {
               whiteUsername varchar(256) NULL,
               blackUsername varchar(256) NULL,
               gameName varchar(256) NOT NULL,
-              game varchar(512) NULL,
+              game varchar(4096) NULL,
               PRIMARY KEY(gameID)
             )
             """;
