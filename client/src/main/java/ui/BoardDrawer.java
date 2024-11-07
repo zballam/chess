@@ -12,26 +12,28 @@ import java.util.List;
 import static ui.EscapeSequences.*;
 
 public class BoardDrawer {
-    // Characters
     private static final String EMPTY = "   ";
     private static final String PADDING = " ";
+    private static final String WHITETEAM = SET_TEXT_COLOR_BLUE;
+    private static final String BLACKTEAM = SET_TEXT_COLOR_MAGENTA;
 
 
     public static void main(String[] args) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        out.print(ERASE_SCREEN);
+
         Collection<ChessPiece> pieces = new ArrayList<>();
         ChessGame.TeamColor white = ChessGame.TeamColor.WHITE;
         ChessGame.TeamColor black = ChessGame.TeamColor.BLACK;
         drawChessBoard(pieces, out, white);
-        drawChessBoard(pieces, out, white);
         drawChessBoard(pieces, out, black);
+
+
     }
 
     private static void drawChessBoard(Collection<ChessPiece> pieces, PrintStream out, ChessGame.TeamColor team) {
+        out.print(ERASE_SCREEN);
         boolean whiteTeam;
-        if (team == ChessGame.TeamColor.WHITE) { whiteTeam = true; }
-        else { whiteTeam = false; }
+        whiteTeam = team == ChessGame.TeamColor.WHITE;
         drawHeaders(out, whiteTeam);
     }
 
@@ -55,12 +57,35 @@ public class BoardDrawer {
         out.println();
     }
 
-    private static void drawWhiteSquare() {
+    private static void drawRow(Collection<ChessPiece> pieces, PrintStream out, boolean whiteTeam) {
+        List<String> colHeaders = new ArrayList<>(List.of("1","2","3","4","5","6","7","8"));
+        setLightGray(out);
+        if (whiteTeam) {
+            for (String colHeader : colHeaders) {
+                drawColHeader(out, colHeader);
+            }
+        }
+    }
+
+    private static void drawColHeader(PrintStream out, String header) {
 
     }
 
-    private static void drawBlackSquare() {
+    private static void setPieceColor(PrintStream out, boolean white) {
+        if (white) {
+            out.print(WHITETEAM);
+        }
+        else {
+            out.print(BLACKTEAM);
+        }
+    }
 
+    private static void drawWhiteSquare(PrintStream out, String piece, boolean white) {
+        setPieceColor(out, white);
+    }
+
+    private static void drawBlackSquare(PrintStream out, String piece, boolean white) {
+        setPieceColor(out, white);
     }
 
     private static void printString(PrintStream out, String string) {
