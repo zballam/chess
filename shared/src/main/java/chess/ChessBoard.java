@@ -71,6 +71,10 @@ public class ChessBoard implements Cloneable {
         return builder.toString();
     }
 
+    public ChessPiece[][] getSquares() {
+        return squares;
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
