@@ -63,10 +63,18 @@ public class BoardDrawer {
     private static void drawRows(ChessPiece[][] pieces, PrintStream out, boolean whiteTeam) {
         List<String> colHeaders = new ArrayList<>(List.of("1","2","3","4","5","6","7","8"));
         setLightGray(out);
+        int x = 0;
+        boolean whiteSquare = true;
         if (whiteTeam) {
             for (String colHeader : colHeaders) {
                 drawColHeader(out, colHeader);
-                drawRow
+                drawRow(out, pieces[x], whiteSquare);
+                x++;
+                setLightGray(out);
+                drawColHeader(out, colHeader);
+                resetColor(out);
+                out.println();
+                whiteSquare = !(whiteSquare);
             }
         }
     }
@@ -78,8 +86,16 @@ public class BoardDrawer {
         resetColor(out);
     }
 
-    private static void drawRow(PrintStream out, ChessPiece[][] pieces) {
-
+    private static void drawRow(PrintStream out, ChessPiece[] pieces, boolean whiteSquare) {
+        for (ChessPiece piece : pieces) {
+            if (piece != null) {
+                drawSquare(out, piece, whiteSquare);
+            }
+            else {
+                drawSquare(out, null, whiteSquare);
+            }
+            whiteSquare = !(whiteSquare);
+        }
     }
 
 
@@ -93,19 +109,46 @@ public class BoardDrawer {
     }
 
     private static void drawWhiteSquare(PrintStream out, ChessPiece piece) {
-        boolean white = piece.getTeamColor() == ChessGame.TeamColor.WHITE;
-        setWhite(out);
-        printString(out, " ");
-        setPieceColor(out, white);
-        printString(out, piece.toString());
-        setWhite(out);
-        printString(out, " ");
-        resetColor(out);
+        if (piece != null) {
+            boolean white = piece.getTeamColor() == ChessGame.TeamColor.WHITE;
+            setWhite(out);
+            setPieceColor(out, white);
+            printString(out, piece.toString());
+            setWhite(out);
+            resetColor(out);
+        }
+        else {
+            setWhite(out);
+            printString(out, " ");
+            setWhite(out);
+            resetColor(out);
+        }
     }
 
     private static void drawBlackSquare(PrintStream out, ChessPiece piece) {
-        boolean white = piece.getTeamColor() == ChessGame.TeamColor.WHITE;
-        setPieceColor(out, white);
+        if (piece != null) {
+            boolean white = piece.getTeamColor() == ChessGame.TeamColor.WHITE;
+            setBlack(out);
+            setPieceColor(out, white);
+            printString(out, piece.toString());
+            setBlack(out);
+            resetColor(out);
+        }
+        else {
+            setBlack(out);
+            printString(out, " ");
+            setBlack(out);
+            resetColor(out);
+        }
+    }
+
+    private static void drawSquare(PrintStream out, ChessPiece piece, boolean whiteSquare) {
+        if (whiteSquare) {
+            drawWhiteSquare(out, piece);
+        }
+        else {
+            drawBlackSquare(out, piece);
+        }
     }
 
     private static void printString(PrintStream out, String string) {
