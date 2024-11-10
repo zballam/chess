@@ -1,7 +1,6 @@
 package ui;
 
-import chess.ChessGame;
-import chess.ChessPiece;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -31,18 +30,18 @@ public class BoardDrawer {
 
     private static void drawChessBoard(ChessPiece[][] pieces, PrintStream out, ChessGame.TeamColor team) {
         out.print(ERASE_SCREEN);
-        boolean whiteTeam;
-        whiteTeam = team == ChessGame.TeamColor.WHITE;
-        drawHeaders(out, whiteTeam);
-        drawRows(pieces, out, whiteTeam);
-        drawHeaders(out, whiteTeam);
+        boolean blackTeam;
+        blackTeam = !(team == ChessGame.TeamColor.WHITE);
+        drawHeaders(out, blackTeam);
+        drawRows(pieces, out, blackTeam);
+        drawHeaders(out, blackTeam);
     }
 
-    private static void drawHeaders(PrintStream out, boolean whiteTeam) {
+    private static void drawHeaders(PrintStream out, boolean blackTeam) {
         List<String> headers = new ArrayList<>(List.of("a","b","c","d","e","f","g","h"));
         setLightGray(out);
         out.print(EMPTY);
-        if (whiteTeam) {
+        if (!blackTeam) {
             for (String header : headers) {
                 out.print(SET_TEXT_COLOR_BLACK);
                 printString(out, header);
