@@ -6,7 +6,6 @@ import chess.ChessPiece;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static ui.EscapeSequences.*;
@@ -36,6 +35,7 @@ public class BoardDrawer {
         whiteTeam = team == ChessGame.TeamColor.WHITE;
         drawHeaders(out, whiteTeam);
         drawRows(pieces, out, whiteTeam);
+        drawHeaders(out, whiteTeam);
     }
 
     private static void drawHeaders(PrintStream out, boolean whiteTeam) {
@@ -72,6 +72,19 @@ public class BoardDrawer {
                 x++;
                 setLightGray(out);
                 drawColHeader(out, colHeader);
+                resetColor(out);
+                out.println();
+                whiteSquare = !(whiteSquare);
+            }
+        }
+        else {
+            x = 7;
+            for (int i = colHeaders.size() - 1; i >= 0; i--) {
+                drawColHeader(out, colHeaders.get(i));
+                drawRow(out, pieces[x], whiteSquare);
+                x--;
+                setLightGray(out);
+                drawColHeader(out, colHeaders.get(i));
                 resetColor(out);
                 out.println();
                 whiteSquare = !(whiteSquare);
