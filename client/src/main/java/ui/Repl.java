@@ -12,12 +12,17 @@ public class Repl {
         String result = "";
 
         while (!result.equals("quit") || !result.equals("q")) {
+            printPrompt();
+            String line = scanner.nextLine();
 
+            result = "test";
+            System.out.print(SET_TEXT_COLOR_BLUE + result);
         }
     }
 
-    public void notification() {
-
+    public void notification(String notification) {
+        System.out.println(SET_BG_COLOR_RED + notification);
+        printPrompt();
     }
 
     public void printPrompt() {

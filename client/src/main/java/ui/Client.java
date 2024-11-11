@@ -1,11 +1,27 @@
 package ui;
 
 public class Client {
+    State state = State.SIGNEDOUT;
 
     public enum State {
         SIGNEDOUT,
         SIGNEDIN,
         INGAME
+    }
+
+    /**
+     * Determines which commands to call based on the current state and command
+     */
+    public void eval() {
+        if (state == State.SIGNEDOUT) {
+            logoutREPL();
+        }
+        else if (state == State.SIGNEDIN) {
+            loginREPL();
+        }
+        else {
+            gameREPL();
+        }
     }
 
     /**

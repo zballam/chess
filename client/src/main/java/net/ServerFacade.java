@@ -3,6 +3,8 @@ package net;
 public class ServerFacade {
     // This will call the ClientCommunicator to actually create the HTTP requests
 
+    public ServerFacade() {
+    }
 
 
     // This is how the client interacts with the server
