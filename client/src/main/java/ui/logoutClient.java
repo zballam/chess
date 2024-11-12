@@ -10,30 +10,26 @@ public class logoutClient {
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         try {
             return switch(cmd) {
-//                case "signin" -> signIn(params);
-//                case "list" -> listPets();
-//                case "signout" -> signOut();
+                case "login" -> login(params);
+                case "help" -> help();
+                case "register" -> register(params);
                 case "quit" -> "quit";
-                default -> "quit";//help();
+                default -> help();
             };
         } catch (RuntimeException e) {
             return e.getMessage();
         }
     }
 
-    public String help(String cmd) {
+    public String help() {
         throw new RuntimeException("Not implemented yet");
     }
 
-    public String quit(String cmd) {
+    public String login(String[] params) {
         throw new RuntimeException("Not implemented yet");
     }
 
-    public String login(String cmd) {
-        throw new RuntimeException("Not implemented yet");
-    }
-
-    public String register(String cmd) {
+    public String register(String[] params) {
         throw new RuntimeException("Not implemented yet");
     }
 }
