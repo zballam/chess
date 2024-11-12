@@ -26,14 +26,18 @@ public class Repl {
         System.out.println("♕ Welcome to 240 Chess. Type HELP to begin. ♕");
         Scanner scanner = new Scanner(System.in);
         String result = "";
-
         while (!result.equals("quit") || !result.equals("q")) {
             printPrompt();
             String line = scanner.nextLine();
-
-            result = "test";
-            System.out.print(SET_TEXT_COLOR_BLUE + result);
+            try {
+                result = eval(line);
+                System.out.print(SET_TEXT_COLOR_BLUE + result);
+            } catch (Throwable e) {
+                String msg = e.toString();
+                System.out.print(msg);
+            }
         }
+        System.out.println();
     }
 
     public void notification(String notification) {
@@ -48,15 +52,17 @@ public class Repl {
     /**
      * Determines which commands to call based on the current state and command
      */
-    public void eval() {
+    public String eval(String line) {
+        String result = null;
         if (state == State.SIGNEDOUT) {
-            logoutREPL.run();
+            logoutREPL.run(line);
         }
         else if (state == State.SIGNEDIN) {
-            loginREPL.run();
+            loginREPL.run(line);
         }
         else {
-            gameREPL.run();
+            gameREPL.run(line);
         }
+        return result;
     }
 }
