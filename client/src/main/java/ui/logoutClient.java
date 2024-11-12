@@ -22,7 +22,11 @@ public class logoutClient {
     }
 
     public String help() {
-        throw new RuntimeException("Not implemented yet");
+        return """
+                - login
+                - register
+                - help
+                """;
     }
 
     public String login(String[] params) {

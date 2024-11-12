@@ -53,15 +53,15 @@ public class Repl {
      * Determines which commands to call based on the current state and command
      */
     public String eval(String line) {
-        String result = null;
+        String result;
         if (state == State.SIGNEDOUT) {
-            logoutREPL.run(line);
+            result = logoutREPL.run(line);
         }
         else if (state == State.SIGNEDIN) {
-            loginREPL.run(line);
+            result = loginREPL.run(line);
         }
         else {
-            gameREPL.run(line);
+            result = gameREPL.run(line);
         }
         return result;
     }
