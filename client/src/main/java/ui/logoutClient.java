@@ -4,12 +4,12 @@ import java.util.Arrays;
 
 public class logoutClient {
 
-    public String run (String input) {
+    public String run(String input) {
         var tokens = input.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         try {
-            return switch (cmd) {
+            return switch(cmd) {
 //                case "signin" -> signIn(params);
 //                case "list" -> listPets();
 //                case "signout" -> signOut();
@@ -17,8 +17,23 @@ public class logoutClient {
                 default -> "quit";//help();
             };
         } catch (RuntimeException e) {
-
+            return e.getMessage();
         }
-        return input;
+    }
+
+    public String help(String cmd) {
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    public String quit(String cmd) {
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    public String login(String cmd) {
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    public String register(String cmd) {
+        throw new RuntimeException("Not implemented yet");
     }
 }
