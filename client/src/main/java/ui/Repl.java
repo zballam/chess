@@ -65,22 +65,29 @@ public class Repl {
     }
 
     /**
+     * Creates the result string based on the response rom the ServerFacade
+     */
+    private String logoutMessage(String result) {
+        if (result.startsWith("{\"authToken\":")) {
+            state = State.SIGNEDIN;
+            AuthData newUser = GSON.fromJson(result, AuthData.class);
+            this.username = newUser.username();
+            result = "Welcome " + this.username.toUpperCase();
+        }
+        else if (result.startsWith("{ \"message\":")) {
+            result = result.substring(14,result.length()-3);
+        }
+        return result;
+    }
+
+    /**
      * Determines which commands to call based on the current state and command
      */
     public String eval(String line) {
         String result;
         if (state == State.SIGNEDOUT) {
             result = logoutREPL.run(line);
-            if (result.startsWith("{\"authToken\":")) {
-                state = State.SIGNEDIN;
-                AuthData newUser = GSON.fromJson(result, AuthData.class);
-                System.out.println(newUser);
-                this.username = newUser.username();
-                result = "Welcome " + this.username.toUpperCase();
-            }
-            else if (result.startsWith("{ \"message\":")) {
-                result = result.substring(14,result.length()-3);
-            }
+            result = logoutMessage(result);
         }
         else if (state == State.SIGNEDIN) {
             result = loginREPL.run(line);

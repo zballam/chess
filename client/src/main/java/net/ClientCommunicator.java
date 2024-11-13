@@ -56,4 +56,15 @@ public class ClientCommunicator {
         }
         return readResponseCode(con);
     }
+
+    public String login(String json) throws IOException {
+        String loginUrl = serverUrl + "/session";
+        HttpURLConnection con = connect(loginUrl, "POST");
+        con.setDoOutput(true);
+        con.connect();
+        try(OutputStream requestBody = con.getOutputStream();) {
+            requestBody.write(json.getBytes(StandardCharsets.UTF_8));
+        }
+        return readResponseCode(con);
+    }
 }

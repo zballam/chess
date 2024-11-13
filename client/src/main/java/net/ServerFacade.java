@@ -28,6 +28,18 @@ public class ServerFacade {
         }
     }
 
+    public String login(String username, String password) {
+        Map<String, String> loginReq = Map.of(
+                "username", username,
+                "password", password
+        );
+        try {
+            return clientCommunicator.login(GSON.toJson(loginReq));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 
 

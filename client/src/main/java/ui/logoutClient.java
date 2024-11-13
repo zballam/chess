@@ -1,11 +1,8 @@
 package ui;
 
 import net.ServerFacade;
-import ui.Repl.State;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 
 public class logoutClient {
     ServerFacade serverFacade;
@@ -41,7 +38,14 @@ public class logoutClient {
     }
 
     public String login(String[] params) {
-        throw new RuntimeException("Not implemented yet");
+        if (params.length == 2) {
+            String username = params[0];
+            String password = params[1];
+            return serverFacade.login(username,password);
+        }
+        else {
+            throw new RuntimeException("Expected: <USERNAME> <PASSWORD>");
+        }
     }
 
     public String register(String[] params) {
