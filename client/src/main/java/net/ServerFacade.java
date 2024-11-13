@@ -1,14 +1,13 @@
 package net;
 
 public class ServerFacade {
-    // This will call the ClientCommunicator to actually create the HTTP requests
+    private final String serverUrl;
 
-    public ServerFacade() {
+    public ServerFacade(String serverUrl) {
+        this.serverUrl = serverUrl;
     }
 
 
-    // This is how the client interacts with the server
-    // This sends and receives server requests
 
     // Create URL object
     // url.openConnection();

@@ -23,8 +23,10 @@ public class logoutClient {
 
     public String help() {
         return """
-                - login
-                - register
+                HELP MENU
+                - register <USERNAME> <PASSWORD> <EMAIL>
+                - login <USERNAME> <PASSWORD>
+                - quit
                 - help
                 """;
     }

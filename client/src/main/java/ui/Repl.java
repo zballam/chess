@@ -1,5 +1,6 @@
 package ui;
 
+import java.util.Objects;
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
@@ -26,12 +27,14 @@ public class Repl {
         System.out.println("♕ Welcome to 240 Chess. Type HELP to begin. ♕");
         Scanner scanner = new Scanner(System.in);
         String result = "";
-        while (!result.equals("quit") || !result.equals("q")) {
+        while (!result.equals("quit")) {
             printPrompt();
             String line = scanner.nextLine();
             try {
                 result = eval(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
+                if (!Objects.equals(result, "quit")) {
+                    System.out.print(SET_TEXT_COLOR_BLUE + result);
+                }
             } catch (Throwable e) {
                 String msg = e.toString();
                 System.out.print(msg);
@@ -41,12 +44,12 @@ public class Repl {
     }
 
     public void notification(String notification) {
-        System.out.println(SET_BG_COLOR_RED + notification);
+        System.out.print(SET_BG_COLOR_RED + notification);
         printPrompt();
     }
 
     public void printPrompt() {
-        System.out.print("\n" + RESET_TEXT_COLOR + ">>> " + SET_TEXT_COLOR_YELLOW);
+        System.out.print(RESET_TEXT_COLOR + ">>> " + SET_TEXT_COLOR_YELLOW);
     }
 
     /**
