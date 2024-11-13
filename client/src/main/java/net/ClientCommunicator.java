@@ -56,6 +56,4 @@ public class ClientCommunicator {
         }
         return readResponseCode(con);
     }
-
-    // Use this to actually make GET POST and other HTTP requests
 }

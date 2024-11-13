@@ -1,14 +1,21 @@
 package ui;
 
+import com.google.gson.Gson;
+import model.AuthData;
+
 import java.util.Objects;
 import java.util.Scanner;
+
 import static ui.EscapeSequences.*;
 
 public class Repl {
     private final logoutClient logoutREPL;
     private final loginClient loginREPL;
     private final gameClient gameREPL;
+    private static final Gson GSON = new Gson();
     private State state;
+    private String username = "";
+    private static final String MENUCOLOR = SET_TEXT_COLOR_YELLOW;
 
     public Repl(String url) {
         logoutREPL = new logoutClient(url);
@@ -24,7 +31,7 @@ public class Repl {
     }
 
     public void run() {
-        System.out.println("♕ Welcome to 240 Chess. Type HELP to begin. ♕");
+        System.out.println(MENUCOLOR + "♕ Welcome to 240 Chess. Type HELP to begin. ♕" + RESET_TEXT_COLOR);
         Scanner scanner = new Scanner(System.in);
         String result = "";
         while (!result.equals("quit")) {
@@ -37,7 +44,7 @@ public class Repl {
                 }
             } catch (Throwable e) {
                 String msg = e.toString();
-                System.out.print(msg);
+                System.out.println(msg);
             }
         }
         System.out.println();
@@ -49,7 +56,12 @@ public class Repl {
     }
 
     public void printPrompt() {
-        System.out.print(RESET_TEXT_COLOR + ">>> " + SET_TEXT_COLOR_YELLOW);
+        if (this.state == State.SIGNEDOUT) {
+            System.out.print(MENUCOLOR + "[LOGGED OUT] >>> " + RESET_TEXT_COLOR);
+        }
+        else if (state == State.SIGNEDIN) {
+            System.out.print(MENUCOLOR + "[" + this.username.toUpperCase() + "] >>> " + RESET_TEXT_COLOR);
+        }
     }
 
     /**
@@ -59,8 +71,15 @@ public class Repl {
         String result;
         if (state == State.SIGNEDOUT) {
             result = logoutREPL.run(line);
-            if (result.startsWith("Expected:")) {
+            if (result.startsWith("{\"authToken\":")) {
                 state = State.SIGNEDIN;
+                AuthData newUser = GSON.fromJson(result, AuthData.class);
+                System.out.println(newUser);
+                this.username = newUser.username();
+                result = "Welcome " + this.username.toUpperCase();
+            }
+            else if (result.startsWith("{ \"message\":")) {
+                result = result.substring(14,result.length()-3);
             }
         }
         else if (state == State.SIGNEDIN) {

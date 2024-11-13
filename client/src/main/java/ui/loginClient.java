@@ -1,9 +1,15 @@
 package ui;
 
+import static ui.EscapeSequences.*;
+
 public class loginClient {
 
     public String run(String command) {
-        throw new RuntimeException("LoginClient: Not implemented yet");
+        System.out.print(SET_BG_COLOR_MAGENTA + "LOGGED IN:");
+        if (!command.equals(null)) {
+            throw new RuntimeException("LoginClient: Not implemented yet");
+        }
+        throw new RuntimeException("LoginClient");
     }
 
     public String help(String cmd) {

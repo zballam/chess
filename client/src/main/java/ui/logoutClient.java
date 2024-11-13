@@ -37,8 +37,7 @@ public class logoutClient {
                 - register <USERNAME> <PASSWORD> <EMAIL>
                 - login <USERNAME> <PASSWORD>
                 - quit
-                - help
-                """;
+                - help""";
     }
 
     public String login(String[] params) {
