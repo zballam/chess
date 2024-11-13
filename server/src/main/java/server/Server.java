@@ -94,7 +94,7 @@ public class Server {
      * Register a new user.
      * @return JSON String
      */
-    private Object register(Request req, Response res) { //Throws ResponseException?
+    private Object register(Request req, Response res) {
         UserData newUser = GSON.fromJson(req.body(), UserData.class);
         // Body: { "username":"", "password":"", "email":"" }
         if (newUser.username() == null || newUser.password() == null || newUser.email() == null) {

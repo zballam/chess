@@ -3,7 +3,7 @@ package ui;
 public class loginClient {
 
     public String run(String command) {
-        throw new RuntimeException("Not implemented yet");
+        throw new RuntimeException("LoginClient: Not implemented yet");
     }
 
     public String help(String cmd) {

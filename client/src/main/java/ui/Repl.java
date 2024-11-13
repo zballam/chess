@@ -10,8 +10,8 @@ public class Repl {
     private final gameClient gameREPL;
     private State state;
 
-    public Repl() {
-        logoutREPL = new logoutClient();
+    public Repl(String url) {
+        logoutREPL = new logoutClient(url);
         loginREPL = new loginClient();
         gameREPL = new gameClient();
         state = State.SIGNEDOUT;
@@ -33,7 +33,7 @@ public class Repl {
             try {
                 result = eval(line);
                 if (!Objects.equals(result, "quit")) {
-                    System.out.print(SET_TEXT_COLOR_BLUE + result);
+                    System.out.println(SET_TEXT_COLOR_BLUE + result);
                 }
             } catch (Throwable e) {
                 String msg = e.toString();
@@ -59,6 +59,9 @@ public class Repl {
         String result;
         if (state == State.SIGNEDOUT) {
             result = logoutREPL.run(line);
+            if (result.startsWith("Expected:")) {
+                state = State.SIGNEDIN;
+            }
         }
         else if (state == State.SIGNEDIN) {
             result = loginREPL.run(line);

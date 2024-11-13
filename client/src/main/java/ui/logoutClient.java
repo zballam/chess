@@ -1,8 +1,18 @@
 package ui;
 
+import net.ServerFacade;
+import ui.Repl.State;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 public class logoutClient {
+    ServerFacade serverFacade;
+
+    public logoutClient(String url) {
+        this.serverFacade = new ServerFacade(url);
+    }
 
     public String run(String input) {
         var tokens = input.toLowerCase().split(" ");
@@ -36,6 +46,14 @@ public class logoutClient {
     }
 
     public String register(String[] params) {
-        throw new RuntimeException("Not implemented yet");
+        if (params.length == 3) {
+            String username = params[0];
+            String password = params[1];
+            String email = params[2];
+            return serverFacade.register(username,password,email);
+        }
+        else {
+            throw new RuntimeException("Expected: <USERNAME> <PASSWORD> <EMAIL>");
+        }
     }
 }
