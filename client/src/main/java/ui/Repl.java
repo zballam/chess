@@ -15,7 +15,7 @@ public class Repl {
     private static final Gson GSON = new Gson();
     private State state;
     private String username = "";
-    private static final String MENUCOLOR = SET_TEXT_COLOR_YELLOW;
+    private static final String MENUCOLOR = SET_TEXT_COLOR_MAGENTA;
 
     public Repl(String url) {
         logoutREPL = new logoutClient(url);

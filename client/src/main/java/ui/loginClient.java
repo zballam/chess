@@ -1,19 +1,36 @@
 package ui;
 
+import java.util.Arrays;
+
 import static ui.EscapeSequences.*;
 
 public class loginClient {
 
-    public String run(String command) {
-        System.out.print(SET_BG_COLOR_MAGENTA + "LOGGED IN:");
-        if (!command.equals(null)) {
-            throw new RuntimeException("LoginClient: Not implemented yet");
+    public String run(String input) {
+        var tokens = input.toLowerCase().split(" ");
+        var cmd = (tokens.length > 0) ? tokens[0] : "help";
+        var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+        try {
+            return switch(cmd) {
+                case "help" -> help();
+                case "quit" -> "quit";
+                default -> help();
+            };
+        } catch (RuntimeException e) {
+            return e.getMessage();
         }
-        throw new RuntimeException("LoginClient");
     }
 
-    public String help(String cmd) {
-        throw new RuntimeException("Not implemented yet");
+    public String help() {
+        return """
+                HELP MENU
+                - logout
+                - create <NAME>
+                - list
+                - join <ID> [WHITE|BLACK]
+                - observe <ID>
+                - quit
+                - help""";
     }
 
     public String logout(String cmd) {
