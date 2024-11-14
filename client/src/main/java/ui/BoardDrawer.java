@@ -15,7 +15,7 @@ public class BoardDrawer {
     private static final String WHITETEAM = SET_TEXT_COLOR_BLUE;
     private static final String BLACKTEAM = SET_TEXT_COLOR_MAGENTA;
 
-    private static final PrintStream outStream = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+    private static final PrintStream OUTSTREAM = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
 
     public static void main(String[] args) {
@@ -30,7 +30,7 @@ public class BoardDrawer {
     }
 
     public static void drawChessBoard(ChessPiece[][] pieces, ChessGame.TeamColor team) {
-        PrintStream out = outStream;
+        PrintStream out = OUTSTREAM;
         out.print(ERASE_SCREEN);
         boolean blackTeam;
         blackTeam = !(team == ChessGame.TeamColor.WHITE);

@@ -20,7 +20,7 @@ public class ClientCommunicator {
         return connection;
     }
 
-    private String responseReader(InputStream responseBody) throws IOException {
+    public static String responseReader(InputStream responseBody) throws IOException {
         StringBuilder response = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(responseBody, StandardCharsets.UTF_8))) {
             String line;

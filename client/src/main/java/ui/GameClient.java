@@ -3,11 +3,11 @@ package ui;
 import chess.ChessGame;
 import net.ServerFacade;
 
-public class gameClient {
+public class GameClient {
     ServerFacade serverFacade;
     private final BoardDrawer drawer = new BoardDrawer();
 
-    public gameClient(ServerFacade serverFacade) {
+    public GameClient(ServerFacade serverFacade) {
         this.serverFacade = serverFacade;
     }
 

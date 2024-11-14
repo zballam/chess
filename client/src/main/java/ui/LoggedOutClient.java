@@ -6,11 +6,11 @@ import net.ServerFacade;
 
 import java.util.Arrays;
 
-public class loggedOutClient {
+public class LoggedOutClient {
     private static final Gson GSON = new Gson();
     ServerFacade serverFacade;
 
-    public loggedOutClient(ServerFacade serverFacade) {
+    public LoggedOutClient(ServerFacade serverFacade) {
         this.serverFacade = serverFacade;
     }
 

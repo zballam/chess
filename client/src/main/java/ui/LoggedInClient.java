@@ -9,14 +9,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class loggedInClient {
+public class LoggedInClient {
     private static final Gson GSON = new Gson();
     private final ServerFacade serverFacade;
     private final String authToken;
     Map<String, String> gameIDs;
     Map<String, String> gameIDsInverse;
 
-    public loggedInClient(ServerFacade serverFacade, String authToken) {
+    public LoggedInClient(ServerFacade serverFacade, String authToken) {
         this.serverFacade = serverFacade;
         this.authToken = authToken;
         this.gameIDs = new HashMap<>();

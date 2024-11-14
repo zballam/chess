@@ -39,17 +39,6 @@ public class ServerFacadeTests {
         server.stop();
     }
 
-    private String responseReader(InputStream responseBody) throws IOException {
-        StringBuilder response = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(responseBody, StandardCharsets.UTF_8))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-            return response.toString();
-        }
-    }
-
     @BeforeEach
     public void reset() throws IOException {
         URL url = new URL("http://localhost:8080/db");
@@ -59,12 +48,12 @@ public class ServerFacadeTests {
         connection.connect();
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             InputStream responseBody = connection.getInputStream();
-            System.out.println(responseReader(responseBody));
+            System.out.println(net.ClientCommunicator.responseReader(responseBody));
         }
         else {
             // SERVER RETURNED AN HTTP ERROR
             InputStream responseBody = connection.getErrorStream();
-            System.out.println(responseReader(responseBody));
+            System.out.println(net.ClientCommunicator.responseReader(responseBody));
         }
     }
 

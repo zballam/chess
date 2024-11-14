@@ -9,9 +9,9 @@ import static ui.EscapeSequences.*;
 
 public class Repl {
     private final ServerFacade serverFacade;
-    private final loggedOutClient logoutREPL;
-    private loggedInClient loginREPL = null;
-    private final gameClient gameREPL;
+    private final LoggedOutClient logoutREPL;
+    private LoggedInClient loginREPL = null;
+    private final GameClient gameREPL;
     private State state;
     private String username = "";
     private String authToken = "";
@@ -19,8 +19,8 @@ public class Repl {
 
     public Repl(String url) {
         this.serverFacade = new ServerFacade(url);
-        this.logoutREPL = new loggedOutClient(serverFacade);
-        this.gameREPL = new gameClient(serverFacade);
+        this.logoutREPL = new LoggedOutClient(serverFacade);
+        this.gameREPL = new GameClient(serverFacade);
         this.state = State.SIGNEDOUT;
     }
 
@@ -50,11 +50,6 @@ public class Repl {
         System.out.println();
     }
 
-    public void notification(String notification) {
-        System.out.print(SET_BG_COLOR_RED + notification);
-        printPrompt();
-    }
-
     public void printPrompt() {
         if (this.state == State.SIGNEDOUT) {
             System.out.print(MENUCOLOR + "[LOGGED OUT] >>> " + RESET_TEXT_COLOR);
@@ -73,7 +68,7 @@ public class Repl {
         var tokens = result.toLowerCase().split(" ");
         this.username = tokens[1];
         this.authToken = tokens[2];
-        this.loginREPL = new loggedInClient(serverFacade, this.authToken);
+        this.loginREPL = new LoggedInClient(serverFacade, this.authToken);
         return "Welcome " + this.username.toUpperCase();
     }
 
