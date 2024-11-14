@@ -100,4 +100,19 @@ public class ServerFacadeTests {
         String noUser = "{ \"message\": \"Error: unauthorized\" }";
         assertEquals(noUser,facade.login("TestUsername","TestPassword"));
     }
+
+    @Test
+    @DisplayName("Logout Test User")
+    public void logout() {
+        String json = facade.register("TestUsername","TestPassword","TestEmail");
+        AuthData tempAuthData = GSON.fromJson(json, AuthData.class);
+        assertEquals("{}",facade.logout(tempAuthData.authToken()),"Invalid logout");
+    }
+
+    @Test
+    @DisplayName("Logout Non-Existing User")
+    public void logoutFalse() {
+        String noUser = "{ \"message\": \"Error: unauthorized\" }";
+        assertEquals(noUser,facade.logout(""));
+    }
 }
