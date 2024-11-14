@@ -40,11 +40,26 @@ public class logoutClient {
                 - help""";
     }
 
+    private String message(String result) {
+        if (result.startsWith("{\"authToken\":")) {
+            AuthData newUser = GSON.fromJson(result, AuthData.class);
+            // Initialize the loginClient
+            String newUsername = newUser.username();
+            String newAuthToken = newUser.authToken();
+            result = "Welcome " + newUsername.toUpperCase() + " " + newAuthToken;
+        }
+        else if (result.startsWith("{ \"message\":")) {
+            result = result.substring(14,result.length()-3);
+        }
+        return result;
+    }
+
     public String login(String[] params) {
         if (params.length == 2) {
             String username = params[0];
             String password = params[1];
-            return serverFacade.login(username,password);
+            String result = serverFacade.login(username,password);
+            return message(result);
         }
         else {
             throw new RuntimeException("Expected: <USERNAME> <PASSWORD>");
@@ -57,17 +72,7 @@ public class logoutClient {
             String password = params[1];
             String email = params[2];
             String result = serverFacade.register(username,password,email);
-            if (result.startsWith("{\"authToken\":")) {
-                AuthData newUser = GSON.fromJson(result, AuthData.class);
-                // Initialize the loginClient
-                String newUsername = newUser.username();
-                String newAuthToken = newUser.authToken();
-                result = "Welcome " + newUsername.toUpperCase() + " " + newAuthToken;
-            }
-            else if (result.startsWith("{ \"message\":")) {
-                result = result.substring(14,result.length()-3);
-            }
-            return result;
+            return message(result);
         }
         else {
             throw new RuntimeException("Expected: <USERNAME> <PASSWORD> <EMAIL>");
