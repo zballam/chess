@@ -24,11 +24,15 @@ public class LoggedOutClient {
                 case "help" -> help();
                 case "register" -> register(params);
                 case "quit" -> "quit";
-                default -> help();
+                default -> error();
             };
         } catch (RuntimeException e) {
             return e.getMessage();
         }
+    }
+
+    private String error() {
+        return "ERROR: Invalid command";
     }
 
     public String help() {

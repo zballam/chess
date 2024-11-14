@@ -23,11 +23,15 @@ public class GameClient {
                 case "draw" -> draw();
                 case "leave" -> leave();
                 case "quit" -> "quit";
-                default -> help();
+                default -> error();
             };
         } catch (RuntimeException e) {
             return e.getMessage();
         }
+    }
+
+    private String error() {
+        return "ERROR: Invalid command";
     }
 
     private String leave() {
