@@ -82,4 +82,22 @@ public class ServerFacadeTests {
         assertEquals(alreadyTaken,facade.register("TestUsername","",""));
     }
 
+    @Test
+    @DisplayName("Login Test User")
+    public void login() {
+        String json = facade.register("TestUsername","TestPassword","TestEmail");
+        AuthData tempAuthData = GSON.fromJson(json, AuthData.class);
+        facade.logout(tempAuthData.authToken());
+        String newJson = facade.login("TestUsername", "TestPassword");
+        AuthData authData = GSON.fromJson(newJson, AuthData.class);
+        assertEquals("TestUsername",authData.username(),"Invalid username returned");
+        assertNotNull(authData.authToken(), "No authToken");
+    }
+
+    @Test
+    @DisplayName("Login Non-Existing User")
+    public void loginFalse() {
+        String noUser = "{ \"message\": \"Error: unauthorized\" }";
+        assertEquals(noUser,facade.login("TestUsername","TestPassword"));
+    }
 }
