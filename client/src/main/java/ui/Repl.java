@@ -1,7 +1,5 @@
 package ui;
 
-import com.google.gson.Gson;
-import model.AuthData;
 import net.ServerFacade;
 
 import java.util.Objects;
@@ -11,8 +9,8 @@ import static ui.EscapeSequences.*;
 
 public class Repl {
     private final ServerFacade serverFacade;
-    private final logoutClient logoutREPL;
-    private loginClient loginREPL = null;
+    private final loggedOutClient logoutREPL;
+    private loggedInClient loginREPL = null;
     private final gameClient gameREPL;
     private State state;
     private String username = "";
@@ -21,7 +19,7 @@ public class Repl {
 
     public Repl(String url) {
         this.serverFacade = new ServerFacade(url);
-        this.logoutREPL = new logoutClient(serverFacade);
+        this.logoutREPL = new loggedOutClient(serverFacade);
         this.gameREPL = new gameClient(serverFacade);
         this.state = State.SIGNEDOUT;
     }
@@ -72,7 +70,7 @@ public class Repl {
         var tokens = result.toLowerCase().split(" ");
         this.username = tokens[1];
         this.authToken = tokens[2];
-        this.loginREPL = new loginClient(serverFacade, this.username, this.authToken);
+        this.loginREPL = new loggedInClient(serverFacade, this.username, this.authToken);
         return "Welcome " + this.username.toUpperCase();
     }
 

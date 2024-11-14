@@ -5,13 +5,13 @@ import net.ServerFacade;
 
 import java.util.Arrays;
 
-public class loginClient {
+public class loggedInClient {
     private static final Gson GSON = new Gson();
     ServerFacade serverFacade;
     String username;
     String authToken;
 
-    public loginClient(ServerFacade serverFacade, String username, String authToken) {
+    public loggedInClient(ServerFacade serverFacade, String username, String authToken) {
         this.serverFacade = serverFacade;
         this.username = username;
         this.authToken = authToken;
@@ -48,10 +48,10 @@ public class loginClient {
 
     public String logout() {
         String result = serverFacade.logout(this.authToken);
-        return message(result);
+        return logOutMessage(result);
     }
 
-    private String message(String result) {
+    private String logOutMessage(String result) {
         if (result.equals("{}")) {
             result = "You have successfully logged out";
         }
