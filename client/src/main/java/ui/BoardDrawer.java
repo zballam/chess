@@ -61,15 +61,21 @@ public class BoardDrawer {
         out.println();
     }
 
-    private static void drawRows(ChessPiece[][] pieces, PrintStream out, boolean whiteTeam) {
+    private static void drawRows(ChessPiece[][] pieces, PrintStream out, boolean blackTeam) {
         List<String> colHeaders = new ArrayList<>(List.of("1","2","3","4","5","6","7","8"));
         setLightGray(out);
         int x = 0;
         boolean whiteSquare = true;
-        if (whiteTeam) {
+        if (blackTeam) {
             for (String colHeader : colHeaders) {
                 drawColHeader(out, colHeader);
-                drawRow(out, pieces[x], whiteSquare);
+                // reverse the array
+                ChessPiece[] array = pieces[x];
+                ChessPiece[] reversedArray = new ChessPiece[array.length];
+                for (int i = 0; i < array.length; i++) {
+                    reversedArray[i] = array[array.length - 1 - i];
+                }
+                drawRow(out, reversedArray, whiteSquare);
                 x++;
                 setLightGray(out);
                 drawColHeader(out, colHeader);
