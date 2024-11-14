@@ -89,11 +89,15 @@ public class Repl {
                 this.state = State.SIGNEDOUT;
             }
             else if (result.equals("Start Game")) {
+                result = "Starting Game..."
                 this.state = State.INGAME;
             }
         }
         else {
             result = gameREPL.run(line);
+            if (result.equals("Return")) {
+                this.state = State.SIGNEDIN;
+            }
         }
         return result;
     }
