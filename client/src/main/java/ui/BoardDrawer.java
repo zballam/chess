@@ -29,7 +29,7 @@ public class BoardDrawer {
         drawChessBoard(pieces, black);
     }
 
-    private static void drawChessBoard(ChessPiece[][] pieces, ChessGame.TeamColor team) {
+    public static void drawChessBoard(ChessPiece[][] pieces, ChessGame.TeamColor team) {
         PrintStream out = outStream;
         out.print(ERASE_SCREEN);
         boolean blackTeam;
