@@ -1,5 +1,6 @@
 package ui;
 
+import com.google.gson.Gson;
 import net.ServerFacade;
 
 import java.util.Arrays;
@@ -7,8 +8,8 @@ import java.util.Arrays;
 public class logoutClient {
     ServerFacade serverFacade;
 
-    public logoutClient(String url) {
-        this.serverFacade = new ServerFacade(url);
+    public logoutClient(ServerFacade serverFacade) {
+        this.serverFacade = serverFacade;
     }
 
     public String run(String input) {

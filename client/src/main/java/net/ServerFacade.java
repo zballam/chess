@@ -40,6 +40,14 @@ public class ServerFacade {
         }
     }
 
+    public String logout(String username, String authToken) {
+        try {
+            return clientCommunicator.logout(username, authToken);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 
 

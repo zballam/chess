@@ -2,6 +2,7 @@ package ui;
 
 import com.google.gson.Gson;
 import model.AuthData;
+import net.ServerFacade;
 
 import java.util.Objects;
 import java.util.Scanner;
@@ -9,19 +10,21 @@ import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
 public class Repl {
+    private final ServerFacade serverFacade;
     private final logoutClient logoutREPL;
-    private final loginClient loginREPL;
+    private loginClient loginREPL = null;
     private final gameClient gameREPL;
     private static final Gson GSON = new Gson();
     private State state;
     private String username = "";
+    private String authToken = "";
     private static final String MENUCOLOR = SET_TEXT_COLOR_MAGENTA;
 
     public Repl(String url) {
-        logoutREPL = new logoutClient(url);
-        loginREPL = new loginClient();
-        gameREPL = new gameClient();
-        state = State.SIGNEDOUT;
+        this.serverFacade = new ServerFacade(url);
+        this.logoutREPL = new logoutClient(serverFacade);
+        this.gameREPL = new gameClient(serverFacade);
+        this.state = State.SIGNEDOUT;
     }
 
     public enum State {
@@ -69,10 +72,24 @@ public class Repl {
      */
     private String logoutMessage(String result) {
         if (result.startsWith("{\"authToken\":")) {
-            state = State.SIGNEDIN;
+            this.state = State.SIGNEDIN;
             AuthData newUser = GSON.fromJson(result, AuthData.class);
+            // Initialize the loginClient
             this.username = newUser.username();
+            this.authToken = newUser.authToken();
+            this.loginREPL = new loginClient(serverFacade, this.username, this.authToken);
             result = "Welcome " + this.username.toUpperCase();
+        }
+        else if (result.startsWith("{ \"message\":")) {
+            result = result.substring(14,result.length()-3);
+        }
+        return result;
+    }
+
+    private String loginMessage(String result) {
+        if (result.equals("{}")) {
+            this.state = State.SIGNEDOUT;
+            result = "You have successfully logged out";
         }
         else if (result.startsWith("{ \"message\":")) {
             result = result.substring(14,result.length()-3);
@@ -91,6 +108,7 @@ public class Repl {
         }
         else if (state == State.SIGNEDIN) {
             result = loginREPL.run(line);
+            result = loginMessage(result);
         }
         else {
             result = gameREPL.run(line);

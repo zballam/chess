@@ -1,7 +1,5 @@
 package net;
 
-import netscape.javascript.JSObject;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -65,6 +63,14 @@ public class ClientCommunicator {
         try(OutputStream requestBody = con.getOutputStream();) {
             requestBody.write(json.getBytes(StandardCharsets.UTF_8));
         }
+        return readResponseCode(con);
+    }
+
+    public String logout(String username, String authToken) throws IOException {
+        String logoutUrl = serverUrl + "/session";
+        HttpURLConnection con = connect(logoutUrl, "DELETE");
+        con.addRequestProperty("Authorization", authToken);
+        con.connect();
         return readResponseCode(con);
     }
 }

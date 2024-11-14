@@ -1,10 +1,19 @@
 package ui;
 
+import net.ServerFacade;
+
 import java.util.Arrays;
 
-import static ui.EscapeSequences.*;
-
 public class loginClient {
+    ServerFacade serverFacade;
+    String username;
+    String authToken;
+
+    public loginClient(ServerFacade serverFacade, String username, String authToken) {
+        this.serverFacade = serverFacade;
+        this.username = username;
+        this.authToken = authToken;
+    }
 
     public String run(String input) {
         var tokens = input.toLowerCase().split(" ");
@@ -13,6 +22,7 @@ public class loginClient {
         try {
             return switch(cmd) {
                 case "help" -> help();
+                case "logout" -> logout();
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -33,23 +43,23 @@ public class loginClient {
                 - help""";
     }
 
-    public String logout(String cmd) {
+    public String logout() {
+        return serverFacade.logout(this.username, this.authToken);
+    }
+
+    public String createGame() {
         throw new RuntimeException("Not implemented yet");
     }
 
-    public String createGame(String cmd) {
+    public String listGames() {
         throw new RuntimeException("Not implemented yet");
     }
 
-    public String listGames(String cmd) {
+    public String playGame() {
         throw new RuntimeException("Not implemented yet");
     }
 
-    public String playGame(String cmd) {
-        throw new RuntimeException("Not implemented yet");
-    }
-
-    public String observeGame(String cmd) {
+    public String observeGame() {
         throw new RuntimeException("Not implemented yet");
     }
 }
