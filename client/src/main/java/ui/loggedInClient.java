@@ -6,17 +6,22 @@ import model.GamesList;
 import net.ServerFacade;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class loggedInClient {
     private static final Gson GSON = new Gson();
-    ServerFacade serverFacade;
-    String username;
-    String authToken;
+    private final ServerFacade serverFacade;
+    private final String authToken;
+    Map<String, String> gameIDs;
+    Map<String, String> gameIDsInverse;
 
-    public loggedInClient(ServerFacade serverFacade, String username, String authToken) {
+    public loggedInClient(ServerFacade serverFacade, String authToken) {
         this.serverFacade = serverFacade;
-        this.username = username;
         this.authToken = authToken;
+        this.gameIDs = new HashMap<>();
+        this.gameIDsInverse = new HashMap<>();
+        listGames();
     }
 
     public String run(String input) {
@@ -69,7 +74,8 @@ public class loggedInClient {
     private String createGameMessage(String result) {
         if (result.startsWith("{ \"gameID\": ")) {
             String gameID = result.substring(12,result.length()-2);
-            result = "Successfully created game with gameID: " + gameID;
+            listGames();
+            result = "Successfully created game with gameID: " + this.gameIDsInverse.get(gameID);
         }
         else if (result.startsWith("{ \"message\":")) {
             result = result.substring(14,result.length()-3);
@@ -92,15 +98,21 @@ public class loggedInClient {
         try {
             GamesList gamesList = GSON.fromJson(result, GamesList.class);
             StringBuilder builder = new StringBuilder();
+            Integer x = 1;
+            this.gameIDs.clear();
+            this.gameIDsInverse.clear();
             for (GameData game : gamesList.games()) {
                 builder.append("- ");
-                builder.append(game.gameID()).append(" ");
+                this.gameIDs.put(x.toString(), String.valueOf(game.gameID()));
+                this.gameIDsInverse.put(String.valueOf(game.gameID()), x.toString());
+                builder.append(x).append(" ");
                 builder.append(game.gameName()).append(" ");
                 builder.append("\n").append("    ");
                 builder.append("White: ").append(game.whiteUsername()).append(" ");
                 builder.append("\n").append("    ");
                 builder.append("Black: ").append(game.blackUsername());
                 builder.append("\n");
+                x++;
             }
             builder.deleteCharAt(builder.length() - 1);
             result = builder.toString();
@@ -132,10 +144,10 @@ public class loggedInClient {
 
     public String joinGame(String[] params) {
         if (params.length == 2) {
-            String gameID = params[0];
+            String gameID = this.gameIDs.get(params[0]);
             String playerColor = params[1];
             String result = serverFacade.joinGame(gameID, playerColor, this.authToken);
-            return joinGameMessage(result, gameID, playerColor);
+            return joinGameMessage(result, params[0], playerColor);
         }
         else {
             throw new RuntimeException("Expected: <ID> [WHITE|BLACK]");
@@ -143,6 +155,12 @@ public class loggedInClient {
     }
 
     public String observeGame(String[] params) {
+        if (params.length == 1) {
+            String gameID = gameIDs.get(params[0]);
+        }
+        else {
+            throw new RuntimeException("Expected: <ID>");
+        }
         return "Start Game";
     }
 }

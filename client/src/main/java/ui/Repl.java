@@ -73,7 +73,7 @@ public class Repl {
         var tokens = result.toLowerCase().split(" ");
         this.username = tokens[1];
         this.authToken = tokens[2];
-        this.loginREPL = new loggedInClient(serverFacade, this.username, this.authToken);
+        this.loginREPL = new loggedInClient(serverFacade, this.authToken);
         return "Welcome " + this.username.toUpperCase();
     }
 
