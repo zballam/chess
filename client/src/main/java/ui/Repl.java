@@ -14,7 +14,6 @@ public class Repl {
     private final logoutClient logoutREPL;
     private loginClient loginREPL = null;
     private final gameClient gameREPL;
-    private static final Gson GSON = new Gson();
     private State state;
     private String username = "";
     private String authToken = "";
@@ -67,25 +66,6 @@ public class Repl {
         }
     }
 
-    /**
-     * Creates the result string based on the response rom the ServerFacade
-     */
-    private String logoutMessage(String result) {
-        if (result.startsWith("{\"authToken\":")) {
-            this.state = State.SIGNEDIN;
-            AuthData newUser = GSON.fromJson(result, AuthData.class);
-            // Initialize the loginClient
-            this.username = newUser.username();
-            this.authToken = newUser.authToken();
-            this.loginREPL = new loginClient(serverFacade, this.username, this.authToken);
-            result = "Welcome " + this.username.toUpperCase();
-        }
-        else if (result.startsWith("{ \"message\":")) {
-            result = result.substring(14,result.length()-3);
-        }
-        return result;
-    }
-
     private String loginMessage(String result) {
         if (result.equals("{}")) {
             this.state = State.SIGNEDOUT;
@@ -104,7 +84,15 @@ public class Repl {
         String result;
         if (state == State.SIGNEDOUT) {
             result = logoutREPL.run(line);
-            result = logoutMessage(result);
+            if (result.startsWith("Welcome ")) {
+                this.state = Repl.State.SIGNEDIN;
+                // Initialize the loginClient
+                var tokens = result.toLowerCase().split(" ");
+                this.username = tokens[1];
+                this.authToken = tokens[2];
+                this.loginREPL = new loginClient(serverFacade, this.username, this.authToken);
+                result = "Welcome " + this.username.toUpperCase();
+            }
         }
         else if (state == State.SIGNEDIN) {
             result = loginREPL.run(line);

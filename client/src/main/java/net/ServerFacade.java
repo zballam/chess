@@ -38,9 +38,9 @@ public class ServerFacade {
         }
     }
 
-    public String logout(String username, String authToken) {
+    public String logout(String authToken) {
         try {
-            return clientCommunicator.logout(username, authToken);
+            return clientCommunicator.logout(authToken);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -52,6 +52,14 @@ public class ServerFacade {
         );
         try {
             return clientCommunicator.createGame(GSON.toJson(createGameReq), authToken);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String listGames(String authToken) {
+        try {
+            return clientCommunicator.listGames(authToken);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

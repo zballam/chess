@@ -45,7 +45,7 @@ public class loginClient {
     }
 
     public String logout() {
-        return serverFacade.logout(this.username, this.authToken);
+        return serverFacade.logout(this.authToken);
     }
 
     public String createGame(String[] params) {
@@ -59,7 +59,7 @@ public class loginClient {
     }
 
     public String listGames() {
-        throw new RuntimeException("Not implemented yet");
+        return serverFacade.listGames(this.authToken);
     }
 
     public String playGame() {

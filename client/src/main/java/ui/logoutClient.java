@@ -1,11 +1,13 @@
 package ui;
 
 import com.google.gson.Gson;
+import model.AuthData;
 import net.ServerFacade;
 
 import java.util.Arrays;
 
 public class logoutClient {
+    private static final Gson GSON = new Gson();
     ServerFacade serverFacade;
 
     public logoutClient(ServerFacade serverFacade) {
@@ -54,7 +56,18 @@ public class logoutClient {
             String username = params[0];
             String password = params[1];
             String email = params[2];
-            return serverFacade.register(username,password,email);
+            String result = serverFacade.register(username,password,email);
+            if (result.startsWith("{\"authToken\":")) {
+                AuthData newUser = GSON.fromJson(result, AuthData.class);
+                // Initialize the loginClient
+                String newUsername = newUser.username();
+                String newAuthToken = newUser.authToken();
+                result = "Welcome " + newUsername.toUpperCase() + " " + newAuthToken;
+            }
+            else if (result.startsWith("{ \"message\":")) {
+                result = result.substring(14,result.length()-3);
+            }
+            return result;
         }
         else {
             throw new RuntimeException("Expected: <USERNAME> <PASSWORD> <EMAIL>");

@@ -66,7 +66,7 @@ public class ClientCommunicator {
         return readResponseCode(con);
     }
 
-    public String logout(String username, String authToken) throws IOException {
+    public String logout(String authToken) throws IOException {
         String logoutUrl = serverUrl + "/session";
         HttpURLConnection con = connect(logoutUrl, "DELETE");
         con.addRequestProperty("Authorization", authToken);
@@ -83,6 +83,14 @@ public class ClientCommunicator {
         try(OutputStream requestBody = con.getOutputStream();) {
             requestBody.write(json.getBytes(StandardCharsets.UTF_8));
         }
+        return readResponseCode(con);
+    }
+
+    public String listGames(String authToken) throws IOException {
+        String listGamesUrl = serverUrl + "/game";
+        HttpURLConnection con = connect(listGamesUrl, "GET");
+        con.addRequestProperty("Authorization", authToken);
+        con.connect();
         return readResponseCode(con);
     }
 }
