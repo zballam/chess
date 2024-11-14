@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.*;
 import net.ServerFacade;
@@ -13,6 +14,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -110,6 +113,17 @@ public class ServerFacadeTests {
     }
 
     @Test
+    @DisplayName("Logout Test User After Login")
+    public void logout2() {
+        String json = facade.register("TestUsername","TestPassword","TestEmail");
+        AuthData tempAuthData = GSON.fromJson(json, AuthData.class);
+        facade.logout(tempAuthData.authToken());
+        String newJson = facade.login("TestUsername", "TestPassword");
+        AuthData authData = GSON.fromJson(newJson, AuthData.class);
+        assertEquals("{}",facade.logout(authData.authToken()),"Invalid logout");
+    }
+
+    @Test
     @DisplayName("Logout Non-Existing User")
     public void logoutFalse() {
         String noUser = "{ \"message\": \"Error: unauthorized\" }";
@@ -134,5 +148,25 @@ public class ServerFacadeTests {
         facade.createGame("TestGame", tempAuthData.authToken());
         String noUser = "{ \"message\": \"Error: GameName already taken\" }";
         assertEquals(noUser,facade.createGame("TestGame", tempAuthData.authToken()));
+    }
+
+    @Test
+    @DisplayName("List Games")
+    public void listGames() {
+        Collection<GameData> games = new ArrayList<>();
+        String json = facade.register("TestUsername","TestPassword","TestEmail");
+        AuthData tempAuthData = GSON.fromJson(json, AuthData.class);
+        String s = facade.createGame("TestGame1", tempAuthData.authToken());
+        var tokens = s.toLowerCase().split(" ");
+        int gameID = Integer.parseInt(tokens[2]);
+        games.add(new GameData(gameID,null,null,"TestGame1",new ChessGame()));
+        String s2 = facade.createGame("TestGame2", tempAuthData.authToken());
+        var tokens2 = s2.toLowerCase().split(" ");
+        int gameID2 = Integer.parseInt(tokens2[2]);
+        games.add(new GameData(gameID2,null,null,"TestGame2",new ChessGame()));
+        String response = facade.listGames(tempAuthData.authToken());
+        GamesList testGamesList = new GamesList(games);
+        String testGamesListString = GSON.toJson(testGamesList);
+        assertEquals(testGamesListString,response);
     }
 }
