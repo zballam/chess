@@ -7,13 +7,10 @@ import net.ServerFacade;
 import org.junit.jupiter.api.*;
 import server.Server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -25,13 +22,15 @@ public class ServerFacadeTests {
     private static Server server;
     private static ServerFacade facade;
     private static final Gson GSON = new Gson();
+    private static String serverUrl;
 
     @BeforeAll
     public static void init() {
         server = new Server();
-        var port = server.run(8080);
+        var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-        facade = new ServerFacade("http://localhost:8080");
+        serverUrl = "http://localhost:" + port;
+        facade = new ServerFacade(serverUrl);
     }
 
     @AfterAll
@@ -41,7 +40,7 @@ public class ServerFacadeTests {
 
     @BeforeEach
     public void reset() throws IOException {
-        URL url = new URL("http://localhost:8080/db");
+        URL url = new URL(serverUrl + "/db");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setReadTimeout(5000);
         connection.setRequestMethod("DELETE");
