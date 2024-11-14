@@ -1,6 +1,8 @@
 package ui;
 
 import com.google.gson.Gson;
+import model.GameData;
+import model.GamesList;
 import net.ServerFacade;
 
 import java.util.Arrays;
@@ -26,6 +28,7 @@ public class loggedInClient {
                 case "help" -> help();
                 case "logout" -> logout();
                 case "create" -> createGame(params);
+                case "list" -> listGames();
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -71,8 +74,26 @@ public class loggedInClient {
         }
     }
 
+    private String listGamesMessage(String result) {
+        GamesList gamesList = GSON.fromJson(result, GamesList.class);
+        StringBuilder builder = new StringBuilder();
+        for (GameData game : gamesList.games()) {
+            builder.append("- ");
+            builder.append(game.gameID()).append(" ");
+            builder.append(game.gameName()).append(" ");
+            builder.append("\n").append("    ");
+            builder.append("White: ").append(game.whiteUsername()).append(" ");
+            builder.append("\n").append("    ");
+            builder.append("Black: ").append(game.blackUsername());
+            builder.append("\n");
+        }
+        builder.deleteCharAt(builder.length()-1);
+        return builder.toString();
+    }
+
     public String listGames() {
-        return serverFacade.listGames(this.authToken);
+        String result = serverFacade.listGames(this.authToken);
+        return listGamesMessage(result);
     }
 
     public String playGame() {
