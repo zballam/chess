@@ -29,7 +29,6 @@ public class ClientCommunicator {
             }
             return response.toString();
         }
-
     }
 
     private String readResponseCode(HttpURLConnection con) throws IOException {
