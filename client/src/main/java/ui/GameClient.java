@@ -20,7 +20,7 @@ public class GameClient {
         try {
             return switch(cmd) {
                 case "help" -> help();
-                case "draw" -> draw(params);
+                case "draw" -> draw();
                 case "leave" -> leave();
                 case "quit" -> "quit";
                 default -> help();

@@ -157,6 +157,9 @@ public class LoggedInClient {
     public String observeGame(String[] params) {
         if (params.length == 1) {
             String gameID = gameIDs.get(params[0]);
+            if (gameID == null) {
+                throw new RuntimeException("Error: no game with gameID " + params[0] + " exists");
+            }
         }
         else {
             throw new RuntimeException("Expected: <ID>");
