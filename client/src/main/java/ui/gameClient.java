@@ -15,6 +15,7 @@ public class gameClient {
         // This is all temporary. For now just print the boards
         ChessGame game = new ChessGame();
         drawer.drawChessBoard(game.getBoard().getSquares(), ChessGame.TeamColor.WHITE);
-        throw new RuntimeException("GameClient not implemented yet");
+        drawer.drawChessBoard(game.getBoard().getSquares(), ChessGame.TeamColor.BLACK);
+        return "";
     }
 }

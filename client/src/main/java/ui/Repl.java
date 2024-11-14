@@ -62,6 +62,9 @@ public class Repl {
         else if (state == State.SIGNEDIN) {
             System.out.print(MENUCOLOR + "[" + this.username.toUpperCase() + "] >>> " + RESET_TEXT_COLOR);
         }
+        else {
+            System.out.print(MENUCOLOR + "[IN GAME] (press enter to display board) >>> " + RESET_TEXT_COLOR);
+        }
     }
 
     private String setStateSignedIn(String result) {

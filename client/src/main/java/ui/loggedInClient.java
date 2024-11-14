@@ -29,6 +29,8 @@ public class loggedInClient {
                 case "logout" -> logout();
                 case "create" -> createGame(params);
                 case "list" -> listGames();
+                case "join" -> joinGame(params);
+                case "observe" -> observeGame(params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -99,7 +101,6 @@ public class loggedInClient {
                 builder.append("\n").append("    ");
                 builder.append("Black: ").append(game.blackUsername());
                 builder.append("\n");
-                builder.append(game.game().toString()).append("\n");
             }
             builder.deleteCharAt(builder.length() - 1);
             result = builder.toString();
@@ -119,11 +120,29 @@ public class loggedInClient {
         return listGamesMessage(result);
     }
 
-    public String playGame() {
-        throw new RuntimeException("Not implemented yet");
+    private String joinGameMessage(String result, String gameID, String teamColor) {
+        if (result.equals("{}")) {
+            result = "You have successfully joined game " + gameID + " as " + teamColor;
+        }
+        else if (result.startsWith("{ \"message\":")) {
+            result = result.substring(14,result.length()-3);
+        }
+        return result;
     }
 
-    public String observeGame() {
-        throw new RuntimeException("Not implemented yet");
+    public String joinGame(String[] params) {
+        if (params.length == 2) {
+            String gameID = params[0];
+            String playerColor = params[1];
+            String result = serverFacade.joinGame(gameID, playerColor, this.authToken);
+            return joinGameMessage(result, gameID, playerColor);
+        }
+        else {
+            throw new RuntimeException("Expected: <ID> [WHITE|BLACK]");
+        }
+    }
+
+    public String observeGame(String[] params) {
+        return "Start Game";
     }
 }

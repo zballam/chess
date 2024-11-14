@@ -64,4 +64,16 @@ public class ServerFacade {
             throw new RuntimeException(e);
         }
     }
+
+    public String joinGame(String gameID, String playerColor, String authToken) {
+        Map<String, String> joinGameReq = Map.of(
+                "playerColor", playerColor.toUpperCase(),
+                "gameID", gameID
+        );
+        try {
+            return clientCommunicator.joinGame(GSON.toJson(joinGameReq), authToken);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

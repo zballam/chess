@@ -93,4 +93,16 @@ public class ClientCommunicator {
         con.connect();
         return readResponseCode(con);
     }
+
+    public String joinGame(String json, String authToken) throws IOException {
+        String joinGameUrl = serverUrl + "/game";
+        HttpURLConnection con = connect(joinGameUrl, "PUT");
+        con.addRequestProperty("Authorization", authToken);
+        con.setDoOutput(true);
+        con.connect();
+        try(OutputStream requestBody = con.getOutputStream();) {
+            requestBody.write(json.getBytes(StandardCharsets.UTF_8));
+        }
+        return readResponseCode(con);
+    }
 }
