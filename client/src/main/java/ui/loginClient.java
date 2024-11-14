@@ -23,6 +23,7 @@ public class loginClient {
             return switch(cmd) {
                 case "help" -> help();
                 case "logout" -> logout();
+                case "create" -> createGame(params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -47,8 +48,14 @@ public class loginClient {
         return serverFacade.logout(this.username, this.authToken);
     }
 
-    public String createGame() {
-        throw new RuntimeException("Not implemented yet");
+    public String createGame(String[] params) {
+        if (params.length == 1) {
+            String gameName = params[0];
+            return serverFacade.createGame(gameName, this.authToken);
+        }
+        else {
+            throw new RuntimeException("Expected: <NAME>");
+        }
     }
 
     public String listGames() {

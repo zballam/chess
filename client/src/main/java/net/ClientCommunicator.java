@@ -73,4 +73,16 @@ public class ClientCommunicator {
         con.connect();
         return readResponseCode(con);
     }
+
+    public String createGame(String json, String authToken) throws IOException {
+        String createGameUrl = serverUrl + "/game";
+        HttpURLConnection con = connect(createGameUrl, "POST");
+        con.addRequestProperty("Authorization", authToken);
+        con.setDoOutput(true);
+        con.connect();
+        try(OutputStream requestBody = con.getOutputStream();) {
+            requestBody.write(json.getBytes(StandardCharsets.UTF_8));
+        }
+        return readResponseCode(con);
+    }
 }

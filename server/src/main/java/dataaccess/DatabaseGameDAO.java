@@ -51,7 +51,8 @@ public class DatabaseGameDAO implements GameDAO{
             throw new DataAccessException("GameName already taken");
         }
         // Serialize game
-        String gameInfo = GSON.toJson(createRequest.game());
+//        String gameInfo = GSON.toJson(createRequest.game());
+        String gameInfo = GSON.toJson(new ChessGame()); // Actually create a game this time
         String insertStatement = """
                     INSERT INTO game (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?);
                     """;

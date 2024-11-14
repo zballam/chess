@@ -7,11 +7,9 @@ import java.util.Map;
 
 public class ServerFacade {
     private static final Gson GSON = new Gson();
-    private final String serverUrl;
     private final ClientCommunicator clientCommunicator;
 
     public ServerFacade(String serverUrl) {
-        this.serverUrl = serverUrl;
         this.clientCommunicator = new ClientCommunicator(serverUrl);
     }
 
@@ -48,16 +46,14 @@ public class ServerFacade {
         }
     }
 
-
-
-
-    // Create URL object
-    // url.openConnection();
-    // setReadTimeout(5000);
-    // connection.connect();
-        // will wait until server responds
-    // if (connection.getResponseCode() == HttpURLConnection.HTTP_OK)
-    // .getHeaderField()
-    // InputStream responseBody = conection.getInputStream();
-    // use connection.getErrorStream() for anything that isn't in the 200s
+    public String createGame(String gameName, String authToken) {
+        Map<String, String> createGameReq = Map.of(
+                "gameName", gameName
+        );
+        try {
+            return clientCommunicator.createGame(GSON.toJson(createGameReq), authToken);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
