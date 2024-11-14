@@ -1,10 +1,12 @@
 package ui;
 
+import com.google.gson.Gson;
 import net.ServerFacade;
 
 import java.util.Arrays;
 
 public class loginClient {
+    private static final Gson GSON = new Gson();
     ServerFacade serverFacade;
     String username;
     String authToken;
@@ -45,7 +47,18 @@ public class loginClient {
     }
 
     public String logout() {
-        return serverFacade.logout(this.authToken);
+        String result = serverFacade.logout(this.authToken);
+        return message(result);
+    }
+
+    private String message(String result) {
+        if (result.equals("{}")) {
+            result = "You have successfully logged out";
+        }
+        else if (result.startsWith("{ \"message\":")) {
+            result = result.substring(14,result.length()-3);
+        }
+        return result;
     }
 
     public String createGame(String[] params) {

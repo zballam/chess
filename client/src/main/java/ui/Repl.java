@@ -66,15 +66,14 @@ public class Repl {
         }
     }
 
-    private String loginMessage(String result) {
-        if (result.equals("{}")) {
-            this.state = State.SIGNEDOUT;
-            result = "You have successfully logged out";
-        }
-        else if (result.startsWith("{ \"message\":")) {
-            result = result.substring(14,result.length()-3);
-        }
-        return result;
+    private String setStateSignedIn(String result) {
+        this.state = Repl.State.SIGNEDIN;
+        // Initialize the loginClient
+        var tokens = result.toLowerCase().split(" ");
+        this.username = tokens[1];
+        this.authToken = tokens[2];
+        this.loginREPL = new loginClient(serverFacade, this.username, this.authToken);
+        return "Welcome " + this.username.toUpperCase();
     }
 
     /**
@@ -85,18 +84,14 @@ public class Repl {
         if (state == State.SIGNEDOUT) {
             result = logoutREPL.run(line);
             if (result.startsWith("Welcome ")) {
-                this.state = Repl.State.SIGNEDIN;
-                // Initialize the loginClient
-                var tokens = result.toLowerCase().split(" ");
-                this.username = tokens[1];
-                this.authToken = tokens[2];
-                this.loginREPL = new loginClient(serverFacade, this.username, this.authToken);
-                result = "Welcome " + this.username.toUpperCase();
+                result = setStateSignedIn(result);
             }
         }
         else if (state == State.SIGNEDIN) {
             result = loginREPL.run(line);
-            result = loginMessage(result);
+            if (result.equals("You have successfully logged out")) {
+                this.state = Repl.State.SIGNEDOUT;
+            }
         }
         else {
             result = gameREPL.run(line);
