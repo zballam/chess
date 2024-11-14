@@ -49,11 +49,6 @@ public class loggedInClient {
                 - help""";
     }
 
-    public String logout() {
-        String result = serverFacade.logout(this.authToken);
-        return logOutMessage(result);
-    }
-
     private String logOutMessage(String result) {
         if (result.equals("{}")) {
             result = "You have successfully logged out";
@@ -64,10 +59,27 @@ public class loggedInClient {
         return result;
     }
 
+    public String logout() {
+        String result = serverFacade.logout(this.authToken);
+        return logOutMessage(result);
+    }
+
+    private String createGameMessage(String result) {
+        if (result.startsWith("{ \"gameID\": ")) {
+            String gameID = result.substring(12,result.length()-2);
+            result = "Successfully created game with gameID: " + gameID;
+        }
+        else if (result.startsWith("{ \"message\":")) {
+            result = result.substring(14,result.length()-3);
+        }
+        return result;
+    }
+
     public String createGame(String[] params) {
         if (params.length == 1) {
             String gameName = params[0];
-            return serverFacade.createGame(gameName, this.authToken);
+            String result = serverFacade.createGame(gameName, this.authToken);
+            return createGameMessage(result);
         }
         else {
             throw new RuntimeException("Expected: <NAME>");
@@ -75,20 +87,31 @@ public class loggedInClient {
     }
 
     private String listGamesMessage(String result) {
-        GamesList gamesList = GSON.fromJson(result, GamesList.class);
-        StringBuilder builder = new StringBuilder();
-        for (GameData game : gamesList.games()) {
-            builder.append("- ");
-            builder.append(game.gameID()).append(" ");
-            builder.append(game.gameName()).append(" ");
-            builder.append("\n").append("    ");
-            builder.append("White: ").append(game.whiteUsername()).append(" ");
-            builder.append("\n").append("    ");
-            builder.append("Black: ").append(game.blackUsername());
-            builder.append("\n");
+        try {
+            GamesList gamesList = GSON.fromJson(result, GamesList.class);
+            StringBuilder builder = new StringBuilder();
+            for (GameData game : gamesList.games()) {
+                builder.append("- ");
+                builder.append(game.gameID()).append(" ");
+                builder.append(game.gameName()).append(" ");
+                builder.append("\n").append("    ");
+                builder.append("White: ").append(game.whiteUsername()).append(" ");
+                builder.append("\n").append("    ");
+                builder.append("Black: ").append(game.blackUsername());
+                builder.append("\n");
+                builder.append(game.game().toString()).append("\n");
+            }
+            builder.deleteCharAt(builder.length() - 1);
+            result = builder.toString();
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("Index -1 out of bounds for length 0")) {
+                return "No games are currently created";
+            }
+            else {
+                throw new RuntimeException(e);
+            }
         }
-        builder.deleteCharAt(builder.length()-1);
-        return builder.toString();
+        return result;
     }
 
     public String listGames() {
