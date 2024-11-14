@@ -58,7 +58,7 @@ public class Repl {
             System.out.print(MENUCOLOR + "[" + this.username.toUpperCase() + "] >>> " + RESET_TEXT_COLOR);
         }
         else {
-            System.out.print(MENUCOLOR + "[IN GAME] (press enter to display board) >>> " + RESET_TEXT_COLOR);
+            System.out.print(MENUCOLOR + "[IN GAME] >>> " + RESET_TEXT_COLOR);
         }
     }
 
@@ -89,13 +89,14 @@ public class Repl {
                 this.state = State.SIGNEDOUT;
             }
             else if (result.equals("Start Game")) {
-                result = "Starting Game..."
+                result = "Starting Game...";
                 this.state = State.INGAME;
             }
         }
         else {
             result = gameREPL.run(line);
-            if (result.equals("Return")) {
+            if (result.equals("Leave Game")) {
+                result = "Leaving Game...";
                 this.state = State.SIGNEDIN;
             }
         }
