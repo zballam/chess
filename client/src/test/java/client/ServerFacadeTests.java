@@ -1,5 +1,8 @@
 package client;
 
+import com.google.gson.Gson;
+import model.*;
+import net.ServerFacade;
 import org.junit.jupiter.api.*;
 import server.Server;
 
@@ -8,20 +11,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
 
     private static Server server;
+    private static ServerFacade facade;
+    private static final Gson GSON = new Gson();
 
     @BeforeAll
     public static void init() {
         server = new Server();
         var port = server.run(8080);
         System.out.println("Started test HTTP server on " + port);
+        facade = new ServerFacade("http://localhost:8080");
     }
 
     @AfterAll
@@ -59,8 +66,20 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
+    @DisplayName("Register New User")
+    public void register() {
+        String json = facade.register("TestUsername","TestPassword","TestEmail");
+        AuthData authData = GSON.fromJson(json, AuthData.class);
+        assertEquals("TestUsername",authData.username(),"Invalid username returned");
+        assertNotNull(authData.authToken(), "No authToken");
+    }
+
+    @Test
+    @DisplayName("Register Existing User")
+    public void registerFalse() {
+        facade.register("TestUsername","TestPassword","TestEmail");
+        String alreadyTaken = "{ \"message\": \"Error: already taken\" }";
+        assertEquals(alreadyTaken,facade.register("TestUsername","",""));
     }
 
 }
