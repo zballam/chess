@@ -115,4 +115,24 @@ public class ServerFacadeTests {
         String noUser = "{ \"message\": \"Error: unauthorized\" }";
         assertEquals(noUser,facade.logout(""));
     }
+
+    @Test
+    @DisplayName("Create Game")
+    public void createGame() {
+        String json = facade.register("TestUsername","TestPassword","TestEmail");
+        AuthData tempAuthData = GSON.fromJson(json, AuthData.class);
+        String response = facade.createGame("TestGame", tempAuthData.authToken());
+        String answer = "{ \"gameID\": ";
+        assertEquals(answer,response.substring(0,12));
+    }
+
+    @Test
+    @DisplayName("Create Already Existing Game")
+    public void createGameFalse() {
+        String json = facade.register("TestUsername","TestPassword","TestEmail");
+        AuthData tempAuthData = GSON.fromJson(json, AuthData.class);
+        facade.createGame("TestGame", tempAuthData.authToken());
+        String noUser = "{ \"message\": \"Error: GameName already taken\" }";
+        assertEquals(noUser,facade.createGame("TestGame", tempAuthData.authToken()));
+    }
 }
