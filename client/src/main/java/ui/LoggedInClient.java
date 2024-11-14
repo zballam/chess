@@ -145,9 +145,21 @@ public class LoggedInClient {
     public String joinGame(String[] params) {
         if (params.length == 2) {
             String gameID = this.gameIDs.get(params[0]);
-            String playerColor = params[1];
-            String result = serverFacade.joinGame(gameID, playerColor, this.authToken);
-            return joinGameMessage(result, params[0], playerColor);
+            // Check if gameID is actually a number
+            if (gameID != null && gameID.matches("\\d+")) {
+                String playerColor = params[1];
+                // Check if playerColor is WHITE or BLACK
+                if (playerColor != null && (playerColor.equalsIgnoreCase("WHITE") || playerColor.equalsIgnoreCase("BLACK"))) {
+                    String result = serverFacade.joinGame(gameID, playerColor, this.authToken);
+                    return joinGameMessage(result, params[0], playerColor);
+                }
+                else {
+                    throw new RuntimeException("Expected: [WHITE|BLACK]");
+                }
+            }
+            else {
+                throw new RuntimeException("Expected: Valid <ID> number");
+            }
         }
         else {
             throw new RuntimeException("Expected: <ID> [WHITE|BLACK]");
