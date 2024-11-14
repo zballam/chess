@@ -88,7 +88,10 @@ public class Repl {
         else if (state == State.SIGNEDIN) {
             result = loginREPL.run(line);
             if (result.equals("You have successfully logged out")) {
-                this.state = Repl.State.SIGNEDOUT;
+                this.state = State.SIGNEDOUT;
+            }
+            else if (result.equals("Start Game")) {
+                this.state = State.INGAME;
             }
         }
         else {

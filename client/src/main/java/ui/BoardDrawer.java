@@ -15,20 +15,22 @@ public class BoardDrawer {
     private static final String WHITETEAM = SET_TEXT_COLOR_BLUE;
     private static final String BLACKTEAM = SET_TEXT_COLOR_MAGENTA;
 
+    private static final PrintStream outStream = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+
 
     public static void main(String[] args) {
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         ChessGame.TeamColor white = ChessGame.TeamColor.WHITE;
         ChessGame.TeamColor black = ChessGame.TeamColor.BLACK;
 
         ChessGame board = new ChessGame();
         ChessPiece[][] pieces = board.getBoard().getSquares();
-        drawChessBoard(pieces, out, white);
-        drawChessBoard(pieces, out, black);
+        drawChessBoard(pieces, white);
+        drawChessBoard(pieces, black);
     }
 
-    private static void drawChessBoard(ChessPiece[][] pieces, PrintStream out, ChessGame.TeamColor team) {
+    private static void drawChessBoard(ChessPiece[][] pieces, ChessGame.TeamColor team) {
+        PrintStream out = outStream;
         out.print(ERASE_SCREEN);
         boolean blackTeam;
         blackTeam = !(team == ChessGame.TeamColor.WHITE);
