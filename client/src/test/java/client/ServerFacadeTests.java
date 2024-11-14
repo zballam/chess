@@ -169,4 +169,25 @@ public class ServerFacadeTests {
         String testGamesListString = GSON.toJson(testGamesList);
         assertEquals(testGamesListString,response);
     }
+
+    @Test
+    @DisplayName("Join Game")
+    public void joinGameWhite() {
+        String json = facade.register("TestUsername","TestPassword","TestEmail");
+        AuthData tempAuthData = GSON.fromJson(json, AuthData.class);
+        String s = facade.createGame("TestGame", tempAuthData.authToken());
+        var tokens = s.toLowerCase().split(" ");
+        String result = facade.joinGame(tokens[2],"WHITE", tempAuthData.authToken());
+        System.out.println(result);
+        assertEquals("{}",result);
+    }
+
+    @Test
+    @DisplayName("Join Non-Existing Game")
+    public void joinGameWhiteFalse() {
+        String json = facade.register("TestUsername","TestPassword","TestEmail");
+        AuthData tempAuthData = GSON.fromJson(json, AuthData.class);
+        String noUser = "{ \"message\": \"Error: bad request\" }";
+        assertEquals(noUser,facade.joinGame("2","WHITE", tempAuthData.authToken()));
+    }
 }
