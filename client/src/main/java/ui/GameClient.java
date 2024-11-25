@@ -22,6 +22,10 @@ public class GameClient {
                 case "help" -> help();
                 case "draw" -> draw();
                 case "leave" -> leave();
+                case "redraw" -> redraw();
+                case "move" -> move();
+                case "highlight" -> highlight();
+                case "resign" -> resign();
                 case "quit" -> "quit";
                 default -> error();
             };
@@ -34,15 +38,14 @@ public class GameClient {
         return "ERROR: Invalid command";
     }
 
-    private String leave() {
-        return "Leave Game";
-    }
-
     public String help() {
         return """
                 HELP MENU
-                - draw
+                - redraw (redraws the current board)
+                - highlight (highlights valid moves)
+                - move
                 - leave
+                - resign
                 - quit
                 - help""";
     }
@@ -53,5 +56,25 @@ public class GameClient {
         drawer.drawChessBoard(game.getBoard().getSquares(), ChessGame.TeamColor.WHITE);
         drawer.drawChessBoard(game.getBoard().getSquares(), ChessGame.TeamColor.BLACK);
         return "Board drawn...";
+    }
+
+    private String leave() {
+        return "Leave Game";
+    }
+
+    private String redraw() {
+        throw new RuntimeException("Not implemented");
+    }
+
+    private String move(){
+        throw new RuntimeException("Not implemented");
+    }
+
+    private String highlight() {
+        throw new RuntimeException("Not implemented");
+    }
+
+    private String resign() {
+        throw new RuntimeException("Not implemented");
     }
 }
