@@ -3,6 +3,7 @@ package client;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.*;
+import net.HttpCommunicator;
 import net.ServerFacade;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -47,12 +48,12 @@ public class ServerFacadeTests {
         connection.connect();
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             InputStream responseBody = connection.getInputStream();
-            System.out.println(net.ClientCommunicator.responseReader(responseBody));
+            System.out.println(HttpCommunicator.responseReader(responseBody));
         }
         else {
             // SERVER RETURNED AN HTTP ERROR
             InputStream responseBody = connection.getErrorStream();
-            System.out.println(net.ClientCommunicator.responseReader(responseBody));
+            System.out.println(HttpCommunicator.responseReader(responseBody));
         }
     }
 

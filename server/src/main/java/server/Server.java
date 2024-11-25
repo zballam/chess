@@ -18,7 +18,7 @@ public class Server {
     private final UserService userService;
 
     public Server() {
-        // Change these DAOs to change which interface is used
+        // Change boolean database to change which interface is used
         boolean database = true;
         if (database) {
             this.authService = new AuthService(new DatabaseAuthDAO());

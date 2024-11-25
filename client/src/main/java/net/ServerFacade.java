@@ -7,10 +7,10 @@ import java.util.Map;
 
 public class ServerFacade {
     private static final Gson GSON = new Gson();
-    private final ClientCommunicator clientCommunicator;
+    private final HttpCommunicator httpCommunicator;
 
     public ServerFacade(String serverUrl) {
-        this.clientCommunicator = new ClientCommunicator(serverUrl);
+        this.httpCommunicator = new HttpCommunicator(serverUrl);
     }
 
     public String register(String username, String password, String email) {
@@ -20,7 +20,7 @@ public class ServerFacade {
                 "email", email
         );
         try {
-            return clientCommunicator.register(GSON.toJson(registerReq));
+            return httpCommunicator.register(GSON.toJson(registerReq));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -32,7 +32,7 @@ public class ServerFacade {
                 "password", password
         );
         try {
-            return clientCommunicator.login(GSON.toJson(loginReq));
+            return httpCommunicator.login(GSON.toJson(loginReq));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -40,7 +40,7 @@ public class ServerFacade {
 
     public String logout(String authToken) {
         try {
-            return clientCommunicator.logout(authToken);
+            return httpCommunicator.logout(authToken);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -51,7 +51,7 @@ public class ServerFacade {
                 "gameName", gameName
         );
         try {
-            return clientCommunicator.createGame(GSON.toJson(createGameReq), authToken);
+            return httpCommunicator.createGame(GSON.toJson(createGameReq), authToken);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -59,7 +59,7 @@ public class ServerFacade {
 
     public String listGames(String authToken) {
         try {
-            return clientCommunicator.listGames(authToken);
+            return httpCommunicator.listGames(authToken);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -71,7 +71,7 @@ public class ServerFacade {
                 "gameID", gameID
         );
         try {
-            return clientCommunicator.joinGame(GSON.toJson(joinGameReq), authToken);
+            return httpCommunicator.joinGame(GSON.toJson(joinGameReq), authToken);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
