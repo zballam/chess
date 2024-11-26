@@ -3,7 +3,7 @@ package server.websocket;
 import java.util.HashMap;
 import org.eclipse.jetty.websocket.api.Session;
 
-public class ConectionManager {
+public class ConnectionManager {
     public final HashMap<String, Session> connections = new HashMap<>();
 
     public void add(String playerName, Session session) {

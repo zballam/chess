@@ -4,6 +4,7 @@ import dataaccess.DataAccessException;
 import dataaccess.*;
 import model.*;
 import org.eclipse.jetty.client.HttpResponseException;
+import server.websocket.WebsocketHandler;
 import spark.*;
 import service.*;
 import com.google.gson.*;
@@ -16,6 +17,7 @@ public class Server {
     private final AuthService authService;
     private final GameService gameService;
     private final UserService userService;
+    private final WebsocketHandler webSocketHandler;
 
     public Server() {
         // Change boolean database to change which interface is used
@@ -30,6 +32,7 @@ public class Server {
             this.userService = new UserService(new MemoryUserDAO(), this.authService);
             this.gameService = new GameService(new MemoryGameDAO(), this.authService, this.userService);
         }
+        webSocketHandler = new WebsocketHandler();
     }
 
     public int run(int desiredPort) {
@@ -38,6 +41,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
+        Spark.webSocket("/ws", webSocketHandler);
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
         Spark.post("/session", this::login);

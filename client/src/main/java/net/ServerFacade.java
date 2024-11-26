@@ -8,9 +8,11 @@ import java.util.Map;
 public class ServerFacade {
     private static final Gson GSON = new Gson();
     private final HttpCommunicator httpCommunicator;
+    private final WebsocketCommunicator websocketCommunicator;
 
     public ServerFacade(String serverUrl) {
         this.httpCommunicator = new HttpCommunicator(serverUrl);
+        this.websocketCommunicator = new WebsocketCommunicator(serverUrl);
     }
 
     public String register(String username, String password, String email) {
