@@ -1,7 +1,9 @@
 package ui;
 
 import chess.ChessGame;
+import net.MessageObserver;
 import net.ServerFacade;
+import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
 

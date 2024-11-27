@@ -10,9 +10,9 @@ public class ServerFacade {
     private final HttpCommunicator httpCommunicator;
     private final WebsocketCommunicator websocketCommunicator;
 
-    public ServerFacade(String serverUrl) {
+    public ServerFacade(String serverUrl, MessageObserver messageObserver) {
         this.httpCommunicator = new HttpCommunicator(serverUrl);
-        this.websocketCommunicator = new WebsocketCommunicator(serverUrl);
+        this.websocketCommunicator = new WebsocketCommunicator(serverUrl, messageObserver);
     }
 
     public String register(String username, String password, String email) {

@@ -1,6 +1,7 @@
 package net;
 
 import com.google.gson.Gson;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.net.URI;
@@ -11,7 +12,7 @@ public class WebsocketCommunicator extends Endpoint {
 
     Session session;
 
-    public WebsocketCommunicator(String url) {
+    public WebsocketCommunicator(String url, MessageObserver notificationHandler) {
         try {
             url.replace("http","ws");
             URI socketURI = new URI(url + "/ws");
@@ -22,12 +23,13 @@ public class WebsocketCommunicator extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    Notification notification = new Gson().fromJson(message, Notification.class);
+                    ServerMessage notification = new Gson().fromJson(message, Notification.class);
+                    // Add a GSON deserializer LOOK IT UP
                     notificationHandler.notify(notification);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
-            throw new ResponseException(500, ex.getMessage());
+            throw new WebsocketException(ex.getMessage());
         }
     }
 

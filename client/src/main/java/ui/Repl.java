@@ -1,13 +1,15 @@
 package ui;
 
+import net.MessageObserver;
 import net.ServerFacade;
+import websocket.messages.ServerMessage;
 
 import java.util.Objects;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
-public class Repl {
+public class Repl implements MessageObserver {
     private final ServerFacade serverFacade;
     private final LoggedOutClient logoutREPL;
     private LoggedInClient loginREPL = null;
@@ -18,7 +20,7 @@ public class Repl {
     private static final String MENUCOLOR = SET_TEXT_COLOR_MAGENTA;
 
     public Repl(String url) {
-        this.serverFacade = new ServerFacade(url);
+        this.serverFacade = new ServerFacade(url, this);
         this.logoutREPL = new LoggedOutClient(serverFacade);
         this.gameREPL = new GameClient(serverFacade);
         this.state = State.SIGNEDOUT;
@@ -102,5 +104,11 @@ public class Repl {
             }
         }
         return result;
+    }
+
+    @Override
+    public void notify(ServerMessage message) {
+        // Call functions based on message type
+        // Look up type cast. Will need to type cast the message
     }
 }
