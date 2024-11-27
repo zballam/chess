@@ -107,8 +107,20 @@ public class Repl implements MessageObserver {
     }
 
     @Override
-    public void notify(ServerMessage message) {
+    public void notify(ServerMessage notification) {
         // Call functions based on message type
+        switch (notification.getServerMessageType()) {
+            case LOAD_GAME -> notifyLoadGameMessage();
+            case ERROR -> notifyErrorMessage();
+            case NOTIFICATION -> notifyNotificationMessage();
+        }
+//                    // Add a GSON deserializer LOOK IT UP
         // Look up type cast. Will need to type cast the message
     }
+
+    private void notifyLoadGameMessage() {}
+
+    private void notifyErrorMessage() {}
+
+    private void notifyNotificationMessage() {}
 }

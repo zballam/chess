@@ -24,8 +24,7 @@ public class WebsocketCommunicator extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
-//                    // Add a GSON deserializer LOOK IT UP
-//                    notificationHandler.notify(notification);
+                    notificationHandler.notify(notification);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
