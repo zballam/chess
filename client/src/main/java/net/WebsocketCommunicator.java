@@ -35,8 +35,12 @@ public class WebsocketCommunicator extends Endpoint {
 
     public void onOpen(Session session, EndpointConfig endpointConfig) {}
 
-    public void connect() {
-//        var connectRequest = new UserGameCommand()
-//        this.session.getBasicRemote().sendText(new Gson().toJson(connectRequest));
+    public void connect(String authToken, Integer gameID) {
+        var connectRequest = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+        try {
+            this.session.getBasicRemote().sendText(new Gson().toJson(connectRequest));
+        } catch (IOException e) {
+            throw new WebsocketException(e.getMessage());
+        }
     }
 }

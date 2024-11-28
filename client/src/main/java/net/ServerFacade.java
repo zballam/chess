@@ -1,6 +1,7 @@
 package net;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import model.AuthData;
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ public class ServerFacade {
     private final HttpCommunicator httpCommunicator;
     private final WebsocketCommunicator websocketCommunicator;
     private String authToken = "";
+    private Integer gameID = 0;
 
     public ServerFacade(String serverUrl, MessageObserver messageObserver) {
         this.httpCommunicator = new HttpCommunicator(serverUrl);
@@ -20,6 +22,11 @@ public class ServerFacade {
     private String extractAuthToken(String json) {
         var httpResponse = new Gson().fromJson(json, AuthData.class);
         return httpResponse.authToken();
+    }
+
+    private Integer extractGameID(String json) {
+        var httpResponse = new Gson().fromJson(json, JsonObject.class);
+        return httpResponse.get("gameID").getAsInt();
     }
 
     public String register(String username, String password, String email) {
@@ -66,7 +73,9 @@ public class ServerFacade {
                 "gameName", gameName
         );
         try {
-            return httpCommunicator.createGame(GSON.toJson(createGameReq), authToken);
+            var response = httpCommunicator.createGame(GSON.toJson(createGameReq), authToken);
+            this.gameID = extractGameID(response);
+            return response;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -86,7 +95,9 @@ public class ServerFacade {
                 "gameID", gameID
         );
         try {
-            return httpCommunicator.joinGame(GSON.toJson(joinGameReq), authToken);
+            var response = httpCommunicator.joinGame(GSON.toJson(joinGameReq), authToken);
+            this.gameID = extractGameID(response);
+            return response;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -95,6 +106,6 @@ public class ServerFacade {
     // WebSocket Methods
 
     public void connectWS() {
-        websocketCommunicator.connect();
+        websocketCommunicator.connect(this.authToken, this.gameID);
     }
 }
