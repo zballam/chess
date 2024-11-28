@@ -1,6 +1,7 @@
 package net;
 
 import com.google.gson.Gson;
+import model.AuthData;
 
 import java.io.IOException;
 import java.util.Map;
@@ -9,10 +10,16 @@ public class ServerFacade {
     private static final Gson GSON = new Gson();
     private final HttpCommunicator httpCommunicator;
     private final WebsocketCommunicator websocketCommunicator;
+    private String authToken = "";
 
     public ServerFacade(String serverUrl, MessageObserver messageObserver) {
         this.httpCommunicator = new HttpCommunicator(serverUrl);
         this.websocketCommunicator = new WebsocketCommunicator(serverUrl, messageObserver);
+    }
+
+    private String extractAuthToken(String json) {
+        var httpResponse = new Gson().fromJson(json, AuthData.class);
+        return httpResponse.authToken();
     }
 
     public String register(String username, String password, String email) {
@@ -22,7 +29,9 @@ public class ServerFacade {
                 "email", email
         );
         try {
-            return httpCommunicator.register(GSON.toJson(registerReq));
+            var response = httpCommunicator.register(GSON.toJson(registerReq));
+            this.authToken = extractAuthToken(response);
+            return response;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -34,7 +43,9 @@ public class ServerFacade {
                 "password", password
         );
         try {
-            return httpCommunicator.login(GSON.toJson(loginReq));
+            var response = httpCommunicator.login(GSON.toJson(loginReq));
+            this.authToken = extractAuthToken(response);
+            return response;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -42,7 +53,9 @@ public class ServerFacade {
 
     public String logout(String authToken) {
         try {
-            return httpCommunicator.logout(authToken);
+            var response = httpCommunicator.logout(authToken);
+            this.authToken = "";
+            return response;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -77,5 +90,11 @@ public class ServerFacade {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // WebSocket Methods
+
+    public void connectWS() {
+        websocketCommunicator.connect();
     }
 }

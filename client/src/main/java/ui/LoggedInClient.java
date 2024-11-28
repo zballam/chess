@@ -25,6 +25,7 @@ public class LoggedInClient {
     }
 
     public String run(String input) {
+        serverFacade.connectWS();
         var tokens = input.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);

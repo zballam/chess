@@ -1,6 +1,7 @@
 package net;
 
 import com.google.gson.Gson;
+import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -33,4 +34,9 @@ public class WebsocketCommunicator extends Endpoint {
     }
 
     public void onOpen(Session session, EndpointConfig endpointConfig) {}
+
+    public void connect() {
+//        var connectRequest = new UserGameCommand()
+//        this.session.getBasicRemote().sendText(new Gson().toJson(connectRequest));
+    }
 }
