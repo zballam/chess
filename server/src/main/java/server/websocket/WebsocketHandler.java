@@ -57,4 +57,19 @@ public class WebsocketHandler {
         // Server marks the game as over (no more moves can be made). Game is updated in the database.
         // Send notification to all clients (including observers) that Root Client resigned and game is over
     }
+
+    private void sendLoadGame(Session session) {
+        // Serialize Load_Game Message
+        // Send to client
+    }
+
+    private void sendError(Session session) {
+        // Serialize Error Message
+        // Send to client
+    }
+
+    private void sendNotification(Session session) {
+        // Serialize Notification Message
+        // Send to client
+    }
 }
