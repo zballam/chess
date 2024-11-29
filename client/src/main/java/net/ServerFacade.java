@@ -114,7 +114,7 @@ public class ServerFacade {
     }
 
     public void makeMoveWS() {
-
+        websocketCommunicator.makeMoveWS();
     }
 
     public void redraw(BoardDrawer drawer) {

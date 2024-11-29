@@ -1,6 +1,7 @@
 package service;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.*;
@@ -50,5 +51,9 @@ public class GameService {
         String username = this.authService.getAuth(auth.authToken()).username();
         UserData user = userService.userDAO.getUser(username);
         gameDAO.insertUser(joinRequest.gameID(), user, joinRequest.playerColor());
+    }
+
+    public void makeMove(ChessMove newMove, AuthData auth) throws DataAccessException {
+        authService.getAuth(auth.authToken());
     }
 }

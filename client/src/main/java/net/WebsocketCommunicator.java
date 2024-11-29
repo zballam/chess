@@ -43,4 +43,8 @@ public class WebsocketCommunicator extends Endpoint {
             throw new WebsocketException(e.getMessage());
         }
     }
+
+    public void makeMoveWS() {
+
+    }
 }
