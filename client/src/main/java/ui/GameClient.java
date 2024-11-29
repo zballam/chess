@@ -16,6 +16,7 @@ public class GameClient {
     }
 
     public String run(String input) {
+        serverFacade.connectWS();
         var tokens = input.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
@@ -65,6 +66,7 @@ public class GameClient {
     }
 
     private String redraw() {
+        serverFacade.redraw(drawer);
         throw new RuntimeException("Not implemented");
     }
 

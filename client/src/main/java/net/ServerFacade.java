@@ -3,6 +3,7 @@ package net;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import model.AuthData;
+import ui.BoardDrawer;
 
 import java.io.IOException;
 import java.util.Map;
@@ -26,7 +27,10 @@ public class ServerFacade {
 
     private Integer extractGameID(String json) {
         var httpResponse = new Gson().fromJson(json, JsonObject.class);
-        return httpResponse.get("gameID").getAsInt();
+        if (httpResponse.has("gameID")) {
+            return httpResponse.get("gameID").getAsInt();
+        }
+        return 0;
     }
 
     public String register(String username, String password, String email) {
@@ -107,5 +111,13 @@ public class ServerFacade {
 
     public void connectWS() {
         websocketCommunicator.connect(this.authToken, this.gameID);
+    }
+
+    public void makeMoveWS() {
+
+    }
+
+    public void redraw(BoardDrawer drawer) {
+
     }
 }
