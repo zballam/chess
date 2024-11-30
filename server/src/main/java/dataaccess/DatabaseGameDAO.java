@@ -123,7 +123,7 @@ public class DatabaseGameDAO implements GameDAO{
     }
 
     @Override
-    public void updateGame(ChessGame game, int gameID) throws DataAccessException { // Needs to be tested
+    public void updateGame(ChessGame game, int gameID) throws DataAccessException {
         String updateStatement = """
                 UPDATE game SET game = ? WHERE gameID=?
                 """;

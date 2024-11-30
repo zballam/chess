@@ -2,6 +2,7 @@ package service;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.InvalidMoveException;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.*;
@@ -53,12 +54,11 @@ public class GameService {
         gameDAO.insertUser(joinRequest.gameID(), user, joinRequest.playerColor());
     }
 
-    public void makeMove(ChessMove newMove, AuthData auth) throws DataAccessException {
+    public ChessGame makeMove(ChessMove newMove, AuthData auth, int gameID) throws DataAccessException, InvalidMoveException {
         authService.getAuth(auth.authToken());
-    }
-
-    public GameData getGame(Integer gameID, AuthData auth) throws DataAccessException {
-        authService.getAuth(auth.authToken());
-        return this.gameDAO.getGame(gameID);
+        ChessGame updatedGame = new ChessGame();
+        updatedGame.makeMove(newMove);
+        this.gameDAO.updateGame(updatedGame, gameID);
+        return updatedGame;
     }
 }
