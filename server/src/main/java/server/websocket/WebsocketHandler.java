@@ -36,6 +36,7 @@ public class WebsocketHandler {
     private void connectCommand(Integer gameID, Session session) {
         connections.add(gameID, session);
         // Send load_game message to root client
+
         // Sends a Notification to all other clients in game that the root client connected, either as a player
         // (in which case their color must be specified) or as an observer.
     }

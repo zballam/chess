@@ -123,6 +123,22 @@ public class DatabaseGameDAO implements GameDAO{
     }
 
     @Override
+    public void updateGame(ChessGame game, int gameID) throws DataAccessException { // Needs to be tested
+        String updateStatement = """
+                UPDATE game SET game = ? WHERE gameID=?
+                """;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(updateStatement)) {
+                ps.setString(1, new Gson().toJson(game));
+                ps.setString(2, String.valueOf(gameID));
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
+    @Override
     public void insertUser(int gameID, UserData user, ChessGame.TeamColor playerColor) throws DataAccessException {
         String insertStatement;
         if (playerColor == ChessGame.TeamColor.WHITE) {

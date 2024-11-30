@@ -1,6 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import model.UserData;
 import model.GameData;
 
@@ -48,6 +49,9 @@ public class MemoryGameDAO implements GameDAO{
         return gamesList;
     }
 
+    @Override
+    public void updateGame(ChessGame game, int gameID) throws DataAccessException {}
+
     public void insertUser(int gameID, UserData user, ChessGame.TeamColor playerColor) throws DataAccessException {
         GameData game = this.gameDataHashMap.get(gameID);
         GameData newGame;
@@ -60,4 +64,6 @@ public class MemoryGameDAO implements GameDAO{
         }
         this.gameDataHashMap.put(gameID, newGame);
     }
+
+
 }

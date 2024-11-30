@@ -56,4 +56,9 @@ public class GameService {
     public void makeMove(ChessMove newMove, AuthData auth) throws DataAccessException {
         authService.getAuth(auth.authToken());
     }
+
+    public GameData getGame(Integer gameID, AuthData auth) throws DataAccessException {
+        authService.getAuth(auth.authToken());
+        return this.gameDAO.getGame(gameID);
+    }
 }
