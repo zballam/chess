@@ -54,11 +54,14 @@ public class GameService {
         gameDAO.insertUser(joinRequest.gameID(), user, joinRequest.playerColor());
     }
 
-    public ChessGame makeMove(ChessMove newMove, AuthData auth, int gameID) throws DataAccessException, InvalidMoveException {
-        authService.getAuth(auth.authToken());
+    public ChessGame makeMove(ChessMove newMove, int gameID) throws DataAccessException, InvalidMoveException {
         ChessGame updatedGame = new ChessGame();
         updatedGame.makeMove(newMove);
         this.gameDAO.updateGame(updatedGame, gameID);
         return updatedGame;
+    }
+
+    public GameData getGame(Integer gameID) throws DataAccessException {
+        return this.gameDAO.getGame(gameID);
     }
 }

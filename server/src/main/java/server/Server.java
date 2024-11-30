@@ -32,7 +32,7 @@ public class Server {
             this.userService = new UserService(new MemoryUserDAO(), this.authService);
             this.gameService = new GameService(new MemoryGameDAO(), this.authService, this.userService);
         }
-        webSocketHandler = new WebsocketHandler();
+        webSocketHandler = new WebsocketHandler(gameService, authService);
     }
 
     public int run(int desiredPort) {
