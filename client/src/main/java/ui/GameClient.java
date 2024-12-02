@@ -15,8 +15,11 @@ public class GameClient {
         this.serverFacade = serverFacade;
     }
 
-    public String run(String input) {
+    public void connectWS() {
         serverFacade.connectWS();
+    }
+
+    public String run(String input) {
         var tokens = input.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);

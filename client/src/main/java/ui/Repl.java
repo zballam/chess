@@ -93,7 +93,7 @@ public class Repl implements MessageObserver {
             else if (result.equals("Start Game") || result.startsWith("You have successfully joined game ")) {
                 result = "Starting Game...";
                 this.state = State.INGAME;
-                gameREPL.run("draw");
+                gameREPL.connectWS();
             }
         }
         else {
