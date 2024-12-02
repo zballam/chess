@@ -1,9 +1,9 @@
 package net;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import model.AuthData;
-import ui.BoardDrawer;
 
 import java.io.IOException;
 import java.util.Map;
@@ -117,7 +117,7 @@ public class ServerFacade {
         websocketCommunicator.makeMoveWS();
     }
 
-    public void redraw(BoardDrawer drawer) {
-
+    public void redraw() {
+        this.websocketCommunicator.redrawRequest(this.authToken, this.gameID);
     }
 }

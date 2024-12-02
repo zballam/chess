@@ -1,4 +1,4 @@
-package server.websocket;
+package net;
 
 import com.google.gson.*;
 import websocket.messages.ErrorMessage;

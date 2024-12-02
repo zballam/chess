@@ -9,7 +9,6 @@ import java.util.Arrays;
 
 public class GameClient {
     ServerFacade serverFacade;
-    private final BoardDrawer drawer = new BoardDrawer();
 
     public GameClient(ServerFacade serverFacade) {
         this.serverFacade = serverFacade;
@@ -26,7 +25,6 @@ public class GameClient {
         try {
             return switch(cmd) {
                 case "help" -> help();
-                case "draw" -> draw();
                 case "leave" -> leave();
                 case "redraw" -> redraw();
                 case "move" -> move();
@@ -56,20 +54,12 @@ public class GameClient {
                 - help""";
     }
 
-    public String draw() {
-        // This is all temporary. For now just print the boards
-        ChessGame game = new ChessGame();
-        drawer.drawChessBoard(game.getBoard().getSquares(), ChessGame.TeamColor.WHITE);
-        drawer.drawChessBoard(game.getBoard().getSquares(), ChessGame.TeamColor.BLACK);
-        return "Board drawn...";
-    }
-
     private String leave() {
         return "Leave Game";
     }
 
     private String redraw() {
-        serverFacade.redraw(drawer);
+        serverFacade.redraw();
         throw new RuntimeException("Not implemented");
     }
 
