@@ -1,5 +1,6 @@
 package net;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ui.BoardDrawer;
@@ -66,10 +67,7 @@ public class WebsocketCommunicator extends Endpoint {
     public void redrawRequest(String authToken, Integer gameID) {
         MakeMoveCommand redrawCommand = new MakeMoveCommand(authToken, gameID, null);
         try {
-            if (this.session.isOpen()) {
-                System.out.println("It's open");
-                this.session.getBasicRemote().sendText(new Gson().toJson(redrawCommand));
-            }
+            this.session.getBasicRemote().sendText(new Gson().toJson(redrawCommand));
         } catch (IOException e) {
             throw new WebsocketException(e.getMessage());
         }
@@ -78,6 +76,7 @@ public class WebsocketCommunicator extends Endpoint {
     // RESPONSE METHODS
 
     private void loadGameResponse(LoadGameMessage responseMessage) {
-        throw new WebsocketException("IT WORKS!!");
+        ChessGame game = responseMessage.getGame();
+        drawer.drawChessBoard(game.getBoard().getSquares(), ChessGame.TeamColor.WHITE);
     }
 }

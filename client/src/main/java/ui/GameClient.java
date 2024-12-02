@@ -60,7 +60,7 @@ public class GameClient {
 
     private String redraw() {
         serverFacade.redraw();
-        throw new RuntimeException("Not implemented");
+        return "";
     }
 
     private String move(){

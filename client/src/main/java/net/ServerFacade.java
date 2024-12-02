@@ -100,7 +100,8 @@ public class ServerFacade {
         );
         try {
             var response = httpCommunicator.joinGame(GSON.toJson(joinGameReq), authToken);
-            this.gameID = extractGameID(response);
+//            this.gameID = extractGameID(response);
+            this.gameID = Integer.valueOf(gameID);
             return response;
         } catch (IOException e) {
             throw new RuntimeException(e);
