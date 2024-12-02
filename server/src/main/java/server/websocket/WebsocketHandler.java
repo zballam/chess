@@ -101,8 +101,8 @@ public class WebsocketHandler {
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game);
-        NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        LoadGameMessage loadGameMessage = new LoadGameMessage(game);
+        NotificationMessage notificationMessage = new NotificationMessage(message);
         try {
             // Send load_game message to root client
             session.getRemote().sendString(new Gson().toJson(loadGameMessage));

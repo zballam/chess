@@ -3,9 +3,7 @@ package net;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ui.BoardDrawer;
-import websocket.commands.MakeMoveCommand;
-import websocket.commands.UserGameCommand;
-import websocket.messages.ErrorMessage;
+import websocket.commands.*;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
@@ -68,7 +66,10 @@ public class WebsocketCommunicator extends Endpoint {
     public void redrawRequest(String authToken, Integer gameID) {
         MakeMoveCommand redrawCommand = new MakeMoveCommand(authToken, gameID, null);
         try {
-            session.getBasicRemote().sendText(new Gson().toJson(redrawCommand));
+            if (this.session.isOpen()) {
+                System.out.println("It's open");
+                this.session.getBasicRemote().sendText(new Gson().toJson(redrawCommand));
+            }
         } catch (IOException e) {
             throw new WebsocketException(e.getMessage());
         }

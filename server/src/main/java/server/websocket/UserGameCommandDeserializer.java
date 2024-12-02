@@ -14,7 +14,7 @@ public class UserGameCommandDeserializer implements JsonDeserializer<UserGameCom
             return context.deserialize(jsonObject, MakeMoveCommand.class);
         }
         else {
-            return context.deserialize(jsonObject, UserGameCommand.class);
+            return new Gson().fromJson(jsonObject, UserGameCommand.class);
         }
     }
 }

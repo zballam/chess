@@ -2,16 +2,17 @@ package server.websocket;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.jetty.websocket.api.Session;
-import websocket.messages.ServerMessage;
 
 public class ConnectionManager {
     public final HashMap<Integer, Set<Session>> connections = new HashMap<>();
 
     public void add(Integer gameID, Session session) {
+        connections.putIfAbsent(gameID, new HashSet<>());
         connections.get(gameID).add(session);
     }
 
