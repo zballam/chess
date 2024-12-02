@@ -33,11 +33,14 @@ public class WebsocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) {
+        // Define customDeserializer for UserGameCommands
         Gson customDeserializer = new GsonBuilder().registerTypeAdapter(UserGameCommand.class, new UserGameCommandDeserializer()).create();
         var userGameCommand = customDeserializer.fromJson(message, UserGameCommand.class);
+        // Check to see if is a MakeMoveCommand
         if (userGameCommand instanceof MakeMoveCommand) { // MakeMoveCommand class
-            makeMoveCommand(session);
+            makeMoveCommandHandler(session, (MakeMoveCommand) userGameCommand);
         }
+        // Otherwise...
         else { // UserGameCommand class
             if (userGameCommand.getCommandType() == UserGameCommand.CommandType.CONNECT) {
                 try {
@@ -53,6 +56,15 @@ public class WebsocketHandler {
             else { // Resign type
                 resignCommand(session);
             }
+        }
+    }
+
+    private void makeMoveCommandHandler(Session session, MakeMoveCommand makeMoveCommand) {
+        if (makeMoveCommand.getMoveCommand() == null) {
+            sendLoadGame(session);
+        }
+        else {
+            makeMoveCommand(session);
         }
     }
 
@@ -120,7 +132,8 @@ public class WebsocketHandler {
 
     private void sendLoadGame(Session session) {
         // Serialize Load_Game Message
-        // Send to client
+//        LoadGameMessage message = new LoadGameMessage()
+            // Send to client
     }
 
     private void sendError(Session session) {
