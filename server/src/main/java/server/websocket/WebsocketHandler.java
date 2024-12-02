@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.GameData;
+import org.eclipse.jetty.websocket.api.WebSocketException;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.Session;
@@ -61,7 +62,7 @@ public class WebsocketHandler {
 
     private void makeMoveCommandHandler(Session session, MakeMoveCommand makeMoveCommand) {
         if (makeMoveCommand.getMoveCommand() == null) {
-            sendLoadGame(session);
+            sendLoadGame(makeMoveCommand.getGameID(), session);
         }
         else {
             makeMoveCommand(session);
@@ -130,10 +131,21 @@ public class WebsocketHandler {
         // Send notification to all clients (including observers) that Root Client resigned and game is over
     }
 
-    private void sendLoadGame(Session session) {
+    private void sendLoadGame(int gameID, Session session) {
         // Serialize Load_Game Message
-//        LoadGameMessage message = new LoadGameMessage()
-            // Send to client
+        GameData gameData = null;
+        try {
+            gameData = this.gameService.getGame(gameID);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        LoadGameMessage message = new LoadGameMessage(gameData.game());
+        // Send to client
+        try {
+            session.getRemote().sendString(new Gson().toJson(message));
+        } catch (IOException e) {
+            throw new WebSocketException(e);
+        }
     }
 
     private void sendError(Session session) {
