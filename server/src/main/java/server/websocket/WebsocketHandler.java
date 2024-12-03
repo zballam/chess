@@ -23,6 +23,7 @@ public class WebsocketHandler {
     private final GameService gameService;
     private final AuthService authService;
     private AuthData rootAuthData;
+    private String rootUser = "DEFAULT USERNAME";
 
     public WebsocketHandler(GameService gameService, AuthService authService) {
         this.gameService = gameService;
@@ -97,9 +98,9 @@ public class WebsocketHandler {
             }
             else {
                 game = gameData.game();
-                String rootUser = rootAuthData.username();
-                UserType type = determineUserType(gameData, rootUser);
-                message = rootUser.toUpperCase() + " connected to the game as " + type.toString();
+                this.rootUser = rootAuthData.username();
+                UserType type = determineUserType(gameData, this.rootUser);
+                message = this.rootUser.toUpperCase() + " connected to the game as " + type.toString();
             }
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
@@ -128,11 +129,21 @@ public class WebsocketHandler {
         // If a player is leaving, then the game is updated to remove the root client. Game is updated in the database.
         try {
             GameData gameData = gameService.getGame(command.getGameID());
-
-        } catch (DataAccessException e) {
+            UserType type = determineUserType(gameData, this.rootUser);
+            if (type == UserType.WHITE) {
+                gameService.leaveGame(gameData.gameID(),ChessGame.TeamColor.WHITE ,command.getAuthToken());
+            }
+            else if (type == UserType.BLACK) {
+                gameService.leaveGame(gameData.gameID(), ChessGame.TeamColor.BLACK ,command.getAuthToken());
+            }
+            connections.remove(gameData.gameID(), session);
+            String message = this.rootUser.toUpperCase() + " has left the game";
+            // Send notification to all clients (including observers) except Root Client that player left game
+            NotificationMessage notificationMessage = new NotificationMessage(message);
+            connections.broadcast(gameData.gameID(), session, new Gson().toJson(notificationMessage));
+        } catch (DataAccessException | IOException e) {
             throw new RuntimeException(e);
         }
-        // Send notification to all clients (including observers) except Root Client that player left game
     }
 
     private void resignCommand(Session session) {
