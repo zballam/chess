@@ -176,6 +176,7 @@ public class LoggedInClient {
             if (gameID == null) {
                 throw new RuntimeException("Error: no game with gameID " + params[0] + " exists");
             }
+            serverFacade.observeGame(gameID, this.authToken);
         }
         else {
             throw new RuntimeException("Expected: <ID>");

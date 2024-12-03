@@ -94,6 +94,12 @@ public class ServerFacade {
         }
     }
 
+    public String observeGame(String gameID, String authToken) {
+        this.gameID = Integer.valueOf(gameID);
+        this.authToken = authToken;
+        return "";
+    }
+
     public String joinGame(String gameID, String playerColor, String authToken) {
         Map<String, String> joinGameReq = Map.of(
                 "playerColor", playerColor.toUpperCase(),

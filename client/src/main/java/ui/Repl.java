@@ -134,12 +134,12 @@ public class Repl implements MessageObserver {
     }
 
     private void notifyNotificationMessage(NotificationMessage message) {
-        System.out.print(NOTIFICATIONCOLOR + message.getMessage() + RESET_TEXT_COLOR + "\n");
+        System.out.print("\n" + NOTIFICATIONCOLOR + message.getMessage() + RESET_TEXT_COLOR + "\n");
         printPrompt();
     }
 
     private void notifyErrorMessage(ErrorMessage message) {
-        System.out.print(ERRORCOLOR + message.getErrorMessage() + RESET_TEXT_COLOR + "\n");
+        System.out.print("\n" + ERRORCOLOR + message.getErrorMessage() + RESET_TEXT_COLOR + "\n");
         printPrompt();
     }
 }
