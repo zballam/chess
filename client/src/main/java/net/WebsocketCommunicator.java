@@ -3,7 +3,6 @@ package net;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import ui.BoardDrawer;
 import websocket.commands.*;
 import websocket.messages.*;
 
@@ -13,7 +12,6 @@ import java.net.URISyntaxException;
 import javax.websocket.*;
 
 public class WebsocketCommunicator extends Endpoint {
-    private BoardDrawer drawer = new BoardDrawer();
     Session session;
     private ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
 
@@ -35,20 +33,6 @@ public class WebsocketCommunicator extends Endpoint {
                         notificationHandler.notifyLoadGameMessage((LoadGameMessage) responseMessage, teamColor);
                     }
                     notificationHandler.notify(responseMessage);
-
-
-
-
-//                    // Call correct response function depending on message class
-//                    if (responseMessage instanceof LoadGameMessage) {
-//                        loadGameResponse((LoadGameMessage) responseMessage);
-//                    }
-//                    else if (responseMessage instanceof NotificationMessage) {
-//                        notificationHandler.notify(responseMessage);
-//                    }
-//                    else if (responseMessage instanceof ErrorMessage) {
-//                        errorResponse((ErrorMessage) responseMessage);
-//                    }
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
@@ -83,13 +67,4 @@ public class WebsocketCommunicator extends Endpoint {
             throw new WebsocketException(e.getMessage());
         }
     }
-
-    // RESPONSE METHODS
-
-//    private void loadGameResponse(LoadGameMessage responseMessage) {
-//        ChessGame game = responseMessage.getGame();
-//        drawer.drawChessBoard(game.getBoard().getSquares(), this.teamColor);
-//    }
-
-    private void errorResponse(ErrorMessage responseMessage) {}
 }

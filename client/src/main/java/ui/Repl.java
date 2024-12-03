@@ -23,7 +23,7 @@ public class Repl implements MessageObserver {
     private String username = "";
     private String authToken = "";
     private static final String MENUCOLOR = SET_TEXT_COLOR_MAGENTA;
-    private static final String NOTIFICATIONCOLOR = SET_BG_COLOR_YELLOW;
+    private static final String NOTIFICATIONCOLOR = SET_TEXT_COLOR_YELLOW;
     private static final String ERRORCOLOR = SET_TEXT_COLOR_RED;
 
     public Repl(String url) {
@@ -134,10 +134,12 @@ public class Repl implements MessageObserver {
     }
 
     private void notifyNotificationMessage(NotificationMessage message) {
-        System.out.print(NOTIFICATIONCOLOR + message.getMessage() + RESET_TEXT_COLOR);
+        System.out.print(NOTIFICATIONCOLOR + message.getMessage() + RESET_TEXT_COLOR + "\n");
+        printPrompt();
     }
 
     private void notifyErrorMessage(ErrorMessage message) {
-        System.out.print(ERRORCOLOR + message.getErrorMessage() + RESET_TEXT_COLOR);
+        System.out.print(ERRORCOLOR + message.getErrorMessage() + RESET_TEXT_COLOR + "\n");
+        printPrompt();
     }
 }
