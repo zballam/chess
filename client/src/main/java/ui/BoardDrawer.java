@@ -34,6 +34,7 @@ public class BoardDrawer {
         out.print(ERASE_SCREEN);
         boolean blackTeam;
         blackTeam = !(team == ChessGame.TeamColor.WHITE);
+        out.println();
         drawHeaders(out, blackTeam);
         drawRows(pieces, out, blackTeam);
         drawHeaders(out, blackTeam);

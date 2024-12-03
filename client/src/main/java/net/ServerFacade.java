@@ -103,7 +103,12 @@ public class ServerFacade {
             var response = httpCommunicator.joinGame(GSON.toJson(joinGameReq), authToken);
 //            this.gameID = extractGameID(response);
             this.gameID = Integer.valueOf(gameID);
-            this.teamColor = ChessGame.TeamColor.valueOf(playerColor);
+            if (playerColor.equalsIgnoreCase("WHITE")) {
+                this.teamColor = ChessGame.TeamColor.WHITE;
+            }
+            else {
+                this.teamColor = ChessGame.TeamColor.BLACK;
+            }
             return response;
         } catch (IOException e) {
             throw new RuntimeException(e);

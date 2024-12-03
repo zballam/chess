@@ -68,6 +68,9 @@ public class WebsocketCommunicator extends Endpoint {
 
     public void redrawRequest(String authToken, Integer gameID) {
         MakeMoveCommand redrawCommand = new MakeMoveCommand(authToken, gameID, null);
+        if (!this.session.isOpen()) {
+            throw new RuntimeException("Session Closed early");
+        }
         try {
             this.session.getBasicRemote().sendText(new Gson().toJson(redrawCommand));
         } catch (IOException e) {

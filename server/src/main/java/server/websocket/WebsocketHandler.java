@@ -39,7 +39,7 @@ public class WebsocketHandler {
         var userGameCommand = customDeserializer.fromJson(message, UserGameCommand.class);
         // Check to see if is a MakeMoveCommand
         if (userGameCommand instanceof MakeMoveCommand) { // MakeMoveCommand class
-            makeMoveCommandHandler(session, (MakeMoveCommand) userGameCommand);
+            makeMoveCommand(session);
         }
         // Otherwise...
         else { // UserGameCommand class
@@ -54,18 +54,13 @@ public class WebsocketHandler {
             else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.LEAVE) {
                 leaveCommand(session);
             }
+            // This else if will trigger when there was no move being made to deserialize the class into a MakeMoveCommand
+            else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
+                sendLoadGame(userGameCommand.getGameID(), session);
+            }
             else { // Resign type
                 resignCommand(session);
             }
-        }
-    }
-
-    private void makeMoveCommandHandler(Session session, MakeMoveCommand makeMoveCommand) {
-        if (makeMoveCommand.getMoveCommand() == null) {
-            sendLoadGame(makeMoveCommand.getGameID(), session);
-        }
-        else {
-            makeMoveCommand(session);
         }
     }
 
