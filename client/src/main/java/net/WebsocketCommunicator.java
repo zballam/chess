@@ -84,4 +84,8 @@ public class WebsocketCommunicator extends Endpoint {
         ChessGame game = responseMessage.getGame();
         drawer.drawChessBoard(game.getBoard().getSquares(), this.teamColor);
     }
+
+    private void notificationMessage(NotificationMessage responseMessage) {}
+
+    private void errorMessage(NotificationMessage responseMessage) {}
 }
