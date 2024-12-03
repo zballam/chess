@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.GameData;
+import model.UserData;
 import org.eclipse.jetty.websocket.api.WebSocketException;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -22,8 +23,6 @@ public class WebsocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
     private final GameService gameService;
     private final AuthService authService;
-    private AuthData rootAuthData;
-    private String rootUser = "DEFAULT USERNAME";
 
     public WebsocketHandler(GameService gameService, AuthService authService) {
         this.gameService = gameService;
@@ -43,11 +42,11 @@ public class WebsocketHandler {
         else { // UserGameCommand class
             if (userGameCommand.getCommandType() == UserGameCommand.CommandType.CONNECT) {
                 try {
-                    this.rootAuthData = authService.getAuth(userGameCommand.getAuthToken());
+                    AuthData userAuthData = authService.getAuth(userGameCommand.getAuthToken());
+                    connectCommand(userGameCommand.getGameID(), userAuthData, session);
                 } catch (DataAccessException e) {
                     throw new RuntimeException(e);
                 }
-                connectCommand(userGameCommand.getGameID(), session);
             }
             else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.LEAVE) {
                 leaveCommand(session, userGameCommand);
@@ -83,7 +82,7 @@ public class WebsocketHandler {
     }
 
 
-    private void connectCommand(Integer gameID, Session session) {
+    private void connectCommand(Integer gameID, AuthData userData, Session session) {
         // Sends Load_Game message to root client
         // Sends a Notification to all other clients in game that the root client connected, either as a player
         // (in which case their color must be specified) or as an observer.
@@ -98,9 +97,9 @@ public class WebsocketHandler {
             }
             else {
                 game = gameData.game();
-                this.rootUser = rootAuthData.username();
-                UserType type = determineUserType(gameData, this.rootUser);
-                message = this.rootUser.toUpperCase() + " connected to the game as " + type.toString();
+                String user = userData.username();
+                UserType type = determineUserType(gameData, user);
+                message = user.toUpperCase() + " connected to the game as " + type.toString();
             }
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
@@ -128,16 +127,17 @@ public class WebsocketHandler {
     private void leaveCommand(Session session, UserGameCommand command) {
         // If a player is leaving, then the game is updated to remove the root client. Game is updated in the database.
         try {
+            AuthData rootUser = authService.getAuth(command.getAuthToken());
             GameData gameData = gameService.getGame(command.getGameID());
-            UserType type = determineUserType(gameData, this.rootUser);
+            UserType type = determineUserType(gameData, rootUser.username());
             if (type == UserType.WHITE) {
                 gameService.leaveGame(gameData.gameID(),ChessGame.TeamColor.WHITE ,command.getAuthToken());
             }
             else if (type == UserType.BLACK) {
                 gameService.leaveGame(gameData.gameID(), ChessGame.TeamColor.BLACK ,command.getAuthToken());
             }
+            String message = rootUser.username().toUpperCase() + " has left the game";
             connections.remove(gameData.gameID(), session);
-            String message = this.rootUser.toUpperCase() + " has left the game";
             // Send notification to all clients (including observers) except Root Client that player left game
             NotificationMessage notificationMessage = new NotificationMessage(message);
             connections.broadcast(gameData.gameID(), session, new Gson().toJson(notificationMessage));
@@ -168,15 +168,5 @@ public class WebsocketHandler {
         } catch (IOException e) {
             throw new WebSocketException(e);
         }
-    }
-
-    private void sendNotification(Session session) {
-        // Serialize Notification Message
-        // Send to client
-    }
-
-    private void sendError(Session session) {
-        // Serialize Error Message
-        // Send to client
     }
 }
