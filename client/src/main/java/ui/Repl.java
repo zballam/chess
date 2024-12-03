@@ -1,7 +1,11 @@
 package ui;
 
+import chess.ChessGame;
 import net.MessageObserver;
 import net.ServerFacade;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.util.Objects;
@@ -14,10 +18,13 @@ public class Repl implements MessageObserver {
     private final LoggedOutClient logoutREPL;
     private LoggedInClient loginREPL = null;
     private final GameClient gameREPL;
+    private final BoardDrawer drawer = new BoardDrawer();
     private State state;
     private String username = "";
     private String authToken = "";
     private static final String MENUCOLOR = SET_TEXT_COLOR_MAGENTA;
+    private static final String NOTIFICATIONCOLOR = SET_BG_COLOR_YELLOW;
+    private static final String ERRORCOLOR = SET_TEXT_COLOR_RED;
 
     public Repl(String url) {
         this.serverFacade = new ServerFacade(url, this);
@@ -107,20 +114,30 @@ public class Repl implements MessageObserver {
     }
 
     @Override
-    public void notify(ServerMessage notification) {
+    public void notify(ServerMessage message) {
         // Call functions based on message type
-        switch (notification.getServerMessageType()) {
-            case LOAD_GAME -> notifyLoadGameMessage();
-            case ERROR -> notifyErrorMessage();
-            case NOTIFICATION -> notifyNotificationMessage();
+        if (message instanceof NotificationMessage) {
+            notifyNotificationMessage((NotificationMessage) message);
         }
-//                    // Add a GSON deserializer LOOK IT UP
-        // Look up type cast. Will need to type cast the message
+        else if (message instanceof ErrorMessage) {
+            notifyErrorMessage((ErrorMessage) message);
+        }
+        else {
+            throw new RuntimeException("Invalid type of Server Message received");
+        }
     }
 
-    private void notifyLoadGameMessage() {}
+    @Override
+    public void notifyLoadGameMessage(LoadGameMessage message, ChessGame.TeamColor teamColor) {
+        ChessGame game = message.getGame();
+        drawer.drawChessBoard(game.getBoard().getSquares(), teamColor);
+    }
 
-    private void notifyErrorMessage() {}
+    private void notifyNotificationMessage(NotificationMessage message) {
+        System.out.print(NOTIFICATIONCOLOR + message.getMessage() + RESET_TEXT_COLOR);
+    }
 
-    private void notifyNotificationMessage() {}
+    private void notifyErrorMessage(ErrorMessage message) {
+        System.out.print(ERRORCOLOR + message.getErrorMessage() + RESET_TEXT_COLOR);
+    }
 }

@@ -5,9 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ui.BoardDrawer;
 import websocket.commands.*;
-import websocket.messages.LoadGameMessage;
-import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
+import websocket.messages.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -33,15 +31,23 @@ public class WebsocketCommunicator extends Endpoint {
                     // Define customDeserializer for ServerMessages
                     Gson customDeserializer = new GsonBuilder().registerTypeAdapter(ServerMessage.class, new ServerMessageDeserializer()).create();
                     var responseMessage = customDeserializer.fromJson(message, ServerMessage.class);
-                    // Call correct response function depending on message class
                     if (responseMessage instanceof LoadGameMessage) {
-                        loadGameResponse((LoadGameMessage) responseMessage);
+                        notificationHandler.notifyLoadGameMessage((LoadGameMessage) responseMessage, teamColor);
                     }
-                    else if (responseMessage instanceof NotificationMessage) {
-                        notificationHandler.notify(responseMessage);
-                    }
+                    notificationHandler.notify(responseMessage);
+
+
+
+
+//                    // Call correct response function depending on message class
+//                    if (responseMessage instanceof LoadGameMessage) {
+//                        loadGameResponse((LoadGameMessage) responseMessage);
+//                    }
+//                    else if (responseMessage instanceof NotificationMessage) {
+//                        notificationHandler.notify(responseMessage);
+//                    }
 //                    else if (responseMessage instanceof ErrorMessage) {
-//
+//                        errorResponse((ErrorMessage) responseMessage);
 //                    }
                 }
             });
@@ -80,12 +86,10 @@ public class WebsocketCommunicator extends Endpoint {
 
     // RESPONSE METHODS
 
-    private void loadGameResponse(LoadGameMessage responseMessage) {
-        ChessGame game = responseMessage.getGame();
-        drawer.drawChessBoard(game.getBoard().getSquares(), this.teamColor);
-    }
+//    private void loadGameResponse(LoadGameMessage responseMessage) {
+//        ChessGame game = responseMessage.getGame();
+//        drawer.drawChessBoard(game.getBoard().getSquares(), this.teamColor);
+//    }
 
-    private void notificationMessage(NotificationMessage responseMessage) {}
-
-    private void errorMessage(NotificationMessage responseMessage) {}
+    private void errorResponse(ErrorMessage responseMessage) {}
 }

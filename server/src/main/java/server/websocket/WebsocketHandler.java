@@ -12,11 +12,8 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.Session;
 import service.AuthService;
 import service.GameService;
-import websocket.commands.MakeMoveCommand;
-import websocket.commands.UserGameCommand;
-import websocket.messages.LoadGameMessage;
-import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
+import websocket.commands.*;
+import websocket.messages.*;
 
 import java.io.IOException;
 
@@ -126,6 +123,8 @@ public class WebsocketHandler {
         // Send notification to all clients (including observers) that Root Client resigned and game is over
     }
 
+    // SEND SERVER MESSAGES
+
     private void sendLoadGame(int gameID, Session session) {
         // Serialize Load_Game Message
         GameData gameData = null;
@@ -143,13 +142,13 @@ public class WebsocketHandler {
         }
     }
 
-    private void sendError(Session session) {
-        // Serialize Error Message
+    private void sendNotification(Session session) {
+        // Serialize Notification Message
         // Send to client
     }
 
-    private void sendNotification(Session session) {
-        // Serialize Notification Message
+    private void sendError(Session session) {
+        // Serialize Error Message
         // Send to client
     }
 }

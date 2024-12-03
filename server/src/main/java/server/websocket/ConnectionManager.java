@@ -26,15 +26,16 @@ public class ConnectionManager {
         Vector<Session> broadcastConnections = new Vector<>();
         // Determine which connections to broadcast to
         // If session is null then send to all connections
-        if (session == null) {
-            broadcastConnections.addAll(connections.get(gameID));
-        }
-        else {
-            for (Session connection : connections.get(gameID)) {
-                if (!connection.equals(session)) {
-                    broadcastConnections.add(connection);
-                }
+        for (Session connection : connections.get(gameID)) {
+            if (connection.isOpen()) {
+                broadcastConnections.add(connection);
             }
+            else {
+                remove(gameID, connection);
+            }
+        }
+        if (session != null) {
+            broadcastConnections.remove(session);
         }
         // Send message to broadcastConnections
         for (Session sendConn : broadcastConnections) {
