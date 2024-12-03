@@ -55,6 +55,7 @@ public class GameClient {
     }
 
     private String leave() {
+        serverFacade.leaveWS();
         return "Leave Game";
     }
 

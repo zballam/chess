@@ -52,10 +52,6 @@ public class WebsocketCommunicator extends Endpoint {
         }
     }
 
-    public void makeMoveWS() {
-
-    }
-
     public void redrawRequest(String authToken, Integer gameID) {
         MakeMoveCommand redrawCommand = new MakeMoveCommand(authToken, gameID, null);
         if (!this.session.isOpen()) {
@@ -66,5 +62,18 @@ public class WebsocketCommunicator extends Endpoint {
         } catch (IOException e) {
             throw new WebsocketException(e.getMessage());
         }
+    }
+
+    public void leave(String authToken, int gameID) {
+        UserGameCommand leaveCommand = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+        try {
+            this.session.getBasicRemote().sendText(new Gson().toJson(leaveCommand));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void makeMoveWS() {
+
     }
 }

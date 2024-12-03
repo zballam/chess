@@ -134,4 +134,8 @@ public class ServerFacade {
     public void redraw() {
         this.websocketCommunicator.redrawRequest(this.authToken, this.gameID);
     }
+
+    public void leaveWS() {
+        this.websocketCommunicator.leave(this.authToken, this.gameID);
+    }
 }
