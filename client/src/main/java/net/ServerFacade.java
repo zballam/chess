@@ -94,10 +94,10 @@ public class ServerFacade {
         }
     }
 
-    public String observeGame(String gameID, String authToken) {
+    public void observeGame(String gameID, String authToken) {
         this.gameID = Integer.valueOf(gameID);
         this.authToken = authToken;
-        return "";
+        this.teamColor = ChessGame.TeamColor.WHITE;
     }
 
     public String joinGame(String gameID, String playerColor, String authToken) {
