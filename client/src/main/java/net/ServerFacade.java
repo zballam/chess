@@ -14,6 +14,7 @@ public class ServerFacade {
     private final WebsocketCommunicator websocketCommunicator;
     private String authToken = "";
     private Integer gameID = 0;
+    private ChessGame.TeamColor teamColor;
 
     public ServerFacade(String serverUrl, MessageObserver messageObserver) {
         this.httpCommunicator = new HttpCommunicator(serverUrl);
@@ -102,6 +103,7 @@ public class ServerFacade {
             var response = httpCommunicator.joinGame(GSON.toJson(joinGameReq), authToken);
 //            this.gameID = extractGameID(response);
             this.gameID = Integer.valueOf(gameID);
+            this.teamColor = ChessGame.TeamColor.valueOf(playerColor);
             return response;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -111,7 +113,7 @@ public class ServerFacade {
     // WebSocket Methods
 
     public void connectWS() {
-        websocketCommunicator.connect(this.authToken, this.gameID);
+        websocketCommunicator.connect(this.authToken, this.gameID, this.teamColor);
     }
 
     public void makeMoveWS() {

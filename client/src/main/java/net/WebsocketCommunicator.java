@@ -17,6 +17,7 @@ import javax.websocket.*;
 public class WebsocketCommunicator extends Endpoint {
     private BoardDrawer drawer = new BoardDrawer();
     Session session;
+    private ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
 
     public WebsocketCommunicator(String url, MessageObserver notificationHandler) {
         try {
@@ -51,7 +52,8 @@ public class WebsocketCommunicator extends Endpoint {
 
     public void onOpen(Session session, EndpointConfig endpointConfig) {}
 
-    public void connect(String authToken, Integer gameID) {
+    public void connect(String authToken, Integer gameID, ChessGame.TeamColor teamColor) {
+        this.teamColor = teamColor;
         var connectRequest = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
         try {
             this.session.getBasicRemote().sendText(new Gson().toJson(connectRequest));
@@ -77,6 +79,6 @@ public class WebsocketCommunicator extends Endpoint {
 
     private void loadGameResponse(LoadGameMessage responseMessage) {
         ChessGame game = responseMessage.getGame();
-        drawer.drawChessBoard(game.getBoard().getSquares(), ChessGame.TeamColor.WHITE);
+        drawer.drawChessBoard(game.getBoard().getSquares(), this.teamColor);
     }
 }
