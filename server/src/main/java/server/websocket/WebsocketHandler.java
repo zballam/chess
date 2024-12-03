@@ -1,12 +1,12 @@
 package server.websocket;
 
 import chess.ChessGame;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.GameData;
-import model.UserData;
 import org.eclipse.jetty.websocket.api.WebSocketException;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -36,7 +36,7 @@ public class WebsocketHandler {
         var userGameCommand = customDeserializer.fromJson(message, UserGameCommand.class);
         // Check to see if is a MakeMoveCommand
         if (userGameCommand instanceof MakeMoveCommand) { // MakeMoveCommand class
-            makeMoveCommand(session);
+            makeMoveCommand((MakeMoveCommand) userGameCommand, session);
         }
         // Otherwise...
         else { // UserGameCommand class
@@ -49,9 +49,9 @@ public class WebsocketHandler {
                 }
             }
             else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.LEAVE) {
-                leaveCommand(session, userGameCommand);
+                leaveCommand(userGameCommand, session);
             }
-            // This else if will trigger when there was no move being made to deserialize the class into a MakeMoveCommand
+            // This else-if will trigger when there was no move being made to deserialize the class into a MakeMoveCommand
             else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
                 sendLoadGame(userGameCommand.getGameID(), session);
             }
@@ -116,15 +116,40 @@ public class WebsocketHandler {
         }
     }
 
-    private void makeMoveCommand(Session session) {
+    private void makeMoveCommand(MakeMoveCommand moveCommand, Session session) {
+        GameData gameData;
+        try {
+            gameData = gameService.getGame(moveCommand.getGameID());
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        ChessGame game = gameData.game();
         // Check to make sure valid move
         // Update game in database
-        // Send load_game to players
+        try {
+            gameService.makeMove(moveCommand.getMoveCommand(), moveCommand.getGameID());
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidMoveException e) {
+            sendErrorMessage("Invalid Move", session);
+        }
         // Send notification to all clients but root client
+        String startPosition = moveCommand.getMoveCommand().getStartPosition().toString();
+        String endPosition = moveCommand.getMoveCommand().getEndPosition().toString();
+        String message = "Move made: " + startPosition + " -> " + endPosition;
+        NotificationMessage notification = new NotificationMessage(message);
+        // Send load_game to players
+        try {
+            LoadGameMessage loadGameMessage = new LoadGameMessage(gameService.getGame(moveCommand.getGameID()).game());
+            connections.broadcast(moveCommand.getGameID(), null, new Gson().toJson(loadGameMessage));
+            connections.broadcast(moveCommand.getGameID(), null, new Gson().toJson(notification));
+        } catch (DataAccessException | IOException e) {
+            throw new RuntimeException(e);
+        }
         // If move results in check, checkmate, or stalemate send notification to all clients
     }
 
-    private void leaveCommand(Session session, UserGameCommand command) {
+    private void leaveCommand(UserGameCommand command, Session session) {
         // If a player is leaving, then the game is updated to remove the root client. Game is updated in the database.
         try {
             AuthData rootUser = authService.getAuth(command.getAuthToken());
