@@ -49,7 +49,7 @@ public class WebsocketHandler {
                 connectCommand(userGameCommand.getGameID(), session);
             }
             else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.LEAVE) {
-                leaveCommand(session);
+                leaveCommand(session, userGameCommand);
             }
             // This else if will trigger when there was no move being made to deserialize the class into a MakeMoveCommand
             else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
@@ -59,6 +59,26 @@ public class WebsocketHandler {
                 resignCommand(session);
             }
         }
+    }
+
+    private enum UserType {
+        WHITE,
+        BLACK,
+        OBSERVER
+    }
+
+    private UserType determineUserType(GameData data, String user) {
+        UserType type;
+        if (user.equals(data.whiteUsername())) {
+            type = UserType.WHITE;
+        }
+        else if (user.equals(data.blackUsername())) {
+            type = UserType.BLACK;
+        }
+        else { // Observer
+            type = UserType.OBSERVER;
+        }
+        return type;
     }
 
 
@@ -77,18 +97,9 @@ public class WebsocketHandler {
             }
             else {
                 game = gameData.game();
-                String teamColor;
                 String rootUser = rootAuthData.username();
-                if (rootUser.equals(gameData.whiteUsername())) {
-                    teamColor = "WHITE";
-                }
-                else if (rootUser.equals(gameData.blackUsername())) {
-                    teamColor = "BLACK";
-                }
-                else { // Observer
-                    teamColor = "OBSERVER";
-                }
-                message = rootUser.toUpperCase() + " connected to the game as " + teamColor;
+                UserType type = determineUserType(gameData, rootUser);
+                message = rootUser.toUpperCase() + " connected to the game as " + type.toString();
             }
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
@@ -113,8 +124,14 @@ public class WebsocketHandler {
         // If move results in check, checkmate, or stalemate send notification to all clients
     }
 
-    private void leaveCommand(Session session) {
+    private void leaveCommand(Session session, UserGameCommand command) {
         // If a player is leaving, then the game is updated to remove the root client. Game is updated in the database.
+        try {
+            GameData gameData = gameService.getGame(command.getGameID());
+
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         // Send notification to all clients (including observers) except Root Client that player left game
     }
 
