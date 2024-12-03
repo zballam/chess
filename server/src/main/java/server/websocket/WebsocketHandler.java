@@ -169,4 +169,13 @@ public class WebsocketHandler {
             throw new WebSocketException(e);
         }
     }
+
+    private void sendErrorMessage(String message, Session session) {
+        ErrorMessage errorMessage = new ErrorMessage(message);
+        try {
+            session.getRemote().sendString(new Gson().toJson(errorMessage));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
