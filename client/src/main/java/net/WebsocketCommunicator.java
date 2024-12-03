@@ -1,6 +1,7 @@
 package net;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import websocket.commands.*;
@@ -68,12 +69,18 @@ public class WebsocketCommunicator extends Endpoint {
         UserGameCommand leaveCommand = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
         try {
             this.session.getBasicRemote().sendText(new Gson().toJson(leaveCommand));
+            this.session.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void makeMoveWS() {
-
+    public void makeMoveWS(String authToken, Integer gameID, ChessMove move) {
+        MakeMoveCommand moveCommand = new MakeMoveCommand(authToken, gameID, move);
+        try {
+            this.session.getBasicRemote().sendText(new Gson().toJson(moveCommand));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

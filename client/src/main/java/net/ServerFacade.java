@@ -1,6 +1,8 @@
 package net;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import model.AuthData;
@@ -127,8 +129,9 @@ public class ServerFacade {
         websocketCommunicator.connect(this.authToken, this.gameID, this.teamColor);
     }
 
-    public void makeMoveWS() {
-        websocketCommunicator.makeMoveWS();
+    public void makeMoveWS(ChessPosition startPosition, ChessPosition endPosition) {
+        ChessMove move = new ChessMove(startPosition, endPosition);
+        websocketCommunicator.makeMoveWS(this.authToken, this.gameID, move);
     }
 
     public void redraw() {
