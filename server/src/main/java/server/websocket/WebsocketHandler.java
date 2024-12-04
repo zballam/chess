@@ -132,7 +132,7 @@ public class WebsocketHandler {
             // Check to see if game is active
             if (gameData.winner() != null) {
                 String innactiveGameMessage = "This Game Is Over. " + gameData.winner() + " Won!";
-                NotificationMessage innactiveGameNotification = new NotificationMessage(innactiveGameMessage);
+                ErrorMessage innactiveGameNotification = new ErrorMessage(innactiveGameMessage);
                 session.getRemote().sendString(new Gson().toJson(innactiveGameNotification));
             }
             username = authService.getAuth(moveCommand.getAuthToken()).username();
