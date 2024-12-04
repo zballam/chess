@@ -1,24 +1,33 @@
 package ui;
 
-import chess.ChessGame;
 import chess.ChessPosition;
 import net.MessageObserver;
 import net.ServerFacade;
-import websocket.messages.ServerMessage;
+import websocket.messages.ErrorMessage;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Scanner;
+
+import static ui.EscapeSequences.RESET_TEXT_COLOR;
 
 public class GameClient {
     ServerFacade serverFacade;
+    private final String MENUCOLOR;
+    private boolean player;
+    private final MessageObserver messageObserver;
 
-    public GameClient(ServerFacade serverFacade) {
+    public GameClient(ServerFacade serverFacade, String menucolor, MessageObserver messageObserver) {
         this.serverFacade = serverFacade;
+        this.MENUCOLOR = menucolor;
+        this.messageObserver = messageObserver;
     }
 
     public void connectWS() {
         serverFacade.connectWS();
+    }
+
+    public void setPlayerVal(boolean player) {
+        this.player = player;
     }
 
     public String run(String input) {
@@ -127,6 +136,18 @@ public class GameClient {
     }
 
     private String resign() {
-        throw new RuntimeException("Not implemented");
+        if (this.player) {
+            System.out.print("\n" + MENUCOLOR + "Are You Sure You Want To Resign?" + RESET_TEXT_COLOR + "\n");
+            Scanner scanner = new Scanner(System.in);
+            String line = scanner.nextLine();
+            if (line.equalsIgnoreCase("Y") || line.equalsIgnoreCase("YES")) {
+                serverFacade.resign();
+            }
+        }
+        else {
+            ErrorMessage errorMessage = new ErrorMessage("You Cannot Resign As An Observer");
+            messageObserver.notify(errorMessage);
+        }
+        return "";
     }
 }

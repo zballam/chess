@@ -28,7 +28,7 @@ public class Repl implements MessageObserver {
     public Repl(String url) {
         this.serverFacade = new ServerFacade(url, this);
         this.logoutREPL = new LoggedOutClient(serverFacade);
-        this.gameREPL = new GameClient(serverFacade);
+        this.gameREPL = new GameClient(serverFacade, MENUCOLOR, this);
         this.state = State.SIGNEDOUT;
     }
 
@@ -97,6 +97,12 @@ public class Repl implements MessageObserver {
                 this.state = State.SIGNEDOUT;
             }
             else if (result.equals("Start Game") || result.startsWith("You have successfully joined game ")) {
+                if (result.startsWith("You have successfully joined game ")) {
+                    gameREPL.setPlayerVal(true);
+                }
+                else if (result.equals("Start Game")){
+                    gameREPL.setPlayerVal(false);
+                }
                 result = "Starting Game...";
                 this.state = State.INGAME;
                 gameREPL.connectWS();
@@ -139,6 +145,6 @@ public class Repl implements MessageObserver {
 
     private void notifyErrorMessage(ErrorMessage message) {
         System.out.print("\n" + ERRORCOLOR + message.getErrorMessage() + RESET_TEXT_COLOR + "\n");
-        printPrompt();
+//        printPrompt();
     }
 }

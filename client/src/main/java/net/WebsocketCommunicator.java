@@ -83,4 +83,13 @@ public class WebsocketCommunicator extends Endpoint {
             throw new RuntimeException(e);
         }
     }
+
+    public void resign(String authToken, Integer gameID) {
+        UserGameCommand resignCommand = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+        try {
+            this.session.getBasicRemote().sendText(new Gson().toJson(resignCommand));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

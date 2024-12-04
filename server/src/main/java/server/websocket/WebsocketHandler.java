@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.GameData;
+import model.UserType;
 import org.eclipse.jetty.websocket.api.WebSocketException;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -17,7 +18,6 @@ import websocket.commands.*;
 import websocket.messages.*;
 
 import java.io.IOException;
-import java.util.Objects;
 
 @WebSocket
 public class WebsocketHandler {
@@ -60,12 +60,6 @@ public class WebsocketHandler {
                 resignCommand(session);
             }
         }
-    }
-
-    private enum UserType {
-        WHITE,
-        BLACK,
-        OBSERVER
     }
 
     private UserType determineUserType(GameData data, String user) {

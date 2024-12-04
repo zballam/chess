@@ -141,4 +141,8 @@ public class ServerFacade {
     public void leaveWS() {
         this.websocketCommunicator.leave(this.authToken, this.gameID);
     }
+
+    public void resign() {
+        websocketCommunicator.resign(this.authToken, this.gameID);
+    }
 }
