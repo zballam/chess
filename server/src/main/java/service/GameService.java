@@ -56,7 +56,8 @@ public class GameService {
 
     public void leaveGame(int gameID, ChessGame.TeamColor color, String authToken) throws DataAccessException {
         authService.getAuth(authToken);
-        gameDAO.insertUser(gameID, null, color);
+        UserData user = new UserData(null, null, null);
+        gameDAO.insertUser(gameID, user, color);
     }
 
     public void makeMove(ChessMove newMove, ChessGame updatedGame, int gameID) throws DataAccessException, InvalidMoveException {
