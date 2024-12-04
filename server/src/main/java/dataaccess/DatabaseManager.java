@@ -99,6 +99,7 @@ public class DatabaseManager {
             """
             CREATE TABLE IF NOT EXISTS game (
               gameID INT NOT NULL AUTO_INCREMENT,
+              active BOOLEAN NULL,
               whiteUsername varchar(256) NULL,
               blackUsername varchar(256) NULL,
               gameName varchar(256) NOT NULL,

@@ -28,7 +28,7 @@ public class MemoryGameDAO implements GameDAO{
         String whiteUsername = createRequest.whiteUsername();
         String blackUsername = createRequest.blackUsername();
         String gameName = createRequest.gameName();
-        GameData newData = new GameData(nextGameID, whiteUsername, blackUsername, gameName, newGame);
+        GameData newData = new GameData(nextGameID, true,  whiteUsername, blackUsername, gameName, newGame);
         this.gameDataHashMap.put(nextGameID,newData);
         nextGameID++;
         return newData.gameID();
@@ -57,10 +57,10 @@ public class MemoryGameDAO implements GameDAO{
         GameData newGame;
         if (game == null) { throw new DataAccessException("Invalid user"); }
         if (playerColor == ChessGame.TeamColor.WHITE) {
-            newGame = new GameData(game.gameID(), user.username(), game.blackUsername(), game.gameName(), game.game());
+            newGame = new GameData(game.gameID(), true, user.username(), game.blackUsername(), game.gameName(), game.game());
         }
         else {
-            newGame = new GameData(game.gameID(), game.whiteUsername(), user.username(), game.gameName(), game.game());
+            newGame = new GameData(game.gameID(), true, game.whiteUsername(), user.username(), game.gameName(), game.game());
         }
         this.gameDataHashMap.put(gameID, newGame);
     }

@@ -79,7 +79,7 @@ public class DatabaseGameDAO implements GameDAO{
         String gameName = rs.getString(4);
         String game = rs.getString(5);
         ChessGame gameData = GSON.fromJson(game, ChessGame.class);
-        return new GameData(dataGameID, whiteUsername, blackUsername, gameName, gameData);
+        return new GameData(dataGameID, true, whiteUsername, blackUsername, gameName, gameData);
     }
 
     @Override

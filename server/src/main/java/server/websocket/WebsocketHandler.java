@@ -57,7 +57,7 @@ public class WebsocketHandler {
                 sendLoadGame(userGameCommand.getGameID(), session);
             }
             else { // Resign type
-                resignCommand(session);
+                resignCommand(userGameCommand, session);
             }
         }
     }
@@ -187,9 +187,14 @@ public class WebsocketHandler {
         }
     }
 
-    private void resignCommand(Session session) {
+    private void resignCommand(UserGameCommand command, Session session) {
+        try {
+            String username = authService.getAuth(command.getAuthToken()).username();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         // Server marks the game as over (no more moves can be made). Game is updated in the database.
-        // Send notification to all clients (including observers) that Root Client resigned and game is over
+        // Send notification to all clients (including observers) that Player resigned and game is over
     }
 
     // SEND SERVER MESSAGES
