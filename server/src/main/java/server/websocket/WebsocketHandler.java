@@ -46,7 +46,7 @@ public class WebsocketHandler {
                     AuthData userAuthData = authService.getAuth(userGameCommand.getAuthToken());
                     connectCommand(userGameCommand.getGameID(), userAuthData, session);
                 } catch (DataAccessException e) {
-                    throw new RuntimeException(e);
+                    sendErrorMessage("No Game Found", session);
                 }
             }
             else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.LEAVE) {
