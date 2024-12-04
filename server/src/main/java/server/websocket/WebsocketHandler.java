@@ -243,7 +243,13 @@ public class WebsocketHandler {
         try {
             String username = authService.getAuth(command.getAuthToken()).username();
             GameData gameData = gameService.getGame(command.getGameID());
-            String winner = "NOBODY";
+            // Check if game is already over
+            if (gameData.winner() != null) {
+                ErrorMessage errorMessage = new ErrorMessage("Cannot Resign From Terminated Game");
+                session.getRemote().sendString(new Gson().toJson(errorMessage));
+                return;
+            }
+            String winner;
             if (gameData.whiteUsername().equalsIgnoreCase(username)) {
                 winner = "BLACK";
             }
