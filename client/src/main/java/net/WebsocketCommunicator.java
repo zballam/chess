@@ -2,6 +2,7 @@ package net;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import websocket.commands.*;
@@ -10,11 +11,13 @@ import websocket.messages.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import javax.websocket.*;
 
 public class WebsocketCommunicator extends Endpoint {
     Session session;
     private ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
+    private ChessGame mostRecentGame;
 
     public WebsocketCommunicator(String url, MessageObserver notificationHandler) {
         try {
@@ -32,6 +35,7 @@ public class WebsocketCommunicator extends Endpoint {
                     var responseMessage = customDeserializer.fromJson(message, ServerMessage.class);
                     if (responseMessage instanceof LoadGameMessage) {
                         notificationHandler.notifyLoadGameMessage((LoadGameMessage) responseMessage, teamColor);
+                        mostRecentGame = ((LoadGameMessage) responseMessage).getGame();
                     }
                     notificationHandler.notify(responseMessage);
                 }
@@ -91,5 +95,9 @@ public class WebsocketCommunicator extends Endpoint {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Collection<ChessMove> highlight(ChessPosition position1) {
+        return mostRecentGame.validMoves(position1);
     }
 }

@@ -1,11 +1,13 @@
 package ui;
 
+import chess.ChessMove;
 import chess.ChessPosition;
 import net.MessageObserver;
 import net.ServerFacade;
 import websocket.messages.ErrorMessage;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.RESET_TEXT_COLOR;
@@ -40,7 +42,7 @@ public class GameClient {
                 case "leave" -> leave();
                 case "redraw" -> redraw();
                 case "move" -> move(params);
-                case "highlight" -> highlight();
+                case "highlight" -> highlight(params);
                 case "resign" -> resign();
                 case "quit" -> "quit";
                 default -> error();
@@ -57,8 +59,8 @@ public class GameClient {
     public String help() {
         return """
                 HELP MENU
-                - redraw (redraws the current board)
-                - highlight (highlights valid moves)
+                - redraw
+                - highlight <PIECE POSITION>
                 - move <START POSITION> <END POSITION>
                 - leave
                 - resign
@@ -123,7 +125,7 @@ public class GameClient {
             }
             ChessPosition position1 = new ChessPosition(startPosition.charAt(1) - '0', translate(String.valueOf(startPosition.charAt(0))));
             ChessPosition position2 = new ChessPosition(endPosition.charAt(1) - '0', translate(String.valueOf(endPosition.charAt(0))));
-            serverFacade.makeMoveWS(position1,position2);
+            serverFacade.makeMoveWS(position1, position2);
             return "";
         }
         else {
@@ -131,8 +133,20 @@ public class GameClient {
         }
     }
 
-    private String highlight() {
-        throw new RuntimeException("Not implemented");
+    private String highlight(String[] params) {
+        if (params.length ==1) {
+            String piecePosition = params[0];
+            if (!verifyMoveInput(piecePosition)) {
+                return "Expected: Valid Piece Position Format: i.e. A1";
+            }
+            ChessPosition position1 = new ChessPosition(piecePosition.charAt(1) - '0', translate(String.valueOf(piecePosition.charAt(0))));
+            Collection<ChessMove> highlightMoves = serverFacade.highlight(position1);
+//            BoardDrawer.highlightMoves(highlightMoves);
+            return "";
+        }
+        else {
+            throw new RuntimeException("Expected: <PIECE POSITION>");
+        }
     }
 
     private String resign() {

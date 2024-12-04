@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import model.AuthData;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 
 public class ServerFacade {
@@ -144,5 +145,9 @@ public class ServerFacade {
 
     public void resign() {
         websocketCommunicator.resign(this.authToken, this.gameID);
+    }
+
+    public Collection<ChessMove> highlight(ChessPosition position1) {
+        return websocketCommunicator.highlight(position1);
     }
 }

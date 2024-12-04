@@ -4,8 +4,7 @@ import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static ui.EscapeSequences.*;
 
@@ -25,8 +24,42 @@ public class BoardDrawer {
 
         ChessGame board = new ChessGame();
         ChessPiece[][] pieces = board.getBoard().getSquares();
-        drawChessBoard(pieces, white);
-        drawChessBoard(pieces, black);
+        ChessMove move = new ChessMove(new ChessPosition(1,1), new ChessPosition(2,1));
+        Collection<ChessMove> moves = new ArrayList<>();
+        moves.add(move);
+        highlightMoves(moves, pieces, white);
+//        drawChessBoard(pieces, white);
+//        drawChessBoard(pieces, black);
+    }
+
+    private static Set<String> convertHighlightMoves(Collection<ChessMove> collectionMoves) {
+        Set<String> highlightSquares = new HashSet<>();
+        if (collectionMoves != null) {
+            for (ChessMove move : collectionMoves) {
+                int destRow1 = move.getStartPosition().getRow()-1;
+                int destCol1 = move.getStartPosition().getColumn()-1;
+                int destRow2 = move.getEndPosition().getRow()-1;
+                int destCol2 = move.getEndPosition().getColumn()-1;
+                highlightSquares.add(destRow1 + "," + destCol1); // Use "row,col" as the key
+                highlightSquares.add(destRow2 + "," + destCol2);
+            }
+        }
+        else {
+            highlightSquares = null;
+        }
+        return highlightSquares;
+    }
+
+    public static void highlightMoves(Collection<ChessMove> highlightMoves, ChessPiece[][] pieces, ChessGame.TeamColor team) {
+        Set<String> highlightSquares = convertHighlightMoves(highlightMoves);
+        PrintStream out = OUTSTREAM;
+        out.print(ERASE_SCREEN);
+        boolean blackTeam;
+        blackTeam = !(team == ChessGame.TeamColor.WHITE);
+        out.println();
+        drawHeaders(out, blackTeam);
+        drawRows(pieces, out, blackTeam, highlightSquares);
+        drawHeaders(out, blackTeam);
     }
 
     public static void drawChessBoard(ChessPiece[][] pieces, ChessGame.TeamColor team) {
@@ -36,7 +69,7 @@ public class BoardDrawer {
         blackTeam = !(team == ChessGame.TeamColor.WHITE);
         out.println();
         drawHeaders(out, blackTeam);
-        drawRows(pieces, out, blackTeam);
+        drawRows(pieces, out, blackTeam, null);
         drawHeaders(out, blackTeam);
     }
 
@@ -62,7 +95,7 @@ public class BoardDrawer {
         out.println();
     }
 
-    private static void drawRows(ChessPiece[][] pieces, PrintStream out, boolean blackTeam) {
+    private static void drawRows(ChessPiece[][] pieces, PrintStream out, boolean blackTeam, Set<String> highlightMoves) {
         List<String> colHeaders = new ArrayList<>(List.of("1","2","3","4","5","6","7","8"));
         setLightGray(out);
         int x = 0;
@@ -76,7 +109,7 @@ public class BoardDrawer {
                 for (int i = 0; i < array.length; i++) {
                     reversedArray[i] = array[array.length - 1 - i];
                 }
-                drawRow(out, reversedArray, whiteSquare);
+                drawRow(out, reversedArray, whiteSquare, highlightMoves, x);
                 x++;
                 setLightGray(out);
                 drawColHeader(out, colHeader);
@@ -89,7 +122,7 @@ public class BoardDrawer {
             x = 7;
             for (int i = colHeaders.size() - 1; i >= 0; i--) {
                 drawColHeader(out, colHeaders.get(i));
-                drawRow(out, pieces[x], whiteSquare);
+                drawRow(out, pieces[x], whiteSquare, highlightMoves, x);
                 x--;
                 setLightGray(out);
                 drawColHeader(out, colHeaders.get(i));
@@ -107,15 +140,37 @@ public class BoardDrawer {
         resetColor(out);
     }
 
-    private static void drawRow(PrintStream out, ChessPiece[] pieces, boolean whiteSquare) {
-        for (ChessPiece piece : pieces) {
-            if (piece != null) {
-                drawSquare(out, piece, whiteSquare);
+    private static void drawRow(PrintStream out, ChessPiece[] pieces, boolean whiteSquare, Set<String> highlightMoves, int row) {
+        if (highlightMoves == null) {
+            for (ChessPiece piece : pieces) {
+                if (piece != null) {
+                    drawSquare(out, piece, whiteSquare);
+                } else {
+                    drawSquare(out, null, whiteSquare);
+                }
+                whiteSquare = !(whiteSquare);
             }
-            else {
-                drawSquare(out, null, whiteSquare);
+        }
+        else {
+            for (int col = 0; col < pieces.length; col++) {
+                String squareKey = row + "," + col;
+                if (highlightMoves.contains(squareKey)) {
+                    if (pieces[col] != null) {
+                        highlightSquare(out, pieces[col], whiteSquare);
+                    }
+                    else {
+                        highlightSquare(out, null, whiteSquare);
+                    }
+                }
+                else {
+                    if (pieces[col] != null) {
+                        drawSquare(out, pieces[col], whiteSquare);
+                    } else {
+                        drawSquare(out, null, whiteSquare);
+                    }
+                }
+                whiteSquare = !(whiteSquare);
             }
-            whiteSquare = !(whiteSquare);
         }
     }
 
@@ -163,12 +218,59 @@ public class BoardDrawer {
         }
     }
 
+    private static void drawGreenSquare(PrintStream out, ChessPiece piece) {
+        if (piece != null) {
+            boolean white = piece.getTeamColor() == ChessGame.TeamColor.WHITE;
+            setWhite(out);
+            setGreen(out);
+            setPieceColor(out, white);
+            printString(out, piece.toString());
+            setWhite(out);
+            resetColor(out);
+        }
+        else {
+            setWhite(out);
+            setGreen(out);
+            printString(out, " ");
+            setWhite(out);
+            resetColor(out);
+        }
+    }
+
+    private static void drawDarkGreenSquare(PrintStream out, ChessPiece piece) {
+        if (piece != null) {
+            boolean white = piece.getTeamColor() == ChessGame.TeamColor.WHITE;
+            setBlack(out);
+            setDarkGreen(out);
+            setPieceColor(out, white);
+            printString(out, piece.toString());
+            setBlack(out);
+            resetColor(out);
+        }
+        else {
+            setBlack(out);
+            setDarkGreen(out);
+            printString(out, " ");
+            setBlack(out);
+            resetColor(out);
+        }
+    }
+
     private static void drawSquare(PrintStream out, ChessPiece piece, boolean whiteSquare) {
         if (whiteSquare) {
             drawWhiteSquare(out, piece);
         }
         else {
             drawBlackSquare(out, piece);
+        }
+    }
+
+    private static void highlightSquare(PrintStream out, ChessPiece piece, boolean whiteSquare) {
+        if (whiteSquare) {
+            drawGreenSquare(out, piece);
+        }
+        else {
+            drawDarkGreenSquare(out, piece);
         }
     }
 
@@ -196,5 +298,13 @@ public class BoardDrawer {
     private static void setWhite(PrintStream out) {
         out.print(SET_BG_COLOR_WHITE);
         out.print(SET_TEXT_COLOR_WHITE);
+    }
+
+    private static void setDarkGreen(PrintStream out) {
+        out.print(SET_BG_COLOR_DARK_GREEN);
+    }
+
+    private static void setGreen(PrintStream out) {
+        out.print(SET_BG_COLOR_GREEN);
     }
 }
