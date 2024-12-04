@@ -16,13 +16,13 @@ import static ui.EscapeSequences.RESET_TEXT_COLOR;
 
 public class GameClient {
     ServerFacade serverFacade;
-    private final String MENUCOLOR;
+    private final String menuColor;
     private boolean player;
     private final MessageObserver messageObserver;
 
     public GameClient(ServerFacade serverFacade, String menucolor, MessageObserver messageObserver) {
         this.serverFacade = serverFacade;
-        this.MENUCOLOR = menucolor;
+        this.menuColor = menucolor;
         this.messageObserver = messageObserver;
     }
 
@@ -155,7 +155,7 @@ public class GameClient {
 
     private String resign() {
         if (this.player) {
-            System.out.print("\n" + MENUCOLOR + "Are You Sure You Want To Resign?" + RESET_TEXT_COLOR + "\n");
+            System.out.print("\n" + menuColor + "Are You Sure You Want To Resign?" + RESET_TEXT_COLOR + "\n");
             Scanner scanner = new Scanner(System.in);
             String line = scanner.nextLine();
             if (line.equalsIgnoreCase("Y") || line.equalsIgnoreCase("YES")) {
