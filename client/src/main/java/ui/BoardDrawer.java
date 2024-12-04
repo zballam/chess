@@ -28,8 +28,9 @@ public class BoardDrawer {
         Collection<ChessMove> moves = new ArrayList<>();
         moves.add(move);
         highlightMoves(moves, pieces, white);
-//        drawChessBoard(pieces, white);
-//        drawChessBoard(pieces, black);
+        highlightMoves(moves, pieces, black);
+        drawChessBoard(pieces, white);
+        drawChessBoard(pieces, black);
     }
 
     private static Set<String> convertHighlightMoves(Collection<ChessMove> collectionMoves) {
@@ -109,7 +110,11 @@ public class BoardDrawer {
                 for (int i = 0; i < array.length; i++) {
                     reversedArray[i] = array[array.length - 1 - i];
                 }
-                drawRow(out, reversedArray, whiteSquare, highlightMoves, x);
+                Set<String> reversedHighlight = null;
+                if (highlightMoves != null) {
+                    reversedHighlight = reverseHighlightMoves(highlightMoves);
+                }
+                drawRow(out, reversedArray, whiteSquare, reversedHighlight, x);
                 x++;
                 setLightGray(out);
                 drawColHeader(out, colHeader);
@@ -129,6 +134,49 @@ public class BoardDrawer {
                 resetColor(out);
                 out.println();
                 whiteSquare = !(whiteSquare);
+            }
+        }
+    }
+
+    private static Set<String> reverseHighlightMoves(Set<String> highlightMoves) {
+        Set<String> newHighlight = new HashSet<>();
+        for (String highlight : highlightMoves) {
+            String row = highlight.substring(0,1);
+            String col = highlight.substring(2,3);
+            String convertedCol = convertCol(col);
+            newHighlight.add(row + "," + convertedCol);
+        }
+        return newHighlight;
+    }
+
+    private static String convertCol(String row) {
+        switch (row) {
+            case "0" -> {
+                return "7";
+            }
+            case "1" -> {
+                return "6";
+            }
+            case "2" -> {
+                return "5";
+            }
+            case "3" -> {
+                return "4";
+            }
+            case "4" -> {
+                return "3";
+            }
+            case "5" -> {
+                return "2";
+            }
+            case "6" -> {
+                return "1";
+            }
+            case "7" -> {
+                return "0";
+            }
+            default -> {
+                throw new RuntimeException("Invalid convertRow in BoardDrawer");
             }
         }
     }

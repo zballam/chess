@@ -154,12 +154,7 @@ public class DatabaseGameDAO implements GameDAO{
         }
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(insertStatement)) {
-//                if (user == null) {
-//                    ps.setNull(1, java.sql.Types.VARCHAR); // Set to null if user is null
-//                }
-//                else {
-                    ps.setString(1, user.username());
-//                }
+                ps.setString(1, user.username());
                 ps.setString(2, String.valueOf(gameID));
                 ps.executeUpdate();
             }
