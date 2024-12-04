@@ -18,7 +18,6 @@ public class Repl implements MessageObserver {
     private final LoggedOutClient logoutREPL;
     private LoggedInClient loginREPL = null;
     private final GameClient gameREPL;
-    private final BoardDrawer drawer = new BoardDrawer();
     private State state;
     private String username = "";
     private String authToken = "";
@@ -130,7 +129,7 @@ public class Repl implements MessageObserver {
     @Override
     public void notifyLoadGameMessage(LoadGameMessage message, ChessGame.TeamColor teamColor) {
         ChessGame game = message.getGame();
-        drawer.drawChessBoard(game.getBoard().getSquares(), teamColor);
+        BoardDrawer.drawChessBoard(game.getBoard().getSquares(), teamColor);
     }
 
     private void notifyNotificationMessage(NotificationMessage message) {

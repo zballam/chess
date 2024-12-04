@@ -59,8 +59,7 @@ public class GameService {
         gameDAO.insertUser(gameID, null, color);
     }
 
-    public void makeMove(ChessMove newMove, int gameID) throws DataAccessException, InvalidMoveException {
-        ChessGame updatedGame = new ChessGame();
+    public void makeMove(ChessMove newMove, ChessGame updatedGame, int gameID) throws DataAccessException, InvalidMoveException {
         updatedGame.makeMove(newMove);
         this.gameDAO.updateGame(updatedGame, gameID);
     }

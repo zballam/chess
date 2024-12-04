@@ -149,7 +149,7 @@ public class WebsocketHandler {
         // Check to make sure valid move
         // Update game in database
         try {
-            gameService.makeMove(moveCommand.getMoveCommand(), moveCommand.getGameID());
+            gameService.makeMove(moveCommand.getMoveCommand(), gameData.game(), moveCommand.getGameID());
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         } catch (InvalidMoveException e) {
