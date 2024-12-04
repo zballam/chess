@@ -74,12 +74,12 @@ public class DatabaseGameDAO implements GameDAO{
 
     private GameData readRS(ResultSet rs) throws SQLException {
         int dataGameID = rs.getInt(1);
-        String whiteUsername = rs.getString(2);
-        String blackUsername = rs.getString(3);
-        String gameName = rs.getString(4);
-        String game = rs.getString(5);
+        String whiteUsername = rs.getString(3);
+        String blackUsername = rs.getString(4);
+        String gameName = rs.getString(5);
+        String game = rs.getString(6);
         ChessGame gameData = GSON.fromJson(game, ChessGame.class);
-        return new GameData(dataGameID, true, whiteUsername, blackUsername, gameName, gameData);
+        return new GameData(dataGameID, null, whiteUsername, blackUsername, gameName, gameData);
     }
 
     @Override
@@ -168,13 +168,14 @@ public class DatabaseGameDAO implements GameDAO{
     }
 
     @Override
-    public void endGame(Integer gameID) throws DataAccessException {
+    public void endGame(Integer gameID, String winner) throws DataAccessException {
         String insertStatement = """
-                UPDATE game SET active = FALSE WHERE gameID=?;
+                UPDATE game SET winner = ? WHERE gameID=?;
                 """;
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(insertStatement)) {
-                ps.setString(1, String.valueOf(gameID));
+                ps.setString(1, winner);
+                ps.setString(2, String.valueOf(gameID));
                 ps.executeUpdate();
             }
         } catch (SQLException e) {

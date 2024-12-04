@@ -129,8 +129,14 @@ public class WebsocketHandler {
         String username;
         try {
             gameData = gameService.getGame(gameID);
+            // Check to see if game is active
+            if (!gameData.winner().equalsIgnoreCase("null")) {
+                String innactiveGameMessage = "This Game Is Over. " + gameData.winner() + " Won!";
+                NotificationMessage innactiveGameNotification = new NotificationMessage(innactiveGameMessage);
+                session.getRemote().sendString(new Gson().toJson(innactiveGameNotification));
+            }
             username = authService.getAuth(moveCommand.getAuthToken()).username();
-        } catch (DataAccessException e) {
+        } catch (DataAccessException | IOException e) {
             throw new RuntimeException(e);
         }
         UserType userType = determineUserType(gameData, username);
@@ -163,8 +169,18 @@ public class WebsocketHandler {
             connections.broadcast(gameID, null, new Gson().toJson(notification));
             // If move results in check, checkmate, or stalemate send notification to all clients
             String checkUpdateResult = checkUpdate(updatedGameData);
-            if (checkUpdateResult.endsWith("Won!")) {
-                gameService.endGame(gameID);
+            if (checkUpdateResult.endsWith("White Won!")) {
+                gameService.endGame(gameID, "WHITE");
+                NotificationMessage endGameNotification = new NotificationMessage(checkUpdateResult);
+                connections.broadcast(gameID, null, new Gson().toJson(endGameNotification));
+            }
+            else if (checkUpdateResult.endsWith("Black Won!")) {
+                gameService.endGame(gameID, "BLACK");
+                NotificationMessage endGameNotification = new NotificationMessage(checkUpdateResult);
+                connections.broadcast(gameID, null, new Gson().toJson(endGameNotification));
+            }
+            else if (checkUpdateResult.endsWith("Nobody Won!")) {
+                gameService.endGame(gameID, "Nobody");
                 NotificationMessage endGameNotification = new NotificationMessage(checkUpdateResult);
                 connections.broadcast(gameID, null, new Gson().toJson(endGameNotification));
             }
@@ -226,8 +242,16 @@ public class WebsocketHandler {
     private void resignCommand(UserGameCommand command, Session session) {
         try {
             String username = authService.getAuth(command.getAuthToken()).username();
+            GameData gameData = gameService.getGame(command.getGameID());
+            String winner = "NOBODY";
+            if (gameData.whiteUsername().equalsIgnoreCase(username)) {
+                winner = "BLACK";
+            }
+            else if (gameData.blackUsername().equalsIgnoreCase(username)) {
+                winner = "WHITE";
+            }
             // Server marks the game as over (no more moves can be made). Game is updated in the database.
-            gameService.endGame(command.getGameID());
+            gameService.endGame(command.getGameID(), winner);
             // Send notification to all clients (including observers) that Player resigned and game is over
             String message = username.toUpperCase() + " has resigned from the game";
             NotificationMessage notification = new NotificationMessage(message);
