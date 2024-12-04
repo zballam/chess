@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import net.MessageObserver;
 import net.ServerFacade;
 import websocket.messages.ErrorMessage;
@@ -8,8 +9,7 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 import static ui.EscapeSequences.*;
 
@@ -135,7 +135,15 @@ public class Repl implements MessageObserver {
     @Override
     public void notifyLoadGameMessage(LoadGameMessage message, ChessGame.TeamColor teamColor) {
         ChessGame game = message.getGame();
-        BoardDrawer.drawChessBoard(game.getBoard().getSquares(), teamColor);
+        if (message.getLastMove() != null) {
+            Collection<ChessMove> highlightMove = new ArrayList<>();
+            highlightMove.add(message.getLastMove());
+            BoardDrawer.highlightMoves(highlightMove, game.getBoard().getSquares(), teamColor);
+        }
+        else {
+            BoardDrawer.drawChessBoard(game.getBoard().getSquares(), teamColor);
+        }
+        printPrompt();
     }
 
     private void notifyNotificationMessage(NotificationMessage message) {
@@ -145,6 +153,6 @@ public class Repl implements MessageObserver {
 
     private void notifyErrorMessage(ErrorMessage message) {
         System.out.print("\n" + ERRORCOLOR + message.getErrorMessage() + RESET_TEXT_COLOR + "\n");
-//        printPrompt();
+        printPrompt();
     }
 }

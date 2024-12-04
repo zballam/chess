@@ -100,7 +100,7 @@ public class WebsocketHandler {
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        LoadGameMessage loadGameMessage = new LoadGameMessage(game);
+        LoadGameMessage loadGameMessage = new LoadGameMessage(game, null);
         NotificationMessage notificationMessage = new NotificationMessage(message);
         try {
             // Send load_game message to root client
@@ -164,7 +164,7 @@ public class WebsocketHandler {
         // Send load_game to players
         try {
             GameData updatedGameData = gameService.getGame(gameID);
-            LoadGameMessage loadGameMessage = new LoadGameMessage(updatedGameData.game());
+            LoadGameMessage loadGameMessage = new LoadGameMessage(updatedGameData.game(), moveCommand.getMoveCommand());
             connections.broadcast(gameID, null, new Gson().toJson(loadGameMessage));
             connections.broadcast(gameID, null, new Gson().toJson(notification));
             // If move results in check, checkmate, or stalemate send notification to all clients
@@ -282,7 +282,7 @@ public class WebsocketHandler {
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        LoadGameMessage message = new LoadGameMessage(gameData.game());
+        LoadGameMessage message = new LoadGameMessage(gameData.game(), null);
         // Send to client
         try {
             session.getRemote().sendString(new Gson().toJson(message));
