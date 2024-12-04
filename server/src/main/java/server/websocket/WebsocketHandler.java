@@ -91,7 +91,7 @@ public class WebsocketHandler {
         // Sends a Notification to all other clients in game that the root client connected, either as a player
         // (in which case their color must be specified) or as an observer.
         connections.add(gameID, session);
-        System.out.println("Entered ConnectCommand " + userData.username() + " with session " + session.hashCode());
+//        System.out.println("Entered ConnectCommand " + userData.username() + " with session " + session.hashCode());
         String message;
         ChessGame game;
         try {
@@ -155,8 +155,16 @@ public class WebsocketHandler {
                 return;
             }
             username = authService.getAuth(moveCommand.getAuthToken()).username();
-        } catch (DataAccessException | IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            ErrorMessage error = new ErrorMessage(e.getMessage());
+            try {
+                session.getRemote().sendString(new Gson().toJson(error));
+                return;
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         }
         UserType userType = determineUserType(gameData, username);
         if (userType == UserType.OBSERVER) {
@@ -185,7 +193,7 @@ public class WebsocketHandler {
             GameData updatedGameData = gameService.getGame(gameID);
             LoadGameMessage loadGameMessage = new LoadGameMessage(updatedGameData.game(), moveCommand.getMove());
             connections.broadcast(gameID, null, new Gson().toJson(loadGameMessage));
-            connections.broadcast(gameID, null, new Gson().toJson(notification));
+            connections.broadcast(gameID, session, new Gson().toJson(notification));
             // If move results in check, checkmate, or stalemate send notification to all clients
             String checkUpdateResult = checkUpdate(updatedGameData);
             if (checkUpdateResult.endsWith("White Won!")) {
@@ -203,7 +211,7 @@ public class WebsocketHandler {
                 NotificationMessage endGameNotification = new NotificationMessage(checkUpdateResult);
                 connections.broadcast(gameID, null, new Gson().toJson(endGameNotification));
             }
-            else if (checkUpdateResult.endsWith("Is In Check!")); {
+            else if (checkUpdateResult.endsWith("Is In Check!")) {
                 NotificationMessage checkNotification = new NotificationMessage(checkUpdateResult);
                 connections.broadcast(gameID, null, new Gson().toJson(checkNotification));
             }
