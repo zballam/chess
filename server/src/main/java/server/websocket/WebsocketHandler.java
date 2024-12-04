@@ -3,7 +3,6 @@ package server.websocket;
 import chess.ChessGame;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.GameData;
@@ -33,14 +32,18 @@ public class WebsocketHandler {
     @OnWebSocketMessage
     public void onMessage(Session session, String message) {
         // Define customDeserializer for UserGameCommands
-        Gson customDeserializer = new GsonBuilder().registerTypeAdapter(UserGameCommand.class, new UserGameCommandDeserializer()).create();
-        var userGameCommand = customDeserializer.fromJson(message, UserGameCommand.class);
+//        Gson customDeserializer = new GsonBuilder().registerTypeAdapter(UserGameCommand.class, new UserGameCommandDeserializer()).create();
+//        var userGameCommand = customDeserializer.fromJson(message, UserGameCommand.class);
+        var userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
         // Check to see if is a MakeMoveCommand
-        if (userGameCommand instanceof MakeMoveCommand) { // MakeMoveCommand class
-            makeMoveCommand((MakeMoveCommand) userGameCommand, session);
-        }
+//        if (userGameCommand instanceof MakeMoveCommand) { // MakeMoveCommand class
+//            makeMoveCommand((MakeMoveCommand) userGameCommand, session);
+//        }
         // Otherwise...
-        else { // UserGameCommand class
+//        if { // UserGameCommand class
+            if (!session.isOpen()) {
+                throw new RuntimeException("Session was closed inside onMessage");
+            }
             if (userGameCommand.getCommandType() == UserGameCommand.CommandType.CONNECT) {
                 try {
                     AuthData userAuthData = authService.getAuth(userGameCommand.getAuthToken());
@@ -54,12 +57,18 @@ public class WebsocketHandler {
             }
             // This else-if will trigger when there was no move being made to deserialize the class into a MakeMoveCommand
             else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
-                sendLoadGame(userGameCommand.getGameID(), session);
+                MakeMoveCommand moveCommand = new Gson().fromJson(message, MakeMoveCommand.class);
+                if (moveCommand.getMove() == null) {
+                    sendLoadGame(userGameCommand.getGameID(), session);
+                }
+                else {
+                    makeMoveCommand(moveCommand, session);
+                }
             }
             else { // Resign type
                 resignCommand(userGameCommand, session);
             }
-        }
+//        }
     }
 
     private UserType determineUserType(GameData data, String user) {
@@ -82,6 +91,7 @@ public class WebsocketHandler {
         // Sends a Notification to all other clients in game that the root client connected, either as a player
         // (in which case their color must be specified) or as an observer.
         connections.add(gameID, session);
+        System.out.println("Entered ConnectCommand " + userData.username() + " with session " + session.hashCode());
         String message;
         ChessGame game;
         try {
@@ -104,7 +114,15 @@ public class WebsocketHandler {
         NotificationMessage notificationMessage = new NotificationMessage(message);
         try {
             // Send load_game message to root client
-            session.getRemote().sendString(new Gson().toJson(loadGameMessage));
+            if (!session.isOpen()) {
+                throw new RuntimeException("Session was closed inside ConnectCommand");
+            }
+            try {
+                session.getRemote().sendString(new Gson().toJson(loadGameMessage));
+            }
+            catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
             // Send notification message to other clients
             connections.broadcast(gameID, session, new Gson().toJson(notificationMessage));
         } catch (IOException e) {
@@ -134,6 +152,7 @@ public class WebsocketHandler {
                 String innactiveGameMessage = "This Game Is Over. " + gameData.winner() + " Won!";
                 ErrorMessage innactiveGameNotification = new ErrorMessage(innactiveGameMessage);
                 session.getRemote().sendString(new Gson().toJson(innactiveGameNotification));
+                return;
             }
             username = authService.getAuth(moveCommand.getAuthToken()).username();
         } catch (DataAccessException | IOException e) {
@@ -151,7 +170,7 @@ public class WebsocketHandler {
         // Check to make sure valid move
         // Update game in database
         try {
-            gameService.makeMove(moveCommand.getMoveCommand(), gameData.game(), gameID);
+            gameService.makeMove(moveCommand.getMove(), gameData.game(), gameID);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         } catch (InvalidMoveException e) {
@@ -159,12 +178,12 @@ public class WebsocketHandler {
             return;
         }
         // Send notification to all clients but root client
-        String message = "Move made: " + moveCommand.getMoveCommand().toString().substring(0,14);
+        String message = "Move made: " + moveCommand.getMove().toString().substring(0,14);
         NotificationMessage notification = new NotificationMessage(message);
         // Send load_game to players
         try {
             GameData updatedGameData = gameService.getGame(gameID);
-            LoadGameMessage loadGameMessage = new LoadGameMessage(updatedGameData.game(), moveCommand.getMoveCommand());
+            LoadGameMessage loadGameMessage = new LoadGameMessage(updatedGameData.game(), moveCommand.getMove());
             connections.broadcast(gameID, null, new Gson().toJson(loadGameMessage));
             connections.broadcast(gameID, null, new Gson().toJson(notification));
             // If move results in check, checkmate, or stalemate send notification to all clients

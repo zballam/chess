@@ -172,6 +172,7 @@ public class LoggedInClient {
     }
 
     public String observeGame(String[] params) {
+        listGames();
         if (params.length == 1) {
             String gameID = gameIDs.get(params[0]);
             if (gameID == null) {

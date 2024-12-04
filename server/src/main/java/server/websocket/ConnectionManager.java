@@ -35,11 +35,13 @@ public class ConnectionManager {
             }
         }
         if (session != null) {
+            System.out.println("Broadcast: remove session " + session.hashCode());
             broadcastConnections.remove(session);
         }
         // Send message to broadcastConnections
         for (Session sendConn : broadcastConnections) {
             sendConn.getRemote().sendString(message);
+            System.out.println("Broadcast: to " + sendConn.hashCode());
         }
     }
 }
