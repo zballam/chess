@@ -149,11 +149,11 @@ public class ServerFacadeTests {
         String s = facade.createGame("TestGame1", tempAuthData.authToken());
         var tokens = s.toLowerCase().split(" ");
         int gameID = Integer.parseInt(tokens[2]);
-        games.add(new GameData(gameID,null,null,"TestGame1",new ChessGame()));
+        games.add(new GameData(gameID,null, null,null,"TestGame1",new ChessGame()));
         String s2 = facade.createGame("TestGame2", tempAuthData.authToken());
         var tokens2 = s2.toLowerCase().split(" ");
         int gameID2 = Integer.parseInt(tokens2[2]);
-        games.add(new GameData(gameID2,null,null,"TestGame2",new ChessGame()));
+        games.add(new GameData(gameID2,null, null,null,"TestGame2",new ChessGame()));
         String response = facade.listGames(tempAuthData.authToken());
         GamesList testGamesList = new GamesList(games);
         String testGamesListString = GSON.toJson(testGamesList);
