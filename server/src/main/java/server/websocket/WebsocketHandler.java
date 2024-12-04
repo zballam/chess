@@ -250,6 +250,11 @@ public class WebsocketHandler {
             else if (gameData.blackUsername().equalsIgnoreCase(username)) {
                 winner = "WHITE";
             }
+            else { // Observer trying to resign
+                ErrorMessage errorMessage = new ErrorMessage("Observers Cannot Resign");
+                session.getRemote().sendString(new Gson().toJson(errorMessage));
+                return;
+            }
             // Server marks the game as over (no more moves can be made). Game is updated in the database.
             gameService.endGame(command.getGameID(), winner);
             // Send notification to all clients (including observers) that Player resigned and game is over
