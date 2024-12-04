@@ -69,7 +69,7 @@ public class WebsocketCommunicator extends Endpoint {
         UserGameCommand leaveCommand = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
         try {
             this.session.getBasicRemote().sendText(new Gson().toJson(leaveCommand));
-            this.session.close();
+//            this.session.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

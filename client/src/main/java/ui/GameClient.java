@@ -71,6 +71,36 @@ public class GameClient {
         return input.matches("^[a-hA-H][1-8]$");
     }
 
+    private int translate(String letter) {
+        switch (letter.toUpperCase()) {
+            case "A" -> {
+                return 1;
+            }
+            case "B" -> {
+                return 2;
+            }
+            case "C" -> {
+                return 3;
+            }
+            case "D" -> {
+                return 4;
+            }
+            case "E" -> {
+                return 5;
+            }
+            case "F" -> {
+                return 6;
+            }
+            case "G" -> {
+                return 7;
+            }
+            case "H" -> {
+                return 8;
+            }
+            default -> throw new IllegalArgumentException("Invalid letter: " + letter);
+        }
+    }
+
     private String move(String[] params){
         if (params.length == 2) {
             String startPosition = params[0];
@@ -82,8 +112,8 @@ public class GameClient {
             if (!verifyMoveInput(endPosition)) {
                 return "Expected: Valid End Position Format: i.e. A1";
             }
-            ChessPosition position1 = new ChessPosition(startPosition.charAt(0), startPosition.charAt(1));
-            ChessPosition position2 = new ChessPosition(endPosition.charAt(0), endPosition.charAt(1));
+            ChessPosition position1 = new ChessPosition(startPosition.charAt(1) - '0', translate(String.valueOf(startPosition.charAt(0))));
+            ChessPosition position2 = new ChessPosition(endPosition.charAt(1) - '0', translate(String.valueOf(endPosition.charAt(0))));
             serverFacade.makeMoveWS(position1,position2);
             return "";
         }

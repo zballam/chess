@@ -17,6 +17,7 @@ import websocket.commands.*;
 import websocket.messages.*;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @WebSocket
 public class WebsocketHandler {
@@ -116,14 +117,35 @@ public class WebsocketHandler {
         }
     }
 
+    private boolean playersTurn(GameData gameData, UserType userType) {
+        ChessGame.TeamColor currentTurn = gameData.game().getTeamTurn();
+        if (userType == UserType.WHITE && currentTurn == ChessGame.TeamColor.WHITE) {
+            return true;
+        }
+        else if (userType == UserType.BLACK && currentTurn == ChessGame.TeamColor.BLACK) {
+            return true;
+        }
+        return false;
+    }
+
     private void makeMoveCommand(MakeMoveCommand moveCommand, Session session) {
         GameData gameData;
+        String username;
         try {
             gameData = gameService.getGame(moveCommand.getGameID());
+            username = authService.getAuth(moveCommand.getAuthToken()).username();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        ChessGame game = gameData.game();
+        UserType userType = determineUserType(gameData, username);
+        if (userType == UserType.OBSERVER) {
+            sendErrorMessage("You Cannot Move Pieces As An OBSERVER", session);
+            return;
+        }
+        else if (!playersTurn(gameData, userType)) {
+            sendErrorMessage("Not Your Turn", session);
+            return;
+        }
         // Check to make sure valid move
         // Update game in database
         try {
@@ -132,11 +154,10 @@ public class WebsocketHandler {
             throw new RuntimeException(e);
         } catch (InvalidMoveException e) {
             sendErrorMessage("Invalid Move", session);
+            return;
         }
         // Send notification to all clients but root client
-        String startPosition = moveCommand.getMoveCommand().getStartPosition().toString();
-        String endPosition = moveCommand.getMoveCommand().getEndPosition().toString();
-        String message = "Move made: " + startPosition + " -> " + endPosition;
+        String message = "Move made: " + moveCommand.getMoveCommand().toString().substring(0,14);
         NotificationMessage notification = new NotificationMessage(message);
         // Send load_game to players
         try {

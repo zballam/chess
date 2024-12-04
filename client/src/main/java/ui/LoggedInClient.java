@@ -147,6 +147,7 @@ public class LoggedInClient {
     }
 
     public String joinGame(String[] params) {
+        listGames();
         if (params.length == 2) {
             String gameID = this.gameIDs.get(params[0]);
             // Check if gameID is actually a number
