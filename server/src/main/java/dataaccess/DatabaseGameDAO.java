@@ -74,12 +74,13 @@ public class DatabaseGameDAO implements GameDAO{
 
     private GameData readRS(ResultSet rs) throws SQLException {
         int dataGameID = rs.getInt(1);
+        String winner = rs.getString(2);
         String whiteUsername = rs.getString(3);
         String blackUsername = rs.getString(4);
         String gameName = rs.getString(5);
         String game = rs.getString(6);
         ChessGame gameData = GSON.fromJson(game, ChessGame.class);
-        return new GameData(dataGameID, null, whiteUsername, blackUsername, gameName, gameData);
+        return new GameData(dataGameID, winner, whiteUsername, blackUsername, gameName, gameData);
     }
 
     @Override
