@@ -93,8 +93,9 @@ public class WebsocketHandler {
         try {
             GameData gameData = gameService.getGame(gameID);
             if (gameData == null) {
-                game = null;
-                message = "No game was found";
+                ErrorMessage errorMessage = new ErrorMessage("Game Not Found");
+                sendErrorMessage(new Gson().toJson(errorMessage), session);
+                return;
             }
             else {
                 game = gameData.game();
