@@ -2,6 +2,7 @@ package net;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -149,5 +150,13 @@ public class ServerFacade {
 
     public Collection<ChessMove> highlight(ChessPosition position1) {
         return websocketCommunicator.highlight(position1);
+    }
+
+    public ChessPiece[][] getPiecesMostRecentGame() {
+        return websocketCommunicator.getPiecesMostRecentGame();
+    }
+
+    public ChessGame.TeamColor getTeamColor() {
+        return websocketCommunicator.getTeamColor();
     }
 }

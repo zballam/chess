@@ -1,6 +1,8 @@
 package ui;
 
+import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import net.MessageObserver;
 import net.ServerFacade;
@@ -141,7 +143,9 @@ public class GameClient {
             }
             ChessPosition position1 = new ChessPosition(piecePosition.charAt(1) - '0', translate(String.valueOf(piecePosition.charAt(0))));
             Collection<ChessMove> highlightMoves = serverFacade.highlight(position1);
-//            BoardDrawer.highlightMoves(highlightMoves);
+            ChessPiece[][] pieces = serverFacade.getPiecesMostRecentGame();
+            ChessGame.TeamColor color = serverFacade.getTeamColor();
+            BoardDrawer.highlightMoves(highlightMoves, pieces, color);
             return "";
         }
         else {
