@@ -166,4 +166,19 @@ public class DatabaseGameDAO implements GameDAO{
             throw new DataAccessException(e.getMessage());
         }
     }
+
+    @Override
+    public void endGame(Integer gameID) throws DataAccessException {
+        String insertStatement = """
+                UPDATE game SET active = FALSE WHERE gameID=?;
+                """;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(insertStatement)) {
+                ps.setString(1, String.valueOf(gameID));
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
 }

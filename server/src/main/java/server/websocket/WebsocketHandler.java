@@ -190,11 +190,12 @@ public class WebsocketHandler {
     private void resignCommand(UserGameCommand command, Session session) {
         try {
             String username = authService.getAuth(command.getAuthToken()).username();
+            // Server marks the game as over (no more moves can be made). Game is updated in the database.
+            gameService.endGame(command.getGameID());
+            // Send notification to all clients (including observers) that Player resigned and game is over
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        // Server marks the game as over (no more moves can be made). Game is updated in the database.
-        // Send notification to all clients (including observers) that Player resigned and game is over
     }
 
     // SEND SERVER MESSAGES

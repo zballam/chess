@@ -64,4 +64,7 @@ public class MemoryGameDAO implements GameDAO{
         }
         this.gameDataHashMap.put(gameID, newGame);
     }
+
+    @Override
+    public void endGame(Integer gameID) throws DataAccessException {}
 }

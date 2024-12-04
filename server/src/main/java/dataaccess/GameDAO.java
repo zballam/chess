@@ -23,4 +23,6 @@ public interface GameDAO {
 
     // addUser Method
     void insertUser(int gameID, UserData user, ChessGame.TeamColor playerColor) throws DataAccessException;
+
+    void endGame(Integer gameID) throws DataAccessException;
 }

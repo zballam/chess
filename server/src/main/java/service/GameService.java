@@ -67,4 +67,8 @@ public class GameService {
     public GameData getGame(Integer gameID) throws DataAccessException {
         return this.gameDAO.getGame(gameID);
     }
+
+    public void endGame(Integer gameID) throws DataAccessException{
+        this.gameDAO.endGame(gameID);
+    }
 }
