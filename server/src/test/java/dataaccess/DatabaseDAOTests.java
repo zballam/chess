@@ -23,7 +23,7 @@ public class DatabaseDAOTests {
         testUser = new UserData("testUser","testPassword","testEmail");
         testAuth = new AuthData("testToken", testUser.username());
         game = new ChessGame();
-        testGame = new GameData(0,null,null,"testName",game);
+        testGame = new GameData(0,null,null,null,"testName",game);
     }
 
     @AfterEach
@@ -171,7 +171,7 @@ public class DatabaseDAOTests {
     @Test
     @DisplayName("Clear Game Multiple")
     public void clearGameTestMultiple() throws DataAccessException {
-        GameData testGame2 = new GameData(1,"test2","test2","test2",new ChessGame());
+        GameData testGame2 = new GameData(1,null,"test2","test2","test2",new ChessGame());
         gameDAO.createGame(testGame2);
         gameDAO.createGame(testGame);
         gameDAO.clear();
@@ -203,7 +203,7 @@ public class DatabaseDAOTests {
     public void insertWhiteTest() throws DataAccessException {
         int i = gameDAO.createGame(testGame);
         gameDAO.insertUser(i,testUser, ChessGame.TeamColor.WHITE);
-        GameData correctGame = new GameData(i, testUser.username(), testGame.blackUsername(), testGame.gameName(), testGame.game());
+        GameData correctGame = new GameData(i, null, testUser.username(), testGame.blackUsername(), testGame.gameName(), testGame.game());
         assertCorrectGame(i,correctGame);
     }
 
@@ -212,7 +212,7 @@ public class DatabaseDAOTests {
     public void insertBlackTest() throws DataAccessException {
         int i = gameDAO.createGame(testGame);
         gameDAO.insertUser(i,testUser, ChessGame.TeamColor.BLACK);
-        GameData correctGame = new GameData(i, testGame.whiteUsername(), testUser.username(), testGame.gameName(), testGame.game());
+        GameData correctGame = new GameData(i, null, testGame.whiteUsername(), testUser.username(), testGame.gameName(), testGame.game());
         assertCorrectGame(i,correctGame);
     }
 }

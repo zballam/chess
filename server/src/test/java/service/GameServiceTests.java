@@ -37,7 +37,7 @@ public class GameServiceTests {
         testAuthData = new AuthData(testAuthToken, "username");
         badAuthData = new AuthData("0000000000", "username");
         testUserData = new UserData("username", "password", "email");
-        testGameData = new GameData(1,null, null,
+        testGameData = new GameData(1, null,null, null,
                 "gameName", new ChessGame());
 
         authService.createAuth(testUserData,testAuthToken);
