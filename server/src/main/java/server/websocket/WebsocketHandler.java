@@ -124,10 +124,11 @@ public class WebsocketHandler {
     }
 
     private void makeMoveCommand(MakeMoveCommand moveCommand, Session session) {
+        Integer gameID = moveCommand.getGameID();
         GameData gameData;
         String username;
         try {
-            gameData = gameService.getGame(moveCommand.getGameID());
+            gameData = gameService.getGame(gameID);
             username = authService.getAuth(moveCommand.getAuthToken()).username();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
@@ -144,7 +145,7 @@ public class WebsocketHandler {
         // Check to make sure valid move
         // Update game in database
         try {
-            gameService.makeMove(moveCommand.getMoveCommand(), gameData.game(), moveCommand.getGameID());
+            gameService.makeMove(moveCommand.getMoveCommand(), gameData.game(), gameID);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         } catch (InvalidMoveException e) {
@@ -156,13 +157,48 @@ public class WebsocketHandler {
         NotificationMessage notification = new NotificationMessage(message);
         // Send load_game to players
         try {
-            LoadGameMessage loadGameMessage = new LoadGameMessage(gameService.getGame(moveCommand.getGameID()).game());
-            connections.broadcast(moveCommand.getGameID(), null, new Gson().toJson(loadGameMessage));
-            connections.broadcast(moveCommand.getGameID(), null, new Gson().toJson(notification));
+            GameData updatedGameData = gameService.getGame(gameID);
+            LoadGameMessage loadGameMessage = new LoadGameMessage(updatedGameData.game());
+            connections.broadcast(gameID, null, new Gson().toJson(loadGameMessage));
+            connections.broadcast(gameID, null, new Gson().toJson(notification));
+            // If move results in check, checkmate, or stalemate send notification to all clients
+            String checkUpdateResult = checkUpdate(updatedGameData);
+            if (checkUpdateResult.endsWith("Won!")) {
+                gameService.endGame(gameID);
+                NotificationMessage endGameNotification = new NotificationMessage(checkUpdateResult);
+                connections.broadcast(gameID, null, new Gson().toJson(endGameNotification));
+            }
+            else if (checkUpdateResult.endsWith("Is In Check!")); {
+                NotificationMessage checkNotification = new NotificationMessage(checkUpdateResult);
+                connections.broadcast(gameID, null, new Gson().toJson(checkNotification));
+            }
         } catch (DataAccessException | IOException e) {
             throw new RuntimeException(e);
         }
-        // If move results in check, checkmate, or stalemate send notification to all clients
+
+    }
+
+    private String checkUpdate(GameData updatedGameData) {
+        ChessGame game = updatedGameData.game();
+        if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+            return "White Is In Checkmate! Black Won!";
+        }
+        else if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
+            return "Black Is In Checkmate! White Won!";
+        }
+        else if (game.isInStalemate(ChessGame.TeamColor.WHITE)) {
+            return "White Is In Checkmate! Nobody Won!";
+        }
+        else if (game.isInStalemate(ChessGame.TeamColor.BLACK)) {
+            return "Black Is In Checkmate! Nobody Won!";
+        }
+        else if (game.isInCheck(ChessGame.TeamColor.WHITE)) {
+            return "White Is In Check!";
+        }
+        else if (game.isInCheck(ChessGame.TeamColor.BLACK)) {
+            return "Black Is In Check!";
+        }
+        return "";
     }
 
     private void leaveCommand(UserGameCommand command, Session session) {
@@ -193,7 +229,10 @@ public class WebsocketHandler {
             // Server marks the game as over (no more moves can be made). Game is updated in the database.
             gameService.endGame(command.getGameID());
             // Send notification to all clients (including observers) that Player resigned and game is over
-        } catch (DataAccessException e) {
+            String message = username.toUpperCase() + " has resigned from the game";
+            NotificationMessage notification = new NotificationMessage(message);
+            connections.broadcast(command.getGameID(), null, new Gson().toJson(notification));
+        } catch (DataAccessException | IOException e) {
             throw new RuntimeException(e);
         }
     }
